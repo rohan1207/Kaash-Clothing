@@ -138,7 +138,7 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
       // Log for debugging
       console.log('Sending form data:', Object.fromEntries(formDataToSend));
 
-      const response = await axios.post('http://localhost:5000/api/products', formDataToSend, {
+      const response = await axios.post('https://kaash-clothing.onrender.com/api/products', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

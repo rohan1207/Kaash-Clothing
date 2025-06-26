@@ -1,47 +1,50 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import axios from 'axios';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import axios from "axios";
 
-const API_URL = 'http://localhost:5000';
+const API_URL = "https://kaash-clothing.onrender.com";
 
 const LoginPage = ({ onLogin, isAuthenticated }) => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // If already authenticated, redirect to dashboard
   if (isAuthenticated) {
-    navigate('/admin/dashboard');
+    navigate("/admin/dashboard");
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const response = await axios.post(`${API_URL}/api/admin/login`, {
         username,
-        password
+        password,
       });
 
       if (response.data.success) {
         // Store the token
-        localStorage.setItem('adminToken', response.data.token);
+        localStorage.setItem("adminToken", response.data.token);
         // Store admin info
-        localStorage.setItem('adminInfo', JSON.stringify(response.data.admin));
-        
+        localStorage.setItem("adminInfo", JSON.stringify(response.data.admin));
+
         // Update auth state
         onLogin();
-        
+
         // Redirect to dashboard
-        navigate('/admin/dashboard');
+        navigate("/admin/dashboard");
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      setError(
+        err.response?.data?.message ||
+          "Login failed. Please check your credentials."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -57,8 +60,12 @@ const LoginPage = ({ onLogin, isAuthenticated }) => {
       >
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-light text-gray-900 mb-2">KAASH & CO.</h2>
-          <p className="text-sm uppercase tracking-[0.2em] text-gray-500">Admin Portal</p>
+          <h2 className="text-3xl font-light text-gray-900 mb-2">
+            KAASH & CO.
+          </h2>
+          <p className="text-sm uppercase tracking-[0.2em] text-gray-500">
+            Admin Portal
+          </p>
         </div>
 
         {/* Login Form */}
@@ -108,10 +115,10 @@ const LoginPage = ({ onLogin, isAuthenticated }) => {
               type="submit"
               disabled={isLoading}
               className={`w-full bg-black text-white py-3 rounded text-sm uppercase tracking-wider hover:bg-gray-900 transition-colors ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              {isLoading ? 'Signing In...' : 'Sign In'}
+              {isLoading ? "Signing In..." : "Sign In"}
             </button>
           </form>
         </div>

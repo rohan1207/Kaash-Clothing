@@ -1,43 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiEdit2, FiTrash2, FiX, FiCheck, FiImage, FiPackage, FiTag, FiDollarSign, FiPercent } from 'react-icons/fi';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { format } from 'date-fns';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FiEdit2,
+  FiTrash2,
+  FiX,
+  FiCheck,
+  FiImage,
+  FiPackage,
+  FiTag,
+  FiDollarSign,
+  FiPercent,
+} from "react-icons/fi";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
 
-const API_URL = 'http://localhost:5000';
+const API_URL = "https://kaash-clothing.onrender.com";
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
   const [editingProduct, setEditingProduct] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState({
     mainImage: null,
-    additionalMedia: []
+    additionalMedia: [],
   });
   const [editForm, setEditForm] = useState({
-    name: '',
-    category: '',
-    description: '',
-    price: '',
-    discountedPrice: '',
-    discountPercentage: '',
-    stock: '',
-    status: '',
+    name: "",
+    category: "",
+    description: "",
+    price: "",
+    discountedPrice: "",
+    discountPercentage: "",
+    stock: "",
+    status: "",
     featured: false,
     coupon: {
-      name: '',
-      discountAmount: '',
-      minPurchaseAmount: '',
+      name: "",
+      discountAmount: "",
+      minPurchaseAmount: "",
       active: true,
-      expiryDate: ''
+      expiryDate: "",
     },
     sizes: [],
     colors: [],
-    material: '',
-    care: []
+    material: "",
+    care: [],
   });
 
   // Fetch products
@@ -48,95 +58,115 @@ const ManageProducts = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/products');
+      const response = await axios.get(
+        "https://kaash-clothing.onrender.com/api/products"
+      );
       setProducts(response.data.products);
     } catch (error) {
-      toast.error('Failed to fetch products');
-      console.error('Error fetching products:', error);
+      toast.error("Failed to fetch products");
+      console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
   };
 
   // Filter products based on search and status
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.category.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    if (filter === 'all') return matchesSearch;
-    if (filter === 'inStock') return matchesSearch && product.stock > 0;
-    if (filter === 'lowStock') return matchesSearch && product.stock <= 5 && product.stock > 0;
-    if (filter === 'outOfStock') return matchesSearch && product.stock === 0;
-    if (filter === 'discontinued') return matchesSearch && product.status === 'discontinued';
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase());
+
+    if (filter === "all") return matchesSearch;
+    if (filter === "inStock") return matchesSearch && product.stock > 0;
+    if (filter === "lowStock")
+      return matchesSearch && product.stock <= 5 && product.stock > 0;
+    if (filter === "outOfStock") return matchesSearch && product.stock === 0;
+    if (filter === "discontinued")
+      return matchesSearch && product.status === "discontinued";
     return matchesSearch;
   });
 
   // Handle product updates
   const handleUpdateProduct = async (productId, updates) => {
     try {
-      const response = await axios.put(`${API_URL}/api/products/${productId}`, updates, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      // Update local state
-      setProducts(prevProducts => 
-        prevProducts.map(p => p._id === productId ? response.data.product : p)
+      const response = await axios.put(
+        `${API_URL}/api/products/${productId}`,
+        updates,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
       );
-      
-      toast.success('Product updated successfully');
+
+      // Update local state
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p._id === productId ? response.data.product : p
+        )
+      );
+
+      toast.success("Product updated successfully");
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update product');
-      console.error('Error updating product:', error);
+      toast.error(error.response?.data?.message || "Failed to update product");
+      console.error("Error updating product:", error);
     }
   };
 
   // Handle image updates
   const handleImageUpdate = async (productId, formData) => {
     try {
-      const response = await axios.put(`${API_URL}/api/products/${productId}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      
-      // Update local state
-      setProducts(prevProducts => 
-        prevProducts.map(p => p._id === productId ? response.data.product : p)
+      const response = await axios.put(
+        `${API_URL}/api/products/${productId}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
-      
-      toast.success('Images updated successfully');
+
+      // Update local state
+      setProducts((prevProducts) =>
+        prevProducts.map((p) =>
+          p._id === productId ? response.data.product : p
+        )
+      );
+
+      toast.success("Images updated successfully");
     } catch (error) {
-      toast.error('Failed to update images');
-      console.error('Error updating images:', error);
+      toast.error("Failed to update images");
+      console.error("Error updating images:", error);
     }
   };
 
   // Handle product deletion
   const handleDeleteProduct = async (productId) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
-    
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
+
     try {
       await axios.delete(`${API_URL}/api/products/${productId}`);
-      
+
       // Update local state
-      setProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
-      toast.success('Product deleted successfully');
+      setProducts((prevProducts) =>
+        prevProducts.filter((p) => p._id !== productId)
+      );
+      toast.success("Product deleted successfully");
     } catch (error) {
-      toast.error('Failed to delete product');
-      console.error('Error deleting product:', error);
+      toast.error("Failed to delete product");
+      console.error("Error deleting product:", error);
     }
   };
   const EditModal = ({ product }) => {
     const [formData, setFormData] = useState(product);
     const [newImages, setNewImages] = useState([]);
-    const [selectedTab, setSelectedTab] = useState('basic'); // Add selectedTab state
+    const [selectedTab, setSelectedTab] = useState("basic"); // Add selectedTab state
 
     const handleChange = (e) => {
       const { name, value, type, checked, files } = e.target;
-      if (type === 'file') {
+      if (type === "file") {
         setNewImages(Array.from(files));
       } else {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          [name]: type === 'checkbox' ? checked : value
+          [name]: type === "checkbox" ? checked : value,
         }));
       }
     };
@@ -150,7 +180,7 @@ const ManageProducts = () => {
           coupon: JSON.stringify(formData.coupon),
           sizes: JSON.stringify(formData.sizes),
           colors: JSON.stringify(formData.colors),
-          care: JSON.stringify(formData.care)
+          care: JSON.stringify(formData.care),
         };
 
         // Update basic info
@@ -159,17 +189,17 @@ const ManageProducts = () => {
         // Update images if new ones are added
         if (newImages.length > 0) {
           const imageFormData = new FormData();
-          newImages.forEach(file => {
-            imageFormData.append('additionalMedia', file);
+          newImages.forEach((file) => {
+            imageFormData.append("additionalMedia", file);
           });
           await handleImageUpdate(product._id, imageFormData);
         }
 
         setEditingProduct(null);
-        toast.success('Product updated successfully');
+        toast.success("Product updated successfully");
       } catch (error) {
-        toast.error('Failed to update product');
-        console.error('Error updating product:', error);
+        toast.error("Failed to update product");
+        console.error("Error updating product:", error);
       }
     };
 
@@ -182,7 +212,9 @@ const ManageProducts = () => {
           className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-xl"
         >
           <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
-            <h2 className="text-xl font-medium">Edit Product: {product.name}</h2>
+            <h2 className="text-xl font-medium">
+              Edit Product: {product.name}
+            </h2>
             <button
               onClick={() => setEditingProduct(null)}
               className="text-gray-500 hover:text-gray-700"
@@ -193,14 +225,14 @@ const ManageProducts = () => {
 
           <div className="p-6">
             <div className="flex gap-4 mb-6 border-b">
-              {['basic', 'media', 'pricing', 'inventory'].map(tab => (
+              {["basic", "media", "pricing", "inventory"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setSelectedTab(tab)}
                   className={`px-4 py-2 -mb-px ${
                     selectedTab === tab
-                      ? 'border-b-2 border-black text-black'
-                      : 'text-gray-500'
+                      ? "border-b-2 border-black text-black"
+                      : "text-gray-500"
                   }`}
                 >
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -209,7 +241,7 @@ const ManageProducts = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {selectedTab === 'basic' && (
+              {selectedTab === "basic" && (
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -224,7 +256,7 @@ const ManageProducts = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Category
@@ -236,10 +268,20 @@ const ManageProducts = () => {
                       className="w-full border-gray-300 rounded-lg shadow-sm"
                       required
                     >
-                      {['Casual', 'Partywear', 'Festive', 'Officewear', 'Kurtis', 'Dresses', 'Lehengas', 'Sarees']
-                        .map(cat => (
-                          <option key={cat} value={cat}>{cat}</option>
-                        ))}
+                      {[
+                        "Casual",
+                        "Partywear",
+                        "Festive",
+                        "Officewear",
+                        "Kurtis",
+                        "Dresses",
+                        "Lehengas",
+                        "Sarees",
+                      ].map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -276,7 +318,7 @@ const ManageProducts = () => {
                 </div>
               )}
 
-              {selectedTab === 'media' && (
+              {selectedTab === "media" && (
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -306,11 +348,13 @@ const ManageProducts = () => {
                           <button
                             type="button"
                             onClick={() => {
-                              const updatedMedia = [...formData.additionalMedia];
+                              const updatedMedia = [
+                                ...formData.additionalMedia,
+                              ];
                               updatedMedia.splice(index, 1);
-                              setFormData(prev => ({
+                              setFormData((prev) => ({
                                 ...prev,
-                                additionalMedia: updatedMedia
+                                additionalMedia: updatedMedia,
                               }));
                             }}
                             className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
@@ -334,7 +378,7 @@ const ManageProducts = () => {
                 </div>
               )}
 
-              {selectedTab === 'pricing' && (
+              {selectedTab === "pricing" && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -360,7 +404,7 @@ const ManageProducts = () => {
                       <input
                         type="number"
                         name="discountedPrice"
-                        value={formData.discountedPrice || ''}
+                        value={formData.discountedPrice || ""}
                         onChange={handleChange}
                         min="0"
                         step="0.01"
@@ -376,7 +420,7 @@ const ManageProducts = () => {
                     <input
                       type="number"
                       name="discountPercentage"
-                      value={formData.discountPercentage || ''}
+                      value={formData.discountPercentage || ""}
                       onChange={handleChange}
                       min="0"
                       max="100"
@@ -394,7 +438,7 @@ const ManageProducts = () => {
                         <input
                           type="text"
                           name="coupon.name"
-                          value={formData.coupon?.name || ''}
+                          value={formData.coupon?.name || ""}
                           onChange={handleChange}
                           className="w-full border-gray-300 rounded-lg shadow-sm"
                         />
@@ -407,7 +451,7 @@ const ManageProducts = () => {
                         <input
                           type="number"
                           name="coupon.discountAmount"
-                          value={formData.coupon?.discountAmount || ''}
+                          value={formData.coupon?.discountAmount || ""}
                           onChange={handleChange}
                           min="0"
                           className="w-full border-gray-300 rounded-lg shadow-sm"
@@ -431,7 +475,7 @@ const ManageProducts = () => {
                 </div>
               )}
 
-              {selectedTab === 'inventory' && (
+              {selectedTab === "inventory" && (
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -453,24 +497,33 @@ const ManageProducts = () => {
                       Sizes
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size'].map(size => (
-                        <label key={size} className="inline-flex items-center">
-                          <input
-                            type="checkbox"
-                            name="sizes"
-                            value={size}
-                            checked={formData.sizes?.includes(size)}
-                            onChange={(e) => {
-                              const sizes = e.target.checked
-                                ? [...(formData.sizes || []), size]
-                                : (formData.sizes || []).filter(s => s !== size);
-                              setFormData(prev => ({ ...prev, sizes }));
-                            }}
-                            className="rounded border-gray-300 text-black focus:ring-black"
-                          />
-                          <span className="ml-2 text-sm text-gray-600">{size}</span>
-                        </label>
-                      ))}
+                      {["XS", "S", "M", "L", "XL", "XXL", "Free Size"].map(
+                        (size) => (
+                          <label
+                            key={size}
+                            className="inline-flex items-center"
+                          >
+                            <input
+                              type="checkbox"
+                              name="sizes"
+                              value={size}
+                              checked={formData.sizes?.includes(size)}
+                              onChange={(e) => {
+                                const sizes = e.target.checked
+                                  ? [...(formData.sizes || []), size]
+                                  : (formData.sizes || []).filter(
+                                      (s) => s !== size
+                                    );
+                                setFormData((prev) => ({ ...prev, sizes }));
+                              }}
+                              className="rounded border-gray-300 text-black focus:ring-black"
+                            />
+                            <span className="ml-2 text-sm text-gray-600">
+                              {size}
+                            </span>
+                          </label>
+                        )
+                      )}
                     </div>
                   </div>
 
@@ -481,7 +534,7 @@ const ManageProducts = () => {
                     <input
                       type="text"
                       name="material"
-                      value={formData.material || ''}
+                      value={formData.material || ""}
                       onChange={handleChange}
                       className="w-full border-gray-300 rounded-lg shadow-sm"
                     />
@@ -493,10 +546,12 @@ const ManageProducts = () => {
                     </label>
                     <textarea
                       name="care"
-                      value={(formData.care || []).join('\n')}
+                      value={(formData.care || []).join("\n")}
                       onChange={(e) => {
-                        const care = e.target.value.split('\n').filter(line => line.trim());
-                        setFormData(prev => ({ ...prev, care }));
+                        const care = e.target.value
+                          .split("\n")
+                          .filter((line) => line.trim());
+                        setFormData((prev) => ({ ...prev, care }));
                       }}
                       rows={3}
                       className="w-full border-gray-300 rounded-lg shadow-sm"
@@ -565,24 +620,42 @@ const ManageProducts = () => {
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 text-left">
-                <th className="px-6 py-4 text-sm font-normal text-gray-500">Product</th>
-                <th className="px-6 py-4 text-sm font-normal text-gray-500">Category</th>
-                <th className="px-6 py-4 text-sm font-normal text-gray-500">Price</th>
-                <th className="px-6 py-4 text-sm font-normal text-gray-500">Stock</th>
-                <th className="px-6 py-4 text-sm font-normal text-gray-500">Status</th>
-                <th className="px-6 py-4 text-sm font-normal text-gray-500">Actions</th>
+                <th className="px-6 py-4 text-sm font-normal text-gray-500">
+                  Product
+                </th>
+                <th className="px-6 py-4 text-sm font-normal text-gray-500">
+                  Category
+                </th>
+                <th className="px-6 py-4 text-sm font-normal text-gray-500">
+                  Price
+                </th>
+                <th className="px-6 py-4 text-sm font-normal text-gray-500">
+                  Stock
+                </th>
+                <th className="px-6 py-4 text-sm font-normal text-gray-500">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-sm font-normal text-gray-500">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                  <td
+                    colSpan="6"
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
                     Loading products...
                   </td>
                 </tr>
               ) : filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                  <td
+                    colSpan="6"
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
                     No products found.
                   </td>
                 </tr>
@@ -598,14 +671,16 @@ const ManageProducts = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-4">
                         <img
-                          src={`http://localhost:5000${product.mainImage.url}`}
+                          src={`https://kaash-clothing.onrender.com${product.mainImage.url}`}
                           alt={product.name}
                           className="w-12 h-12 rounded-lg object-cover"
                         />
                         <div className="flex flex-col">
-                          <span className="text-sm font-medium">{product.name}</span>
+                          <span className="text-sm font-medium">
+                            {product.name}
+                          </span>
                           <span className="text-xs text-gray-500">
-                            {product.featured && '⭐ Featured'}
+                            {product.featured && "⭐ Featured"}
                           </span>
                         </div>
                       </div>
@@ -627,23 +702,26 @@ const ManageProducts = () => {
                         className={`
                           inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                           ${
-                            product.status === 'published' && product.stock > 10
-                              ? 'bg-green-100 text-green-800'
-                              : product.status === 'published' && product.stock <= 10 && product.stock > 0
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : product.status === 'discontinued'
-                              ? 'bg-gray-100 text-gray-800'
-                              : 'bg-red-100 text-red-800'
+                            product.status === "published" && product.stock > 10
+                              ? "bg-green-100 text-green-800"
+                              : product.status === "published" &&
+                                product.stock <= 10 &&
+                                product.stock > 0
+                              ? "bg-yellow-100 text-yellow-800"
+                              : product.status === "discontinued"
+                              ? "bg-gray-100 text-gray-800"
+                              : "bg-red-100 text-red-800"
                           }
                         `}
                       >
-                        {product.status === 'published'
+                        {product.status === "published"
                           ? product.stock > 10
-                            ? 'In Stock'
+                            ? "In Stock"
                             : product.stock > 0
-                            ? 'Low Stock'
-                            : 'Out of Stock'
-                          : product.status.charAt(0).toUpperCase() + product.status.slice(1)}
+                            ? "Low Stock"
+                            : "Out of Stock"
+                          : product.status.charAt(0).toUpperCase() +
+                            product.status.slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4">
