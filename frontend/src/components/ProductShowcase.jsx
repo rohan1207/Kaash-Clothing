@@ -7,6 +7,19 @@ const API_URL = "https://kaash-clothing.onrender.com";
 
 const ProductCard = ({ product, index }) => {
   const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Get the first additional image if available
+  const firstAdditionalImage = product.additionalMedia?.find(
+    (media) => media.type === "image"
+  )?.url;
+
+  // Determine current image URL based on hover state
+  const currentImageUrl =
+    isHovered && firstAdditionalImage
+      ? firstAdditionalImage
+      : product.mainImage.url;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -15,12 +28,15 @@ const ProductCard = ({ product, index }) => {
       viewport={{ once: true }}
       className="group cursor-pointer flex flex-col h-full"
       onClick={() => navigate(`/product/${product._id}`)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative overflow-hidden aspect-[3/4]">
+      <div className="relative overflow-hidden aspect-[3/4] rounded-md">
         <img
-          src={`${API_URL}${product.mainImage.url}`}
+          key={currentImageUrl}
+          src={`${API_URL}${currentImageUrl}`}
           alt={product.name}
-          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
+          className="w-full h-full object-cover transition-all duration-300 ease-in-out"
         />
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div className="absolute bottom-0 left-0 right-0 p-4 text-center translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">

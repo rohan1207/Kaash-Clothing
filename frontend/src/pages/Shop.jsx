@@ -166,6 +166,18 @@ const Shop = () => {
   const ProductCard = ({ product }) => {
     const hasDiscount =
       product.discountedPrice && product.discountedPrice < product.price;
+    const [isHovered, setIsHovered] = useState(false);
+
+    // Get the first additional image if available
+    const firstAdditionalImage = product.additionalMedia?.find(
+      (media) => media.type === "image"
+    )?.url;
+
+    // Determine current image URL based on hover state
+    const currentImageUrl =
+      isHovered && firstAdditionalImage
+        ? firstAdditionalImage
+        : product.mainImage.url;
 
     return (
       <motion.div
@@ -175,12 +187,15 @@ const Shop = () => {
         exit={{ opacity: 0 }}
         className="group cursor-pointer"
         onClick={() => navigate(`/product/${product._id}`)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100">
           <img
-            src={`${API_URL}${product.mainImage.url}`}
+            key={currentImageUrl}
+            src={`${API_URL}${currentImageUrl}`}
             alt={product.name}
-            className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
+            className="w-full h-full object-cover transition-all duration-300 ease-in-out"
           />
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="absolute bottom-0 left-0 right-0 p-4 text-center translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">

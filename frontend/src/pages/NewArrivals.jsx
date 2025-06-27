@@ -21,6 +21,7 @@ const NewArrivals = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [hoveredProduct, setProductHover] = useState(null);
 
   useEffect(() => {
     const fetchNewArrivals = async () => {
@@ -96,12 +97,25 @@ const NewArrivals = () => {
             variants={fadeIn}
             className="group relative text-center cursor-pointer"
             onClick={() => handleViewDetails(product._id)}
+            onMouseEnter={() => setProductHover(product._id)}
+            onMouseLeave={() => setProductHover(null)}
           >
             <div className="relative w-full aspect-[4/5] overflow-hidden rounded-lg bg-stone-100 shadow-md group-hover:shadow-xl transition-shadow duration-300">
               <img
-                src={`${API_URL}${product.mainImage.url}`}
+                key={
+                  product._id +
+                  (hoveredProduct === product._id &&
+                    product.additionalMedia?.find((m) => m.type === "image")
+                      ?.url)
+                }
+                src={`${API_URL}${
+                  hoveredProduct === product._id
+                    ? product.additionalMedia?.find((m) => m.type === "image")
+                        ?.url || product.mainImage.url
+                    : product.mainImage.url
+                }`}
                 alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
+                className="w-full h-full object-cover transition-all duration-300 ease-in-out"
               />
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
                 <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 border text-xs px-4 py-2 rounded-full uppercase tracking-widest">

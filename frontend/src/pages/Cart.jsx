@@ -83,7 +83,7 @@ const Cart = () => {
                         Size: {item.size}
                       </p>
                       <p className="text-md text-stone-700 mt-1">
-                        ${parseFloat(item.price).toFixed(2)}
+                        ${item.discountedPrice || item.price.toFixed(2)}
                       </p>
                     </div>
                     <div className="flex items-center gap-4 font-sans">

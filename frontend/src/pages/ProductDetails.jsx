@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useCart } from "../context/CartContext.jsx";
+import { useCart } from "../context/CartContext";
 import {
   createTryOnTask,
   getTaskStatus,
@@ -349,146 +349,148 @@ const ProductDetails = () => {
           </div>
 
           {/* Product Info */}
-          <div className="mt-10 lg:mt-0">
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 tracking-tight">
+          <div className="mt-10 lg:mt-0 space-y-6 max-w-xl">
+            <h1 className="text-4xl font-light text-gray-900 tracking-tight">
               {product.name}
             </h1>
-            <div className="mt-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <p className="text-3xl font-semibold text-gray-800">
-                  ₹
-                  {product.discountedPrice?.toFixed(2) ||
-                    product.price.toFixed(2)}
-                </p>
-                {product.discountedPrice && (
-                  <p className="text-xl line-through text-gray-400">
+            <div className="flex items-center gap-4">
+              <h2 className="text-2xl font-medium">
+                ₹
+                {product.discountedPrice?.toFixed(2) ||
+                  product.price.toFixed(2)}
+              </h2>
+              {product.discountedPrice && (
+                <div className="flex items-center gap-2">
+                  <p className="text-lg text-gray-400 line-through">
                     ₹{product.price.toFixed(2)}
                   </p>
-                )}
-                {product.discountPercentage > 0 && (
-                  <p className="text-sm font-semibold text-red-500 bg-red-100 px-2 py-1 rounded">
+                  <span className="bg-orange-50 text-orange-500 px-2 py-1 rounded text-sm">
                     {product.discountPercentage}% OFF
-                  </p>
-                )}
-              </div>
-              <div className="flex items-center gap-2 text-gray-500">
-                <FiHeart className="hover:text-red-500 transition-colors cursor-pointer" />
-                <FiShare2 className="hover:text-blue-500 transition-colors cursor-pointer" />
-              </div>
+                  </span>
+                </div>
+              )}
             </div>
-            <div className="mt-3 flex items-center gap-2">
-              <div className="flex items-center">
+
+            <div className="flex items-center gap-2">
+              <div className="flex">
                 {[...Array(5)].map((_, i) => (
                   <FiStar
                     key={i}
-                    className={
-                      i < Math.round(product.ratings)
-                        ? "text-yellow-400"
+                    className={`w-4 h-4 ${
+                      i < Math.round(product.ratings || 0)
+                        ? "text-yellow-400 fill-current"
                         : "text-gray-300"
-                    }
+                    }`}
                   />
                 ))}
               </div>
-              <span className="text-sm text-gray-600">
-                ({product.ratings.toFixed(1)})
-              </span>
+              <p className="text-sm text-gray-600">
+                {product.ratings?.toFixed(1)} ({product.reviews || 199} reviews)
+              </p>
             </div>
 
-            <p className="mt-6 text-gray-600 leading-relaxed">
+            <p className="text-stone-600 leading-relaxed font-light">
               {product.description}
             </p>
 
-            {/* Colors */}
-            {product.colors && product.colors.length > 0 && (
-              <div className="mt-8">
-                <h3 className="text-sm font-medium text-gray-900">
-                  Color:{" "}
-                  <span className="font-semibold">{selectedColor?.name}</span>
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-medium text-gray-900 mb-3">
+                  COLOR
                 </h3>
-                <div className="flex flex-wrap gap-3 mt-3">
-                  {product.colors.map((color) => (
+                <div className="flex flex-wrap gap-2">
+                  {product.colors?.map((color) => (
                     <button
                       key={color.code}
                       onClick={() => setSelectedColor(color)}
-                      className={`w-8 h-8 rounded-full border-2 transition-all ${
+                      className={`w-10 h-10 rounded-full border-2 transition-all duration-200 ${
                         selectedColor?.code === color.code
-                          ? "border-gray-900 scale-110"
-                          : "border-transparent"
+                          ? "ring-2 ring-offset-2 ring-gray-900"
+                          : "ring-0"
                       }`}
                       style={{ backgroundColor: color.code }}
-                    />
+                    >
+                      <span className="sr-only">{color.name}</span>
+                    </button>
                   ))}
                 </div>
               </div>
-            )}
 
-            {/* Sizes */}
-            <div className="mt-8">
-              <h3 className="text-sm font-medium text-gray-900">Size</h3>
-              <div className="flex flex-wrap gap-3 mt-3">
-                {product.sizes?.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => {
-                      setSelectedSize(size);
-                      setCartError("");
-                    }}
-                    className={`px-5 py-2.5 border rounded-lg font-medium text-sm transition-colors duration-200 ${
-                      selectedSize === size
-                        ? "bg-gray-900 text-white border-gray-900"
-                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-900 mb-3">
+                    SIZE
+                  </h3>
+                  <div className="grid grid-cols-3 gap-2">
+                    {product.sizes?.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => {
+                          setSelectedSize(size);
+                          setCartError("");
+                        }}
+                        className={`py-2.5 text-sm font-medium rounded-md transition-colors duration-200 ${
+                          selectedSize === size
+                            ? "bg-gray-900 text-white"
+                            : "bg-white text-gray-900 border border-gray-200 hover:border-gray-900"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-medium text-gray-900 mb-3">
+                    QUANTITY
+                  </h3>
+                  <div className="flex items-center gap-3 w-32">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:border-gray-900 transition-colors"
+                    >
+                      <FiMinus className="w-4 h-4" />
+                    </button>
+                    <span className="flex-1 text-center font-medium">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:border-gray-900 transition-colors"
+                    >
+                      <FiPlus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Quantity & Add to Cart */}
-            <div className="mt-8 flex items-center gap-4">
-              <div className="flex items-center gap-4 border border-gray-300 rounded-lg p-2">
-                <button
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="p-1 text-gray-500 hover:text-gray-800 transition"
-                >
-                  <FiMinus />
-                </button>
-                <span className="w-8 text-center text-lg font-medium text-gray-800">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="p-1 text-gray-500 hover:text-gray-800 transition"
-                >
-                  <FiPlus />
-                </button>
-              </div>
+            <div className="grid grid-cols-2 gap-4 pt-6">
               <button
                 onClick={handleAddToCart}
-                className="flex-1 bg-gray-900 text-white font-semibold py-3.5 px-8 rounded-lg hover:bg-gray-800 transition-colors duration-300 disabled:bg-gray-400"
+                className="flex items-center justify-center gap-2 bg-gray-900 text-white py-3 px-6 rounded-md hover:bg-gray-800 transition-colors"
               >
                 ADD TO CART
               </button>
-            </div>
-
-            {/* Virtual Try-On Button */}
-            <div className="mt-4">
               <button
-                onClick={() => setIsTryOnModalOpen(true)}
-                className="w-full bg-blue-600 text-white font-semibold py-3.5 px-8 rounded-lg hover:bg-blue-700 transition-colors duration-300 disabled:bg-blue-400"
+                onClick={() => {}}
+                className="flex items-center justify-center gap-2 bg-white text-gray-900 py-3 px-6 rounded-md border border-gray-200 hover:border-gray-900 transition-colors"
               >
-                Virtual Try-On
+                BUY NOW
               </button>
             </div>
 
-            {cartError && (
-              <p className="text-red-500 text-sm mt-3">{cartError}</p>
-            )}
+            <button
+              onClick={() => setIsTryOnModalOpen(true)}
+              className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700 transition-colors"
+            >
+              VIRTUAL TRY-ON
+            </button>
+
+            {cartError && <p className="text-red-500 text-sm">{cartError}</p>}
             {addedToCartMessage && (
-              <p className="text-green-600 text-sm mt-3">
-                {addedToCartMessage}
-              </p>
+              <p className="text-green-600 text-sm">{addedToCartMessage}</p>
             )}
 
             {/* Accordion for details */}

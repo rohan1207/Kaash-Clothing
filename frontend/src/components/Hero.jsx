@@ -42,14 +42,14 @@ const Hero = () => {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-stone-900">
+    <div className="relative w-full h-screen overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('/banner.png')" }}
+        style={{ backgroundImage: "url('')" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent z-10"></div>
+      <div className="absolute inset-0 z-10"></div>
 
-      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-white px-4 pb-10">
+      <div className="relative z-20 flex flex-col items-center justify-center h-full text-center text-black px-4 pb-10">
         <motion.div
           variants={logoVariants}
           initial="hidden"
@@ -57,16 +57,16 @@ const Hero = () => {
           className="mb-6"
         >
           <img
-            src="/logo1.png"
+            src="/logo.png"
             alt="Kaash Co.Clothing Logo"
-            className="h-20 md:h-24 w-auto"
+            className=" h-20 md:h-21 w-auto"
           />
         </motion.div>
         <motion.h1
           variants={headlineVariants}
           initial="hidden"
           animate="visible"
-          className="text-4xl md:text-6xl lg:text-7xl font-thin tracking-tighter text-stone-50 mb-4"
+          className="text-4xl md:text-6xl lg:text-7xl font-thin tracking-tighter text-black mb-4"
         >
           Clothing that makes you smile!
         </motion.h1>
@@ -74,7 +74,7 @@ const Hero = () => {
           variants={subheadlineVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-xl lg:max-w-2xl text-base md:text-lg font-light text-stone-300 mb-8"
+          className="max-w-xl lg:max-w-2xl text-base md:text-lg font-light text-black mb-8"
         >
           Handpicked collection of kurtis & ready to wears
         </motion.p>
