@@ -17,7 +17,28 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Category is required'],
     trim: true,
-    enum: ['Casual', 'Partywear', 'Festive', 'Officewear', 'Kurtis', 'Dresses', 'Lehengas', 'Sarees']
+    enum: [ 'Kurtis',  'Western', 'Sarees', 'Tops', 'Jeans']
+  },
+  sub_category: {
+    type: String,
+    required: [true, 'Sub-category is required'],
+    trim: true,
+    validate: {
+      validator: function(value) {
+        // Define valid sub-categories for each main category
+        const subCategoryMap = {
+          'Tops': ['Crop Tops', 'T-Shirts', 'Blouses', 'Tank Tops', 'Sweaters', 'Hoodies', 'Formal Shirts'],
+          'Jeans': ['Skinny', 'Straight', 'Bootcut', 'Mom Fit', 'Boyfriend', 'Relaxed Fit', 'Slim Fit'],
+         
+          'Kurtis': ['Long', 'Short', 'Medium', 'Anarkali', 'A-Line', 'Straight'],
+          'Western': ['Casual', 'Party', 'Formal', 'Evening', 'Cocktail', 'Bohemian', 'Vintage'],
+          'Sarees': ["Silk Sarees", "Cotton Sarees","Designer Sarees","Casual Sarees","Wedding Sarees","Printed Sarees"]
+        };
+        
+        return subCategoryMap[this.category]?.includes(value) || false;
+      },
+      message: props => `${props.value} is not a valid sub-category for the selected category`
+    }
   },
   description: {
     type: String,

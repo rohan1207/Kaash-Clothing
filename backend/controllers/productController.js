@@ -73,7 +73,65 @@ export const createProduct = async (req, res) => {
 // @access  Public
 export const getProducts = async (req, res) => {
     try {
-        const products = await Product.find();
+        const { category, price, sortBy, fabric, sub_category } = req.query;
+        
+        // Build query
+        const query = { status: 'published' };
+        
+        // Category filter
+        if (category) {
+            query.category = category;
+        }
+        
+        // Sub-category filter (for internal page filtering)
+        if (sub_category && sub_category !== 'All') {
+            query.sub_category = sub_category;
+        }
+
+        // Fabric filter
+        if (fabric && fabric !== 'All Fabrics') {
+            query.material = fabric;
+        }
+        
+        // Price filter
+        if (price && price !== 'All') {
+            switch(price) {
+                case 'Under ₹2000':
+                    query.price = { $lt: 2000 };
+                    break;
+                case '₹2000 - ₹5000':
+                    query.price = { $gte: 2000, $lte: 5000 };
+                    break;
+                case '₹5000 - ₹10000':
+                    query.price = { $gte: 5000, $lte: 10000 };
+                    break;
+                case 'Above ₹10000':
+                    query.price = { $gt: 10000 };
+                    break;
+            }
+        }
+
+        // Sort options
+        let sortOptions = {};
+        if (sortBy) {
+            switch(sortBy) {
+                case 'newest':
+                    sortOptions = { createdAt: -1 };
+                    break;
+                case 'price-asc':
+                    sortOptions = { price: 1 };
+                    break;
+                case 'price-desc':
+                    sortOptions = { price: -1 };
+                    break;
+            }
+        } else {
+            // Default sort by newest
+            sortOptions = { createdAt: -1 };
+        }
+
+        const products = await Product.find(query).sort(sortOptions);
+        
         res.json({
             success: true,
             products
