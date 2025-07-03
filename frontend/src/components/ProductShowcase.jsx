@@ -31,12 +31,13 @@ const ProductCard = ({ product, index }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative overflow-hidden aspect-[3/4] rounded-md">
+      <div className="relative overflow-hidden aspect-[3/4] rounded-md sm:aspect-[3/4]">
         <img
           key={currentImageUrl}
           src={`${API_URL}${currentImageUrl}`}
           alt={product.name}
           className="w-full h-full object-cover transition-all duration-300 ease-in-out"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div className="absolute bottom-0 left-0 right-0 p-4 text-center translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
@@ -45,11 +46,11 @@ const ProductCard = ({ product, index }) => {
           </p>
         </div>
       </div>
-      <div className="text-center pt-4 mt-auto">
-        <h4 className="text-base font-light text-stone-800 mb-1 truncate">
+      <div className="text-center pt-3 sm:pt-4 mt-auto">
+        <h4 className="text-sm sm:text-base font-light text-stone-800 mb-0.5 sm:mb-1 truncate">
           {product.name}
         </h4>
-        <p className="text-stone-600 text-sm">₹{product.price.toFixed(2)}</p>
+        <p className="text-stone-600 text-xs sm:text-sm">₹{product.price.toFixed(2)}</p>
       </div>
     </motion.div>
   );
@@ -74,6 +75,7 @@ const ValueProp = ({ icon, title, description, index }) => (
 const ProductShowcase = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [visibleProducts, setVisibleProducts] = useState(6); // Initially show 6 products
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -111,11 +113,28 @@ const ProductShowcase = () => {
       );
     }
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-        {products.map((product, index) => (
-          <ProductCard key={product._id} product={product} index={index} />
-        ))}
-      </div>
+      <>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-8 sm:gap-y-12">
+          {products.slice(0, visibleProducts).map((product, index) => (
+            <ProductCard key={product._id} product={product} index={index} />
+          ))}
+        </div>
+        {visibleProducts < products.length && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-center mt-8"
+          >
+            <button
+              onClick={() => setVisibleProducts(prev => Math.min(prev + 6, products.length))}
+              className="border border-stone-400 text-stone-600 font-medium text-sm px-8 py-2.5 rounded-full hover:bg-stone-100 transition-all duration-300 ease-out"
+            >
+              View More
+            </button>
+          </motion.div>
+        )}
+      </>
     );
   };
 
