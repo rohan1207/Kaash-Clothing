@@ -11,7 +11,7 @@ import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import ManageProducts from "./pages/ManageProducts";
 import DiscountManagement from "./pages/DiscountManagement";
-import AddProduct from "./pages/Addproduct";
+import AddProduct from "./pages/AddProduct";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
