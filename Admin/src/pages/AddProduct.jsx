@@ -5,6 +5,46 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 
 const AddProduct = () => {
+  // Define valid sub-categories for each main category
+  const subCategoryMap = {
+    Tops: [
+      "Crop Tops",
+      "T-Shirts",
+      "Blouses",
+      "Tank Tops",
+      "Sweaters",
+      "Hoodies",
+      "Formal Shirts",
+    ],
+    Jeans: [
+      "Skinny",
+      "Straight",
+      "Bootcut",
+      "Mom Fit",
+      "Boyfriend",
+      "Relaxed Fit",
+      "Slim Fit",
+    ],
+    Kurtis: ["Long", "Short", "Medium", "Anarkali", "A-Line", "Straight"],
+    Western: [
+      "Casual",
+      "Party",
+      "Formal",
+      "Evening",
+      "Cocktail",
+      "Bohemian",
+      "Vintage",
+    ],
+    Sarees: [
+      "Silk Sarees",
+      "Cotton Sarees",
+      "Designer Sarees",
+      "Casual Sarees",
+      "Wedding Sarees",
+      "Printed Sarees",
+    ],
+  };
+
   const categories = [
     { value: "Kurtis", label: "Kurtis" },
     { value: "Sarees", label: "Sarees" },
@@ -12,10 +52,12 @@ const AddProduct = () => {
     { value: "Tops", label: "Tops" },
     { value: "Western", label: "Western Wear" },
   ];
+
   const [formData, setFormData] = useState({
     // Basic Information
     name: "",
     category: "",
+    sub_category: "", // Added sub_category
     description: "",
     tags: [],
 
@@ -49,48 +91,21 @@ const AddProduct = () => {
     featured: false,
   });
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    if (type === "file") {
-      const files = Array.from(e.target.files);
-      if (name === "mainImage") {
-        setFormData((prev) => ({
-          ...prev,
-          mainImage: files[0],
-        }));
-      } else if (name === "additionalMedia") {
-        const newMedia = files.map((file) => ({
-          file,
-          type: file.type.startsWith("video/") ? "video" : "image",
-          preview: URL.createObjectURL(file),
-        }));
-        setFormData((prev) => ({
-          ...prev,
-          additionalMedia: [...prev.additionalMedia, ...newMedia],
-        }));
-      }
-    } else if (type === "checkbox") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: checked,
-      }));
-    } else if (name.includes(".")) {
-      // Handle nested objects (e.g., coupon.name)
-      const [parent, child] = name.split(".");
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: type === "number" ? parseFloat(value) || "" : value,
-        },
-      }));
+    const { name, value, files } = e.target;
+    if (name === "image") {
+      setFormData({ ...formData, [name]: files[0] });
+    } else if (name === "category") {
+      // When category changes, reset sub_category
+      setFormData({
+        ...formData,
+        [name]: value,
+        sub_category: "", // Reset sub-category when main category changes
+      });
     } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: type === "number" ? parseFloat(value) || "" : value,
-      }));
+      setFormData({ ...formData, [name]: value });
     }
   };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getAuthToken = () => {
@@ -100,6 +115,18 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    // Validate required fields including sub-category
+    if (!formData.category || !formData.sub_category) {
+      toast.error("Please select both category and sub-category");
+      return;
+    }
+
+    // Validate that sub-category matches the selected category
+    if (!subCategoryMap[formData.category]?.includes(formData.sub_category)) {
+      toast.error("Invalid sub-category selected for the chosen category");
+      return;
+    }
 
     try {
       // Get the auth token
@@ -127,6 +154,7 @@ const AddProduct = () => {
       // Append all fields
       formDataToSend.append("name", formData.name);
       formDataToSend.append("category", formData.category);
+      formDataToSend.append("sub_category", formData.sub_category);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("status", formData.status);
       formDataToSend.append("featured", formData.featured);
@@ -175,10 +203,11 @@ const AddProduct = () => {
         "https://kaash-clothing.onrender.com/api/products",
         formDataToSend,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
+          headers:
+            {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
         }
       );
 
@@ -188,6 +217,7 @@ const AddProduct = () => {
         setFormData({
           name: "",
           category: "",
+          sub_category: "",
           description: "",
           tags: [],
           price: "",
@@ -307,6 +337,33 @@ const AddProduct = () => {
                 <option value="Jeans">Jeans</option>
                 <option value="Tops">Tops</option>
                 <option value="Western">Western Wear</option>
+              </select>
+            </div>
+
+            {/* Sub-Category */}
+            <div>
+              <label
+                htmlFor="sub_category"
+                className="block text-sm text-gray-500 mb-2"
+              >
+                Sub-Category
+              </label>
+              <select
+                id="sub_category"
+                name="sub_category"
+                value={formData.sub_category}
+                onChange={handleChange}
+                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-black"
+                disabled={!formData.category}
+                required
+              >
+                <option value="">Select a sub-category</option>
+                {formData.category &&
+                  subCategoryMap[formData.category].map((subCat) => (
+                    <option key={subCat} value={subCat}>
+                      {subCat}
+                    </option>
+                  ))}
               </select>
             </div>
 
@@ -771,16 +828,16 @@ const AddProduct = () => {
                       strokeLinejoin="round"
                       strokeWidth="1.5"
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="text-sm text-gray-500">
-                    Click to upload images or videos
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    {formData.additionalMedia.length >= 5
-                      ? "Maximum limit reached"
-                      : "PNG, JPG, MP4 up to 10MB each"}
-                  </span>
+                  />
+                </svg>
+                <span className="text-sm text-gray-500">
+                  Click to upload images or videos
+                </span>
+                <span className="text-xs text-gray-400">
+                  {formData.additionalMedia.length >= 5
+                    ? "Maximum limit reached"
+                    : "PNG, JPG, MP4 up to 10MB each"}
+                </span>
                 </label>
               </div>
               {formData.additionalMedia.length > 0 && (
