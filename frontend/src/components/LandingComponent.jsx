@@ -389,7 +389,12 @@ const LandingPage = () => {
 
   if (isMobile) {
     return (
-      <div className={`fixed inset-0 w-full h-screen bg-white ${mobileScrolled ? 'overflow-hidden' : ''}`} style={{ touchAction: mobileScrolled ? 'none' : 'auto' }}>
+      <div className={`relative w-full min-h-screen bg-white ${mobileScrolled ? 'fixed inset-0 z-50' : ''}`} 
+           style={{ 
+             touchAction: mobileScrolled ? 'none' : 'auto',
+             height: mobileScrolled ? '100vh' : '100vh',
+             marginBottom: !mobileScrolled ? '0' : undefined
+           }}>
         {/* Mobile Header - Simplified */}
         <div className="absolute top-0 left-0 right-0 z-50">
           <h1 className="text-xl font-light tracking-widest text-center p-4">TSK</h1>
