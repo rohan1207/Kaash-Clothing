@@ -98,14 +98,31 @@ const LandingPage = () => {
     return positions[position] || {};
   };
 
-  // Mobile model navigation
+  // Mobile model navigation with improved transitions
   const navigateModel = (direction) => {
     const newIndex =
       direction === "next"
         ? (currentModelIndex + 1) % models.length
         : (currentModelIndex - 1 + models.length) % models.length;
 
-    setCurrentModelIndex(newIndex);
+    // Fade out current model
+    if (mobileModelRef.current) {
+      mobileModelRef.current.style.opacity = "0";
+      mobileModelRef.current.style.transition = "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+
+      // Change model after fade out
+      setTimeout(() => {
+        setCurrentModelIndex(newIndex);
+        
+        // Fade in new model
+        if (mobileModelRef.current) {
+          mobileModelRef.current.style.opacity = "1";
+          mobileModelRef.current.style.transition = "opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+        }
+      }, 300);
+    } else {
+      setCurrentModelIndex(newIndex);
+    }
   };
 
   // Mobile scroll/touch handler
@@ -113,54 +130,63 @@ const LandingPage = () => {
     if (!isMobile) return;
 
     let touchStartY = 0;
+    let touchStartX = 0;
     let initialScrollHandled = false;
     const threshold = 50;
-
-    // Add smooth scroll behavior
-    document.documentElement.style.scrollBehavior = 'smooth';
+    
+    // Initially prevent scrolling
+    if (!initialScrollHandled) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
+      document.documentElement.style.scrollBehavior = 'smooth';
+    }
 
     const handleTouchStart = (e) => {
       if (!initialScrollHandled) {
         touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
       }
     };
 
     const handleTouchMove = (e) => {
       if (!initialScrollHandled) {
-        e.preventDefault();
         const touchY = e.touches[0].clientY;
+        const touchX = e.touches[0].clientX;
         const deltaY = touchStartY - touchY;
-
-        if (Math.abs(deltaY) > threshold) {
-          if (deltaY > 0) {
-            setMobileScrolled(true);
-            initialScrollHandled = true;
-            // Allow scrolling after animation completes
-            setTimeout(() => {
-              document.body.style.overflow = 'auto';
-              document.body.style.touchAction = 'auto';
-            }, 1200); // Increased to match animation duration
+        const deltaX = Math.abs(touchStartX - touchX);
+        
+        // Only trigger vertical scroll if horizontal movement is minimal
+        if (deltaX < threshold) {
+          e.preventDefault();
+          if (Math.abs(deltaY) > threshold) {
+            if (deltaY > 0) {
+              setMobileScrolled(true);
+              initialScrollHandled = true;
+              // Enable scrolling after animation completes
+              setTimeout(() => {
+                document.body.style.overflow = 'auto';
+                document.body.style.touchAction = 'auto';
+              }, 1500); // Match with total animation duration
+            }
           }
         }
       }
     };
 
     const handleWheel = (e) => {
-      if (!initialScrollHandled && e.deltaY > 0) {
+      if (!initialScrollHandled) {
         e.preventDefault();
-        setMobileScrolled(true);
-        initialScrollHandled = true;
-        // Allow scrolling after animation completes
-        setTimeout(() => {
-          document.body.style.overflow = 'auto';
-          document.body.style.touchAction = 'auto';
-        }, 1200); // Increased to match animation duration
+        if (e.deltaY > 0) {
+          setMobileScrolled(true);
+          initialScrollHandled = true;
+          // Enable scrolling after animation completes
+          setTimeout(() => {
+            document.body.style.overflow = 'auto';
+            document.body.style.touchAction = 'auto';
+          }, 1500); // Match with total animation duration
+        }
       }
     };
-
-    // Initially prevent scrolling
-    document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
 
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
@@ -316,12 +342,14 @@ const LandingPage = () => {
     if (!isMobile) return;
 
     if (mobileScrolled) {
-      // Hide top and bottom content with smooth easing
+      // Hide top content with smooth easing
       if (mobileTopContentRef.current) {
         mobileTopContentRef.current.style.opacity = "0";
         mobileTopContentRef.current.style.transform = "translateY(-20px)";
         mobileTopContentRef.current.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
       }
+
+      // Hide bottom content with smooth easing
       if (mobileBottomContentRef.current) {
         mobileBottomContentRef.current.style.opacity = "0";
         mobileBottomContentRef.current.style.transform = "translateY(20px)";
@@ -334,30 +362,35 @@ const LandingPage = () => {
         mobileModelRef.current.style.transition = "all 1.2s cubic-bezier(0.4, 0, 0.2, 1)";
       }
 
-      // Show arrows with smooth fade
+      // Show arrows with delayed fade in
       if (mobileArrowsRef.current) {
         mobileArrowsRef.current.style.opacity = "1";
-        mobileArrowsRef.current.style.transition = "opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s";
+        mobileArrowsRef.current.style.transform = "translateX(0)";
+        mobileArrowsRef.current.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s";
       }
     } else {
-      // Show top and bottom content
+      // Reset all elements when scrolling back
       if (mobileTopContentRef.current) {
         mobileTopContentRef.current.style.opacity = "1";
         mobileTopContentRef.current.style.transform = "translateY(0)";
+        mobileTopContentRef.current.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
       }
+
       if (mobileBottomContentRef.current) {
         mobileBottomContentRef.current.style.opacity = "1";
         mobileBottomContentRef.current.style.transform = "translateY(0)";
+        mobileBottomContentRef.current.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
       }
 
-      // Scale down center model
       if (mobileModelRef.current) {
         mobileModelRef.current.style.transform = "scale(1)";
+        mobileModelRef.current.style.transition = "all 1.2s cubic-bezier(0.4, 0, 0.2, 1)";
       }
 
-      // Hide arrows
       if (mobileArrowsRef.current) {
         mobileArrowsRef.current.style.opacity = "0";
+        mobileArrowsRef.current.style.transform = "translateX(-10px)";
+        mobileArrowsRef.current.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
       }
     }
   }, [mobileScrolled, isMobile]);
