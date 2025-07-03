@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { ChevronLeft, ChevronRight, Menu } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
@@ -363,10 +363,9 @@ const LandingPage = () => {
   if (isMobile) {
     return (
       <div className="relative w-full h-screen bg-white overflow-hidden">
-        {/* Mobile Header */}
-        <div className="absolute top-0 left-0 right-0 z-50 flex justify-between items-center p-4">
-          <div className="text-xl font-light tracking-widest">TSK</div>
-          <Menu className="w-6 h-6" />
+        {/* Mobile Header - Simplified */}
+        <div className="absolute top-0 left-0 right-0 z-50">
+          <h1 className="text-xl font-light tracking-widest text-center p-4">TSK</h1>
         </div>
 
         {/* Mobile Top Content */}
@@ -503,18 +502,7 @@ const LandingPage = () => {
           </button>
         </div>
 
-        {/* Mobile Model Dots Indicator */}
-        <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 flex space-x-2 z-30">
-          {models.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentModelIndex(index)}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                index === currentModelIndex ? "bg-black" : "bg-black/30"
-              }`}
-            />
-          ))}
-        </div>
+    
       </div>
     );
   }
