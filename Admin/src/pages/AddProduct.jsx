@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const AddProduct = () => {
   const categories = [
@@ -92,11 +93,21 @@ const AddProduct = () => {
   };
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const getAuthToken = () => {
+    return localStorage.getItem("adminToken");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      // Get the auth token
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("Not authenticated. Please login again.");
+      }
+
       // Client-side validation
       if (
         !formData.name ||
@@ -159,12 +170,14 @@ const AddProduct = () => {
       // Log for debugging
       console.log("Sending form data:", Object.fromEntries(formDataToSend));
 
+      // Make the request with auth token
       const response = await axios.post(
         "https://kaash-clothing.onrender.com/api/products",
         formDataToSend,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -203,21 +216,30 @@ const AddProduct = () => {
 
       let errorMessage = "Error adding product";
       if (error.response) {
-        // Server error
-        errorMessage =
-          error.response.data.message ||
-          error.response.data.error ||
-          "Server error";
+        // Handle specific error cases
+        if (error.response.status === 401) {
+          errorMessage = "Session expired. Please login again.";
+          // Optionally, redirect to login page or handle re-authentication
+        } else {
+          errorMessage =
+            error.response.data.message ||
+            error.response.data.error ||
+            "Server error";
+        }
         console.log("Server error details:", error.response.data);
       } else if (error.request) {
-        // Network error
         errorMessage = "Network error. Please check your connection.";
       } else {
-        // Client-side error or other
         errorMessage = error.message;
       }
 
       toast.error(errorMessage);
+
+      // If unauthorized, you might want to redirect to login
+      if (error.response && error.response.status === 401) {
+        // You can handle re-authentication here
+        // For example: window.location.href = '/';
+      }
     } finally {
       setIsSubmitting(false);
     }
