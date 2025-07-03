@@ -4,9 +4,13 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-
   
   base: '/',
+  
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true,
 
   resolve: {
     alias: {
@@ -33,4 +37,4 @@ export default defineConfig({
     // Ensure index.html and 404.html are handled properly
     emptyOutDir: true
   },
-})
+}});

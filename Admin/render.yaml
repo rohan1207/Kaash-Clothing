@@ -1,8 +1,8 @@
 services:
   - type: web
-    name: Kaash Co.Clothing
+    name: kaash-admin
     env: static
-    buildCommand: npm install && npm run build
+    buildCommand: NODE_VERSION=18 npm install && npm run build
     staticPublishPath: ./dist
     headers:
       - path: /*

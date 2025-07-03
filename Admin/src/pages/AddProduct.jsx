@@ -1,83 +1,92 @@
-import  {useState}  from 'react';
-import { motion } from 'framer-motion';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const AddProduct = () => {  const [formData, setFormData] = useState({
+const AddProduct = () => {
+  const categories = [
+    { value: "Kurtis", label: "Kurtis" },
+    { value: "Sarees", label: "Sarees" },
+    { value: "Jeans", label: "Jeans" },
+    { value: "Tops", label: "Tops" },
+    { value: "Western", label: "Western Wear" },
+  ];
+  const [formData, setFormData] = useState({
     // Basic Information
-    name: '',
-    category: '',
-    description: '',
+    name: "",
+    category: "",
+    description: "",
     tags: [],
-    
+
     // Pricing & Stock
-    price: '',
-    discountedPrice: '',
-    discountPercentage: '',
-    stock: '',
-    
+    price: "",
+    discountedPrice: "",
+    discountPercentage: "",
+    stock: "",
+
     // Coupon
     coupon: {
-      name: '',
-      discountAmount: '',
-      minPurchaseAmount: '',
-      expiryDate: '',
-      active: true
+      name: "",
+      discountAmount: "",
+      minPurchaseAmount: "",
+      expiryDate: "",
+      active: true,
     },
-    
+
     // Product Details
     sizes: [],
     colors: [],
-    material: '',
+    material: "",
     care: [],
-    
+
     // Media
     mainImage: null,
     additionalMedia: [],
-    
+
     // Status
-    status: 'draft',
-    featured: false
-  });  const handleChange = (e) => {
+    status: "draft",
+    featured: false,
+  });
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
-    if (type === 'file') {
+
+    if (type === "file") {
       const files = Array.from(e.target.files);
-      if (name === 'mainImage') {
-        setFormData(prev => ({
+      if (name === "mainImage") {
+        setFormData((prev) => ({
           ...prev,
-          mainImage: files[0]
+          mainImage: files[0],
         }));
-      } else if (name === 'additionalMedia') {
-        const newMedia = files.map(file => ({
+      } else if (name === "additionalMedia") {
+        const newMedia = files.map((file) => ({
           file,
-          type: file.type.startsWith('video/') ? 'video' : 'image',
-          preview: URL.createObjectURL(file)
+          type: file.type.startsWith("video/") ? "video" : "image",
+          preview: URL.createObjectURL(file),
         }));
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          additionalMedia: [...prev.additionalMedia, ...newMedia]
+          additionalMedia: [...prev.additionalMedia, ...newMedia],
         }));
       }
-    } else if (type === 'checkbox') {
-      setFormData(prev => ({
+    } else if (type === "checkbox") {
+      setFormData((prev) => ({
         ...prev,
-        [name]: checked
+        [name]: checked,
       }));
-    } else if (name.includes('.')) {
+    } else if (name.includes(".")) {
       // Handle nested objects (e.g., coupon.name)
-      const [parent, child] = name.split('.');
-      setFormData(prev => ({
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
         ...prev,
         [parent]: {
           ...prev[parent],
-          [child]: type === 'number' ? parseFloat(value) || '' : value
-        }
+          [child]: type === "number" ? parseFloat(value) || "" : value,
+        },
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: type === 'number' ? parseFloat(value) || '' : value
+        [name]: type === "number" ? parseFloat(value) || "" : value,
       }));
     }
   };
@@ -89,101 +98,120 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
     try {
       // Client-side validation
-      if (!formData.name || !formData.category || !formData.description || !formData.price || !formData.stock) {
-        throw new Error('Please fill in all required fields');
+      if (
+        !formData.name ||
+        !formData.category ||
+        !formData.description ||
+        !formData.price ||
+        !formData.stock
+      ) {
+        throw new Error("Please fill in all required fields");
       }
       if (!formData.mainImage) {
-        throw new Error('Main image is required');
+        throw new Error("Main image is required");
       }
 
       const formDataToSend = new FormData();
 
       // Append all fields
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('category', formData.category);
-      formDataToSend.append('description', formData.description);
-      formDataToSend.append('status', formData.status);
-      formDataToSend.append('featured', formData.featured);
-      formDataToSend.append('material', formData.material);
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("category", formData.category);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("status", formData.status);
+      formDataToSend.append("featured", formData.featured);
+      formDataToSend.append("material", formData.material);
 
       // Append numbers
-      formDataToSend.append('price', parseFloat(formData.price));
-      formDataToSend.append('stock', parseInt(formData.stock, 10));
+      formDataToSend.append("price", parseFloat(formData.price));
+      formDataToSend.append("stock", parseInt(formData.stock, 10));
       if (formData.discountedPrice) {
-        formDataToSend.append('discountedPrice', parseFloat(formData.discountedPrice));
+        formDataToSend.append(
+          "discountedPrice",
+          parseFloat(formData.discountedPrice)
+        );
       }
       if (formData.discountPercentage) {
-        formDataToSend.append('discountPercentage', parseFloat(formData.discountPercentage));
+        formDataToSend.append(
+          "discountPercentage",
+          parseFloat(formData.discountPercentage)
+        );
       }
 
       // Append arrays as JSON strings
-      formDataToSend.append('tags', JSON.stringify(formData.tags));
-      formDataToSend.append('sizes', JSON.stringify(formData.sizes));
-      formDataToSend.append('colors', JSON.stringify(formData.colors));
-      formDataToSend.append('care', JSON.stringify(formData.care));
+      formDataToSend.append("tags", JSON.stringify(formData.tags));
+      formDataToSend.append("sizes", JSON.stringify(formData.sizes));
+      formDataToSend.append("colors", JSON.stringify(formData.colors));
+      formDataToSend.append("care", JSON.stringify(formData.care));
 
       // Append coupon if it exists
       if (formData.coupon.name) {
-        formDataToSend.append('coupon', JSON.stringify(formData.coupon));
+        formDataToSend.append("coupon", JSON.stringify(formData.coupon));
       }
 
       // Append files
-      formDataToSend.append('mainImage', formData.mainImage);
+      formDataToSend.append("mainImage", formData.mainImage);
       formData.additionalMedia.forEach((media) => {
         if (media.file) {
-          formDataToSend.append('additionalMedia', media.file);
+          formDataToSend.append("additionalMedia", media.file);
         }
       });
 
       // Log for debugging
-      console.log('Sending form data:', Object.fromEntries(formDataToSend));
+      console.log("Sending form data:", Object.fromEntries(formDataToSend));
 
-      const response = await axios.post('https://kaash-clothing.onrender.com/api/products', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        "https://kaash-clothing.onrender.com/api/products",
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       if (response.data.success) {
-        toast.success('Product added successfully!');
-        // Reset form              
+        toast.success("Product added successfully!");
+        // Reset form
         setFormData({
-          name: '',
-          category: '',
-          description: '',
+          name: "",
+          category: "",
+          description: "",
           tags: [],
-          price: '',
-          discountedPrice: '',
-          discountPercentage: '',
-          stock: '',
+          price: "",
+          discountedPrice: "",
+          discountPercentage: "",
+          stock: "",
           coupon: {
-            name: '',
-            discountAmount: '',
-            minPurchaseAmount: '',
-            expiryDate: '',
-            active: true
+            name: "",
+            discountAmount: "",
+            minPurchaseAmount: "",
+            expiryDate: "",
+            active: true,
           },
           sizes: [],
           colors: [],
-          material: '',
+          material: "",
           care: [],
           mainImage: null,
           additionalMedia: [],
-          status: 'draft',
-          featured: false
+          status: "draft",
+          featured: false,
         });
       }
     } catch (error) {
-      console.error('Error adding product:', error);
+      console.error("Error adding product:", error);
 
-      let errorMessage = 'Error adding product';
+      let errorMessage = "Error adding product";
       if (error.response) {
         // Server error
-        errorMessage = error.response.data.message || error.response.data.error || 'Server error';
-        console.log('Server error details:', error.response.data);
+        errorMessage =
+          error.response.data.message ||
+          error.response.data.error ||
+          "Server error";
+        console.log("Server error details:", error.response.data);
       } else if (error.request) {
         // Network error
-        errorMessage = 'Network error. Please check your connection.';
+        errorMessage = "Network error. Please check your connection.";
       } else {
         // Client-side error or other
         errorMessage = error.message;
@@ -217,7 +245,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
           <div className="space-y-4">
             {/* Product Name */}
             <div>
-              <label htmlFor="name" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Product Name
               </label>
               <input
@@ -234,7 +265,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
             {/* Category */}
             <div>
-              <label htmlFor="category" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="category"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Category
               </label>
               <select
@@ -244,20 +278,22 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
                 onChange={handleChange}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-black"
                 required
-              >                <option value="">Select a category</option>
+              >
+                <option value="">Select a category</option>
                 <option value="Kurtis">Kurtis</option>
-                <option value="Dresses">Dresses</option>
-                <option value="Lehengas">Lehengas</option>
                 <option value="Sarees">Sarees</option>
-                <option value="Casual">Casual</option>
-                <option value="Festive">Festive</option>
-                <option value="Officewear">Officewear</option>
+                <option value="Jeans">Jeans</option>
+                <option value="Tops">Tops</option>
+                <option value="Western">Western Wear</option>
               </select>
             </div>
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="description"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Description
               </label>
               <textarea
@@ -280,7 +316,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Original Price */}
             <div>
-              <label htmlFor="price" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="price"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Price (AED)
               </label>
               <input
@@ -298,7 +337,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
             {/* Discounted Price */}
             <div>
-              <label htmlFor="discountedPrice" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="discountedPrice"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Discounted Price (Optional)
               </label>
               <input
@@ -315,7 +357,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
             {/* Discount Percentage */}
             <div>
-              <label htmlFor="discountPercentage" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="discountPercentage"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Discount Percentage
               </label>
               <input
@@ -332,7 +377,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
             {/* Stock */}
             <div>
-              <label htmlFor="stock" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="stock"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Stock
               </label>
               <input
@@ -356,7 +404,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Coupon Name */}
               <div>
-                <label htmlFor="coupon.name" className="block text-sm text-gray-500 mb-2">
+                <label
+                  htmlFor="coupon.name"
+                  className="block text-sm text-gray-500 mb-2"
+                >
                   Coupon Name
                 </label>
                 <input
@@ -371,7 +422,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
               {/* Coupon Discount Amount */}
               <div>
-                <label htmlFor="coupon.discountAmount" className="block text-sm text-gray-500 mb-2">
+                <label
+                  htmlFor="coupon.discountAmount"
+                  className="block text-sm text-gray-500 mb-2"
+                >
                   Coupon Discount Amount
                 </label>
                 <input
@@ -387,7 +441,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
               {/* Minimum Purchase Amount */}
               <div>
-                <label htmlFor="coupon.minPurchaseAmount" className="block text-sm text-gray-500 mb-2">
+                <label
+                  htmlFor="coupon.minPurchaseAmount"
+                  className="block text-sm text-gray-500 mb-2"
+                >
                   Minimum Purchase Amount
                 </label>
                 <input
@@ -403,7 +460,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
               {/* Expiry Date */}
               <div>
-                <label htmlFor="coupon.expiryDate" className="block text-sm text-gray-500 mb-2">
+                <label
+                  htmlFor="coupon.expiryDate"
+                  className="block text-sm text-gray-500 mb-2"
+                >
                   Expiry Date
                 </label>
                 <input
@@ -424,10 +484,12 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
                   type="checkbox"
                   name="coupon.active"
                   checked={formData.coupon.active}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    coupon: { ...prev.coupon, active: e.target.checked }
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      coupon: { ...prev.coupon, active: e.target.checked },
+                    }))
+                  }
                   className="rounded border-gray-300 text-black focus:ring-black"
                 />
                 <span className="text-sm text-gray-500">Coupon Active</span>
@@ -444,21 +506,21 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
             <div>
               <label className="block text-sm text-gray-500 mb-2">Sizes</label>
               <div className="flex flex-wrap gap-2">
-                {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'Free Size'].map((size) => (
+                {["XS", "S", "M", "L", "XL", "XXL", "Free Size"].map((size) => (
                   <label key={size} className="inline-flex items-center">
                     <input
                       type="checkbox"
                       checked={formData.sizes.includes(size)}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setFormData(prev => ({
+                          setFormData((prev) => ({
                             ...prev,
-                            sizes: [...prev.sizes, size]
+                            sizes: [...prev.sizes, size],
                           }));
                         } else {
-                          setFormData(prev => ({
+                          setFormData((prev) => ({
                             ...prev,
-                            sizes: prev.sizes.filter(s => s !== size)
+                            sizes: prev.sizes.filter((s) => s !== size),
                           }));
                         }
                       }}
@@ -472,7 +534,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
             {/* Material */}
             <div>
-              <label htmlFor="material" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="material"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Material
               </label>
               <input
@@ -487,17 +552,24 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
             {/* Care Instructions */}
             <div>
-              <label htmlFor="care" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="care"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Care Instructions (One per line)
               </label>
               <textarea
                 id="care"
                 name="care"
-                value={formData.care.join('\n')}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  care: e.target.value.split('\n').filter(line => line.trim())
-                }))}
+                value={formData.care.join("\n")}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    care: e.target.value
+                      .split("\n")
+                      .filter((line) => line.trim()),
+                  }))
+                }
                 rows={3}
                 className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-black"
                 placeholder="e.g., Machine wash cold&#10;Tumble dry low&#10;Do not bleach"
@@ -512,17 +584,25 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
           <div className="space-y-4">
             {/* Tags */}
             <div>
-              <label htmlFor="tags" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="tags"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Tags (Comma separated)
               </label>
               <input
                 type="text"
                 id="tags"
-                value={formData.tags.join(', ')}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  tags: e.target.value.split(',').map(tag => tag.trim()).filter(Boolean)
-                }))}
+                value={formData.tags.join(", ")}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    tags: e.target.value
+                      .split(",")
+                      .map((tag) => tag.trim())
+                      .filter(Boolean),
+                  }))
+                }
                 className="w-full border border-gray-200 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-black"
                 placeholder="e.g., summer, casual, party wear"
               />
@@ -535,10 +615,12 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
                   type="checkbox"
                   name="featured"
                   checked={formData.featured}
-                  onChange={(e) => setFormData(prev => ({
-                    ...prev,
-                    featured: e.target.checked
-                  }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      featured: e.target.checked,
+                    }))
+                  }
                   className="rounded border-gray-300 text-black focus:ring-black"
                 />
                 <span className="text-sm text-gray-500">Featured Product</span>
@@ -547,7 +629,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
 
             {/* Status */}
             <div>
-              <label htmlFor="status" className="block text-sm text-gray-500 mb-2">
+              <label
+                htmlFor="status"
+                className="block text-sm text-gray-500 mb-2"
+              >
                 Status
               </label>
               <select
@@ -588,8 +673,18 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
                   htmlFor="mainImage"
                   className="cursor-pointer inline-flex flex-col items-center space-y-2"
                 >
-                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="w-12 h-12 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   <span className="text-sm text-gray-500">
                     Click to upload main product image
@@ -609,7 +704,9 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
                     />
                     <button
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, mainImage: null }))}
+                      onClick={() =>
+                        setFormData((prev) => ({ ...prev, mainImage: null }))
+                      }
                       className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
                     >
                       ×
@@ -638,19 +735,29 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
                 <label
                   htmlFor="additionalMedia"
                   className={`cursor-pointer inline-flex flex-col items-center space-y-2 ${
-                    formData.additionalMedia.length >= 5 ? 'opacity-50' : ''
+                    formData.additionalMedia.length >= 5 ? "opacity-50" : ""
                   }`}
                 >
-                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="w-12 h-12 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="1.5"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
                   <span className="text-sm text-gray-500">
                     Click to upload images or videos
                   </span>
                   <span className="text-xs text-gray-400">
-                    {formData.additionalMedia.length >= 5 
-                      ? 'Maximum limit reached'
-                      : 'PNG, JPG, MP4 up to 10MB each'}
+                    {formData.additionalMedia.length >= 5
+                      ? "Maximum limit reached"
+                      : "PNG, JPG, MP4 up to 10MB each"}
                   </span>
                 </label>
               </div>
@@ -658,7 +765,7 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
                 <div className="mt-4 flex flex-wrap gap-4">
                   {formData.additionalMedia.map((media, index) => (
                     <div key={index} className="relative">
-                      {media.type === 'image' ? (
+                      {media.type === "image" ? (
                         <img
                           src={media.preview}
                           alt={`Additional media ${index + 1}`}
@@ -677,7 +784,10 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
                           const newMedia = [...formData.additionalMedia];
                           URL.revokeObjectURL(newMedia[index].preview);
                           newMedia.splice(index, 1);
-                          setFormData(prev => ({ ...prev, additionalMedia: newMedia }));
+                          setFormData((prev) => ({
+                            ...prev,
+                            additionalMedia: newMedia,
+                          }));
                         }}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
                       >
@@ -697,17 +807,17 @@ const AddProduct = () => {  const [formData, setFormData] = useState({
             type="submit"
             disabled={isSubmitting}
             className={`w-full bg-black text-white py-3 rounded-lg transition-colors ${
-              isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/90'
+              isSubmitting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-black/90"
             }`}
           >
-            {isSubmitting ? 'Adding Product...' : 'Add Product'}
+            {isSubmitting ? "Adding Product..." : "Add Product"}
           </button>
         </div>
       </motion.form>
     </div>
   );
-
 };
-
 
 export default AddProduct;
