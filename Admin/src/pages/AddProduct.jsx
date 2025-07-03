@@ -91,7 +91,8 @@ const AddProduct = () => {
     featured: false,
   });
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value, files, type: inputType, checked } = e.target;
+    
     if (name === "image") {
       setFormData({ ...formData, [name]: files[0] });
     } else if (name === "category") {
@@ -101,6 +102,16 @@ const AddProduct = () => {
         [name]: value,
         sub_category: "", // Reset sub-category when main category changes
       });
+    } else if (name.includes('.')) {
+      // Handle nested object properties (e.g., coupon.name, coupon.discountAmount)
+      const [parent, child] = name.split('.');
+      setFormData((prev) => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: inputType === 'checkbox' ? checked : value
+        }
+      }));
     } else {
       setFormData({ ...formData, [name]: value });
     }
