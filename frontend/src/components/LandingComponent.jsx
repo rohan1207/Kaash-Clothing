@@ -108,41 +108,57 @@ const LandingPage = () => {
     setCurrentModelIndex(newIndex);
   };
 
-  // Mobile scroll handler
+  // Mobile scroll/touch handler
   useEffect(() => {
     if (!isMobile) return;
 
     let touchStartY = 0;
-    const threshold = 50; // minimum distance to trigger scroll
+    let initialScrollHandled = false;
+    const threshold = 50;
 
     const handleTouchStart = (e) => {
-      touchStartY = e.touches[0].clientY;
+      if (!initialScrollHandled) {
+        touchStartY = e.touches[0].clientY;
+      }
     };
 
     const handleTouchMove = (e) => {
-      if (!mobileScrolled) {
-        e.preventDefault(); // Prevent scrolling on first touch
+      if (!initialScrollHandled) {
+        e.preventDefault();
         const touchY = e.touches[0].clientY;
         const deltaY = touchStartY - touchY;
 
         if (Math.abs(deltaY) > threshold) {
-          if (deltaY > 0) { // Scrolling up
+          if (deltaY > 0) {
             setMobileScrolled(true);
+            initialScrollHandled = true;
+            // Allow scrolling after animation completes
+            setTimeout(() => {
+              document.body.style.overflow = 'auto';
+              document.body.style.touchAction = 'auto';
+            }, 1000);
           }
         }
       }
     };
 
     const handleWheel = (e) => {
-      if (e.deltaY > 0 && !mobileScrolled) {
+      if (!initialScrollHandled && e.deltaY > 0) {
         e.preventDefault();
         setMobileScrolled(true);
-      } else if (e.deltaY < 0 && mobileScrolled) {
-        setMobileScrolled(false);
+        initialScrollHandled = true;
+        // Allow scrolling after animation completes
+        setTimeout(() => {
+          document.body.style.overflow = 'auto';
+          document.body.style.touchAction = 'auto';
+        }, 1000);
       }
     };
 
-    // Add both wheel and touch event listeners
+    // Initially prevent scrolling
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
+
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
@@ -151,8 +167,11 @@ const LandingPage = () => {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
+      // Reset body styles on cleanup
+      document.body.style.overflow = 'auto';
+      document.body.style.touchAction = 'auto';
     };
-  }, [isMobile, mobileScrolled]);
+  }, [isMobile]);
 
   // Desktop initialization (unchanged)
   useEffect(() => {
@@ -389,11 +408,9 @@ const LandingPage = () => {
 
   if (isMobile) {
     return (
-      <div className={`relative w-full min-h-screen bg-white ${mobileScrolled ? 'fixed inset-0 z-50' : ''}`} 
+      <div className="relative w-full min-h-screen bg-white"
            style={{ 
-             touchAction: mobileScrolled ? 'none' : 'auto',
-             height: mobileScrolled ? '100vh' : '100vh',
-             marginBottom: !mobileScrolled ? '0' : undefined
+             height: '100vh'
            }}>
         {/* Mobile Header - Simplified */}
         <div className="absolute top-0 left-0 right-0 z-50">
