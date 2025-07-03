@@ -117,7 +117,6 @@ const LandingPage = () => {
         e.preventDefault(); // Prevent actual scrolling
         setMobileScrolled(true);
       } else if (e.deltaY < 0 && mobileScrolled) {
-        e.preventDefault(); // Prevent actual scrolling
         setMobileScrolled(false);
       }
       // After the first scroll trigger, normal scrolling resumes automatically
