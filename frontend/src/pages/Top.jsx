@@ -2,25 +2,24 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiFilter, FiX, FiLoader, FiAlertTriangle } from "react-icons/fi";
+import axios from "axios";
 
-const API_URL = "https://kaash-clothing.onrender.com"; // Your backend server URL
+const API_URL = "https://kaash-clothing.onrender.com";
 
-const categories = ["All", "Kurtis", "Tops", "Jeans", "Sarees","Western"];
 const priceRanges = [
   "All",
-  "Under 1000",
-  "1000 - 2000",
-  "2000 - 5000",
-  "Over 5000",
+  "Under ₹1000",
+  "₹1000 - ₹2000",
+  "₹2000 - ₹5000",
+  "Above ₹5000",
 ];
 
-const Shop = () => {
+const Top = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
-    category: "All",
     price: "All",
     sortBy: "newest",
   });
@@ -30,18 +29,17 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/api/products`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const data = await response.json();
-        setProducts(data.products || []);
+        const response = await axios.get(
+          `${API_URL}/api/products?category=Tops`
+        );
+        setProducts(response.data.products);
+        setLoading(false);
       } catch (err) {
-        setError(err.message);
-      } finally {
+        setError("Failed to fetch products");
         setLoading(false);
       }
     };
+
     fetchProducts();
   }, []);
 
@@ -52,19 +50,15 @@ const Shop = () => {
   const filteredAndSortedProducts = useMemo(() => {
     let items = [...products];
 
-    if (filters.category !== "All") {
-      items = items.filter((p) => p.category === filters.category);
-    }
-
     if (filters.price !== "All") {
       items = items.filter((p) => {
         const price = p.discountedPrice || p.price;
-        if (filters.price === "Under 1000") return price < 1000;
-        if (filters.price === "1000 - 2000")
+        if (filters.price === "Under ₹1000") return price < 1000;
+        if (filters.price === "₹1000 - ₹2000")
           return price >= 1000 && price <= 2000;
-        if (filters.price === "2000 - 5000")
+        if (filters.price === "₹2000 - ₹5000")
           return price >= 2000 && price <= 5000;
-        if (filters.price === "Over 5000") return price > 5000;
+        if (filters.price === "Above ₹5000") return price > 5000;
         return true;
       });
     }
@@ -95,9 +89,7 @@ const Shop = () => {
       className="fixed top-0 left-0 h-full w-full max-w-md bg-white shadow-2xl z-50 p-8 font-sans overflow-y-auto"
     >
       <div className="flex justify-between items-center mb-12">
-        <h2 className="text-3xl font-serif text-gray-800">
-          Refine Your Search
-        </h2>
+        <h2 className="text-3xl font-serif text-gray-800">Filter & Sort</h2>
         <button
           onClick={() => setIsFilterOpen(false)}
           className="text-gray-500 hover:text-gray-900 transition-transform duration-300 hover:rotate-90"
@@ -106,31 +98,12 @@ const Shop = () => {
         </button>
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-8">
         <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-5">Category</h3>
-          <div className="space-y-3">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => handleFilterChange("category", cat)}
-                className={`w-full text-left p-3 rounded-lg transition-all duration-300 text-lg ${
-                  filters.category === cat
-                    ? "bg-gray-800 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-5">
+          <h3 className="text-xl font-semibold text-gray-700 mb-4">
             Price Range
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {priceRanges.map((range) => (
               <button
                 key={range}
@@ -148,13 +121,13 @@ const Shop = () => {
         </div>
 
         <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-5">Sort By</h3>
+          <h3 className="text-xl font-semibold text-gray-700 mb-4">Sort By</h3>
           <select
             value={filters.sortBy}
             onChange={(e) => handleFilterChange("sortBy", e.target.value)}
             className="w-full p-4 border border-gray-300 rounded-lg bg-white text-lg focus:ring-2 focus:ring-gray-800 focus:border-gray-800 transition shadow-sm"
           >
-            <option value="newest">Newest Arrivals</option>
+            <option value="newest">New Arrivals</option>
             <option value="price-asc">Price: Low to High</option>
             <option value="price-desc">Price: High to Low</option>
           </select>
@@ -168,12 +141,10 @@ const Shop = () => {
       product.discountedPrice && product.discountedPrice < product.price;
     const [isHovered, setIsHovered] = useState(false);
 
-    // Get the first additional image if available
     const firstAdditionalImage = product.additionalMedia?.find(
       (media) => media.type === "image"
     )?.url;
 
-    // Determine current image URL based on hover state
     const currentImageUrl =
       isHovered && firstAdditionalImage
         ? firstAdditionalImage
@@ -233,13 +204,18 @@ const Shop = () => {
               </p>
             )}
           </div>
+          {product.sizes?.length > 0 && (
+            <p className="text-xs text-stone-500 mt-1">
+              {product.sizes.join(" · ")}
+            </p>
+          )}
         </div>
       </motion.div>
     );
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
+    <div className="bg-gradient-to-b from-stone-50 to-white min-h-screen font-sans">
       <AnimatePresence>{isFilterOpen && <FilterSidebar />}</AnimatePresence>
       {isFilterOpen && (
         <div
@@ -250,26 +226,34 @@ const Shop = () => {
 
       <main className="pt-28 md:pt-36 pb-24">
         <header className="text-center mb-16 px-6">
-          <h1 className="text-5xl md:text-7xl text-gray-800 font-serif tracking-tight mb-4">
-            Curated Collection
-          </h1>
-          <p className="text-gray-600 max-w-3xl mx-auto text-lg">
-            Experience the pinnacle of craftsmanship and style. Each piece is a
-            statement of elegance, designed for the modern connoisseur.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-5xl md:text-7xl text-gray-800 font-serif tracking-tight mb-6">
+              Designer Tops
+            </h1>
+            <div className="max-w-3xl mx-auto space-y-4">
+              <p className="text-gray-600 text-lg md:text-xl font-light leading-relaxed">
+                Discover our exquisite collection of designer tops. From casual
+                essentials to statement pieces, find your perfect style.
+              </p>
+            </div>
+          </motion.div>
         </header>
 
         <div className="container mx-auto px-6">
           <div className="mb-10 flex justify-between items-center">
             <button
               onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-3 text-lg text-gray-700 hover:text-gray-900 transition-colors font-semibold bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200"
+              className="flex items-center gap-3 text-lg text-gray-700 hover:text-gray-900 transition-colors font-medium bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 hover:border-gray-300"
             >
               <FiFilter />
               <span>Filter & Sort</span>
             </button>
             <p className="text-md text-gray-500 font-medium">
-              {filteredAndSortedProducts.length} results
+              {filteredAndSortedProducts.length} items
             </p>
           </div>
 
@@ -301,4 +285,4 @@ const Shop = () => {
   );
 };
 
-export default Shop;
+export default Top;

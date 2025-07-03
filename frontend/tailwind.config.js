@@ -10,6 +10,12 @@ export default {
         'hot-pink': '#FF69B4',
         'pink': '#FFC0CB',
         'baby-pink': '#F4C2C2',
+        'primary': '#0D0D0D',
+        'secondary': '#F5F5F5',
+      },
+      fontFamily: {
+        'serif': ['Cormorant Garamond', 'serif'],
+        'sans': ['Montserrat', 'sans-serif'],
       },
       animation: {
         'spin-slow': 'spin 20s linear infinite',

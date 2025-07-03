@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const FooterLink = ({ to, children }) => (
   <Link
@@ -52,11 +53,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
           {/* Brand Section */}
           <div className="md:col-span-1 mb-8 md:mb-0">
-            <img
-              src="/logo1.png"
-              alt="Kaash Co.Clothing Logo"
-              className="h-10 w-auto mx-auto md:mx-0 mb-4"
-            />
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          className="text-xl md:text-2xl tracking-[0.3em] font-light cursor-pointer"
+        >
+          TSK
+        </motion.div>
             <p className="text-sm text-stone-400 leading-relaxed">
               Timeless elegance, modern design. Discover curated collections
               that define luxury.

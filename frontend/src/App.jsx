@@ -10,6 +10,13 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 
+import SareePage from "./pages/SareePage";
+import Top from "./pages/Top";
+import WesternPage from "./pages/WesternPage";
+import JeansPage from "./pages/JeansPage";
+import Kurti from "./pages/Kurti";
+
+
 const App = () => {
   return (
     <Router>
@@ -18,10 +25,17 @@ const App = () => {
         <Navbar />
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<HomePage/>} />
+            <Route path="/saree" element={<SareePage />} />
+            <Route path="/top" element={<Top/>} />
+            <Route path="/western" element={<WesternPage />} />
+           
+            <Route path="/jeans" element={<JeansPage />} />
+            <Route path="/shop" element={<Shop />} /> 
+
             <Route path="/about" element={<AboutUs />} />
             <Route path="/new" element={<NewArrivals />} />
-            <Route path="/shop" element={<Shop />} />
+            <Route path="/kurti" element={<Kurti />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/product/:productId" element={<ProductDetails />} />

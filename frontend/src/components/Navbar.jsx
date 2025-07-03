@@ -68,11 +68,12 @@ const Navbar = () => {
                   transition={{ duration: 0.3 }}
                 >
                   <Link to="/">
-                    <img
-                      src="/logo.png"
-                      alt="Kaash Co.Clothing Logo"
-                      className="h-[4.5rem] w-auto"
-                    />
+                    <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            className="text-xl md:text-2xl tracking-[0.3em] font-light cursor-pointer"
+                          >
+                            TSK
+                          </motion.div> 
                   </Link>
                 </motion.div>
               )}
