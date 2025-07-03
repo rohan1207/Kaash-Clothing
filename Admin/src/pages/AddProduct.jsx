@@ -170,12 +170,19 @@ const AddProduct = () => {
       if (
         !formData.name ||
         !formData.category ||
+        !formData.sub_category ||
         !formData.description ||
         !formData.price ||
         !formData.stock
       ) {
         throw new Error("Please fill in all required fields");
       }
+
+      // Validate that sub-category matches the selected category
+      if (!subCategoryMap[formData.category]?.includes(formData.sub_category)) {
+        throw new Error(`Invalid sub-category '${formData.sub_category}' for category '${formData.category}'`);
+      }
+
       if (!formData.mainImage) {
         throw new Error("Main image is required");
       }
@@ -185,11 +192,11 @@ const AddProduct = () => {
       // Append all fields
       formDataToSend.append("name", formData.name);
       formDataToSend.append("category", formData.category);
-      formDataToSend.append("sub_category", formData.sub_category);
+      formDataToSend.append("sub_category", formData.sub_category); // Make sure this is a string
       formDataToSend.append("description", formData.description);
       formDataToSend.append("status", formData.status);
-      formDataToSend.append("featured", formData.featured);
-      formDataToSend.append("material", formData.material);
+      formDataToSend.append("featured", formData.featured.toString()); // Convert boolean to string
+      formDataToSend.append("material", formData.material || "");
 
       // Append numbers
       formDataToSend.append("price", parseFloat(formData.price));
@@ -208,14 +215,19 @@ const AddProduct = () => {
       }
 
       // Append arrays as JSON strings
-      formDataToSend.append("tags", JSON.stringify(formData.tags));
-      formDataToSend.append("sizes", JSON.stringify(formData.sizes));
-      formDataToSend.append("colors", JSON.stringify(formData.colors));
-      formDataToSend.append("care", JSON.stringify(formData.care));
+      formDataToSend.append("tags", JSON.stringify(formData.tags || []));
+      formDataToSend.append("sizes", JSON.stringify(formData.sizes || []));
+      formDataToSend.append("colors", JSON.stringify(formData.colors || []));
+      formDataToSend.append("care", JSON.stringify(formData.care || []));
 
       // Append coupon if it exists
-      if (formData.coupon.name) {
-        formDataToSend.append("coupon", JSON.stringify(formData.coupon));
+      if (formData.coupon && (formData.coupon.name || formData.coupon.discountAmount)) {
+        const couponData = {
+          ...formData.coupon,
+          discountAmount: formData.coupon.discountAmount ? Number(formData.coupon.discountAmount) : undefined,
+          minPurchaseAmount: formData.coupon.minPurchaseAmount ? Number(formData.coupon.minPurchaseAmount) : undefined,
+        };
+        formDataToSend.append("coupon", JSON.stringify(couponData));
       }
 
       // Append files
