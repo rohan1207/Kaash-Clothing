@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
 
 const AddProduct = () => {
   // Define valid sub-categories for each main category
@@ -93,8 +92,29 @@ const AddProduct = () => {
   const handleChange = (e) => {
     const { name, value, files, type: inputType, checked } = e.target;
     
-    if (name === "image") {
-      setFormData({ ...formData, [name]: files[0] });
+    if (name === "mainImage") {
+      // Handle main image upload
+      if (files && files[0]) {
+        setFormData(prev => ({
+          ...prev,
+          mainImage: files[0]
+        }));
+      }
+    } else if (name === "additionalMedia") {
+      // Handle additional media uploads
+      if (files && files.length) {
+        const newFiles = Array.from(files).slice(0, 5 - formData.additionalMedia.length);
+        const newMedia = newFiles.map(file => ({
+          file,
+          type: file.type.startsWith('image/') ? 'image' : 'video',
+          preview: URL.createObjectURL(file)
+        }));
+        
+        setFormData(prev => ({
+          ...prev,
+          additionalMedia: [...prev.additionalMedia, ...newMedia].slice(0, 5)
+        }));
+      }
     } else if (name === "category") {
       // When category changes, reset sub_category
       setFormData({
@@ -285,6 +305,18 @@ const AddProduct = () => {
       setIsSubmitting(false);
     }
   };
+
+  // Cleanup function for object URLs
+  useEffect(() => {
+    return () => {
+      // Cleanup object URLs when component unmounts
+      formData.additionalMedia.forEach(media => {
+        if (media.preview) {
+          URL.revokeObjectURL(media.preview);
+        }
+      });
+    };
+  }, []);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -788,7 +820,7 @@ const AddProduct = () => {
                 <div className="mt-4">
                   <div className="relative inline-block">
                     <img
-                      src={URL.createObjectURL(formData.mainImage)}
+                      src={formData.mainImage instanceof File ? URL.createObjectURL(formData.mainImage) : formData.mainImage}
                       alt="Main product image"
                       className="w-32 h-32 rounded-lg object-cover"
                     />
