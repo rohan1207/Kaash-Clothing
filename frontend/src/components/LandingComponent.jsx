@@ -116,6 +116,9 @@ const LandingPage = () => {
     let initialScrollHandled = false;
     const threshold = 50;
 
+    // Add smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
+
     const handleTouchStart = (e) => {
       if (!initialScrollHandled) {
         touchStartY = e.touches[0].clientY;
@@ -136,7 +139,7 @@ const LandingPage = () => {
             setTimeout(() => {
               document.body.style.overflow = 'auto';
               document.body.style.touchAction = 'auto';
-            }, 1000);
+            }, 1200); // Increased to match animation duration
           }
         }
       }
@@ -151,7 +154,7 @@ const LandingPage = () => {
         setTimeout(() => {
           document.body.style.overflow = 'auto';
           document.body.style.touchAction = 'auto';
-        }, 1000);
+        }, 1200); // Increased to match animation duration
       }
     };
 
@@ -170,6 +173,7 @@ const LandingPage = () => {
       // Reset body styles on cleanup
       document.body.style.overflow = 'auto';
       document.body.style.touchAction = 'auto';
+      document.documentElement.style.scrollBehavior = 'auto';
     };
   }, [isMobile]);
 
@@ -312,28 +316,28 @@ const LandingPage = () => {
     if (!isMobile) return;
 
     if (mobileScrolled) {
-      // Hide top and bottom content
+      // Hide top and bottom content with smooth easing
       if (mobileTopContentRef.current) {
         mobileTopContentRef.current.style.opacity = "0";
         mobileTopContentRef.current.style.transform = "translateY(-20px)";
-        mobileTopContentRef.current.style.transition = "all 0.5s ease-out";
+        mobileTopContentRef.current.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
       }
       if (mobileBottomContentRef.current) {
         mobileBottomContentRef.current.style.opacity = "0";
         mobileBottomContentRef.current.style.transform = "translateY(20px)";
-        mobileBottomContentRef.current.style.transition = "all 0.5s ease-out";
+        mobileBottomContentRef.current.style.transition = "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)";
       }
 
-      // Scale up center model
+      // Scale up center model with smooth easing
       if (mobileModelRef.current) {
         mobileModelRef.current.style.transform = "scale(1.2)";
-        mobileModelRef.current.style.transition = "all 0.8s ease-out";
+        mobileModelRef.current.style.transition = "all 1.2s cubic-bezier(0.4, 0, 0.2, 1)";
       }
 
-      // Show arrows
+      // Show arrows with smooth fade
       if (mobileArrowsRef.current) {
         mobileArrowsRef.current.style.opacity = "1";
-        mobileArrowsRef.current.style.transition = "opacity 0.5s ease-out 0.3s";
+        mobileArrowsRef.current.style.transition = "opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s";
       }
     } else {
       // Show top and bottom content
@@ -440,11 +444,13 @@ const LandingPage = () => {
           <div className="absolute inset-0 flex items-center justify-center">
             {/* Left background model */}
             <div
-              className="absolute left-4 opacity-30 scale-75"
+              className="absolute left-4 opacity-30"
               style={{
                 transform: `scale(0.6) translateX(-20px)`,
                 filter: "blur(1px)",
                 zIndex: 1,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                willChange: "transform, opacity"
               }}
             >
               <img
@@ -460,11 +466,13 @@ const LandingPage = () => {
 
             {/* Right background model */}
             <div
-              className="absolute right-4 opacity-30 scale-75"
+              className="absolute right-4 opacity-30"
               style={{
                 transform: `scale(0.6) translateX(20px)`,
                 filter: "blur(1px)",
                 zIndex: 1,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                willChange: "transform, opacity"
               }}
             >
               <img
@@ -481,8 +489,8 @@ const LandingPage = () => {
             className="relative z-10 cursor-pointer"
             style={{
               transform: "scale(1)",
-              transition: "all 0.8s ease-out",
-              willChange: "transform",
+              transition: "all 1.2s cubic-bezier(0.4, 0, 0.2, 1)",
+              willChange: "transform, opacity",
             }}
             onClick={handleMobileModelClick}
           >
@@ -494,7 +502,7 @@ const LandingPage = () => {
 
             {/* Collection Label */}
             <div
-              className={`absolute -bottom-16 left-1/2 transform -translate-x-1/2 transition-all duration-500 ${
+              className={`absolute -bottom-16 left-1/2 transform -translate-x-1/2 transition-all duration-800 ${
                 mobileScrolled
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-4"
@@ -514,12 +522,15 @@ const LandingPage = () => {
         {/* Mobile Navigation Arrows */}
         <div
           ref={mobileArrowsRef}
-          className="absolute left-4 right-4 top-1/2 transform -translate-y-1/2 flex justify-between z-40"
-          style={{ opacity: 0, transition: "opacity 0.5s ease-out" }}
+          className="absolute left-4 right-4 top-1/2 transform -translate-y-1/2 flex justify-between z-40"            style={{ 
+              opacity: 0, 
+              transition: "opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+              transform: mobileScrolled ? "translateX(0)" : "translateX(-10px)"
+            }}
         >
           <button
             onClick={() => navigateModel("prev")}
-            className="w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-colors"
+            className="w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-lg hover:bg-white transition-all duration-300"
           >
             <ChevronLeft className="w-6 h-6 text-gray-800" />
           </button>
