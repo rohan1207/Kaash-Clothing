@@ -112,18 +112,46 @@ const LandingPage = () => {
   useEffect(() => {
     if (!isMobile) return;
 
-    const handleMobileScroll = (e) => {
+    let touchStartY = 0;
+    const threshold = 50; // minimum distance to trigger scroll
+
+    const handleTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+      if (!mobileScrolled) {
+        e.preventDefault(); // Prevent scrolling on first touch
+        const touchY = e.touches[0].clientY;
+        const deltaY = touchStartY - touchY;
+
+        if (Math.abs(deltaY) > threshold) {
+          if (deltaY > 0) { // Scrolling up
+            setMobileScrolled(true);
+          }
+        }
+      }
+    };
+
+    const handleWheel = (e) => {
       if (e.deltaY > 0 && !mobileScrolled) {
-        e.preventDefault(); // Prevent actual scrolling
+        e.preventDefault();
         setMobileScrolled(true);
       } else if (e.deltaY < 0 && mobileScrolled) {
         setMobileScrolled(false);
       }
-      // After the first scroll trigger, normal scrolling resumes automatically
     };
 
-    window.addEventListener("wheel", handleMobileScroll, { passive: false });
-    return () => window.removeEventListener("wheel", handleMobileScroll);
+    // Add both wheel and touch event listeners
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+    };
   }, [isMobile, mobileScrolled]);
 
   // Desktop initialization (unchanged)
@@ -361,7 +389,7 @@ const LandingPage = () => {
 
   if (isMobile) {
     return (
-      <div className="relative w-full h-screen bg-white overflow-hidden">
+      <div className={`fixed inset-0 w-full h-screen bg-white ${mobileScrolled ? 'overflow-hidden' : ''}`} style={{ touchAction: mobileScrolled ? 'none' : 'auto' }}>
         {/* Mobile Header - Simplified */}
         <div className="absolute top-0 left-0 right-0 z-50">
           <h1 className="text-xl font-light tracking-widest text-center p-4">TSK</h1>
