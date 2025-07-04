@@ -20,6 +20,15 @@ const ProductCard = ({ product, index }) => {
       ? firstAdditionalImage
       : product.mainImage.url;
 
+  // Calculate discount percentage if there's a discounted price
+  const hasDiscount =
+    product.discountedPrice && product.discountedPrice < product.price;
+  const discountPercentage = hasDiscount
+    ? Math.round(
+        ((product.price - product.discountedPrice) / product.price) * 100
+      )
+    : 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -45,12 +54,28 @@ const ProductCard = ({ product, index }) => {
             View Details
           </p>
         </div>
+        {hasDiscount && (
+          <div className="absolute bottom-4 right-4 bg-black text-white text-xs px-3 py-1.5 rounded-full font-medium tracking-wider shadow-lg">
+            {discountPercentage}% OFF
+          </div>
+        )}
       </div>
       <div className="text-center pt-3 sm:pt-4 mt-auto">
         <h4 className="text-sm sm:text-base font-light text-stone-800 mb-0.5 sm:mb-1 truncate">
           {product.name}
         </h4>
-        <p className="text-stone-600 text-xs sm:text-sm">₹{product.price.toFixed(2)}</p>
+        <p className="text-stone-600 text-xs sm:text-sm flex items-center justify-center gap-2">
+          {hasDiscount ? (
+            <>
+              <span className="line-through text-stone-400">
+                ₹{product.price.toFixed(2)}
+              </span>
+              <span>₹{product.discountedPrice.toFixed(2)}</span>
+            </>
+          ) : (
+            <span>₹{product.price.toFixed(2)}</span>
+          )}
+        </p>
       </div>
     </motion.div>
   );
@@ -120,14 +145,18 @@ const ProductShowcase = () => {
           ))}
         </div>
         {visibleProducts < products.length && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
             className="text-center mt-8"
           >
             <button
-              onClick={() => setVisibleProducts(prev => Math.min(prev + 6, products.length))}
+              onClick={() =>
+                setVisibleProducts((prev) =>
+                  Math.min(prev + 6, products.length)
+                )
+              }
               className="border border-stone-400 text-stone-600 font-medium text-sm px-8 py-2.5 rounded-full hover:bg-stone-100 transition-all duration-300 ease-out"
             >
               View More

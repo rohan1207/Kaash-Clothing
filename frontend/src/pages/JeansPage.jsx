@@ -100,7 +100,9 @@ const JeansPage = () => {
 
       <div className="space-y-8">
         <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-4">Price Range</h3>
+          <h3 className="text-xl font-semibold text-gray-700 mb-4">
+            Price Range
+          </h3>
           <div className="space-y-2">
             {priceRanges.map((range) => (
               <button
@@ -135,16 +137,18 @@ const JeansPage = () => {
   );
 
   const ProductCard = ({ product }) => {
-    const hasDiscount = product.discountedPrice && product.discountedPrice < product.price;
+    const hasDiscount =
+      product.discountedPrice && product.discountedPrice < product.price;
     const [isHovered, setIsHovered] = useState(false);
 
     const firstAdditionalImage = product.additionalMedia?.find(
       (media) => media.type === "image"
     )?.url;
 
-    const currentImageUrl = isHovered && firstAdditionalImage
-      ? firstAdditionalImage
-      : product.mainImage.url;
+    const currentImageUrl =
+      isHovered && firstAdditionalImage
+        ? firstAdditionalImage
+        : product.mainImage.url;
 
     return (
       <motion.div
@@ -166,28 +170,42 @@ const JeansPage = () => {
           />
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           <div className="absolute bottom-0 left-0 right-0 p-4 text-center translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
-            <p className="text-white text-sm font-medium tracking-wider">View Details</p>
+            <p className="text-white text-sm font-medium tracking-wider">
+              View Details
+            </p>
           </div>
           {hasDiscount && (
-            <div className="absolute top-4 left-4 bg-black text-white text-xs px-3 py-1.5 rounded-full font-medium tracking-wider">
-              {Math.round(((product.price - product.discountedPrice) / product.price) * 100)}% OFF
+            <div className="absolute bottom-3 right-3 sm:top-4 sm:left-4 sm:bottom-auto sm:right-auto bg-black text-white text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-medium tracking-wider shadow-lg">
+              {Math.round(
+                ((product.price - product.discountedPrice) / product.price) *
+                  100
+              )}
+              % OFF
             </div>
           )}
         </div>
         <div className="mt-4 text-center">
-          <h3 className="text-base font-light text-stone-800 mb-1 truncate">{product.name}</h3>
-          <div className="flex items-center justify-center gap-2">
+          <h3 className="text-sm sm:text-base font-light text-stone-800 mb-0.5 sm:mb-1 truncate">
+            {product.name}
+          </h3>
+          <div className="flex items-center justify-center gap-1 sm:gap-2">
             {hasDiscount ? (
               <>
-                <p className="text-stone-600 text-sm">₹{product.discountedPrice.toFixed(2)}</p>
-                <p className="text-stone-400 text-sm line-through">₹{product.price.toFixed(2)}</p>
+                <p className="text-stone-600 text-xs sm:text-sm">
+                  ₹{product.discountedPrice.toFixed(2)}
+                </p>
+                <p className="text-stone-400 text-xs sm:text-sm line-through">
+                  ₹{product.price.toFixed(2)}
+                </p>
               </>
             ) : (
-              <p className="text-stone-600 text-sm">₹{product.price.toFixed(2)}</p>
+              <p className="text-stone-600 text-xs sm:text-sm">
+                ₹{product.price.toFixed(2)}
+              </p>
             )}
           </div>
           {product.sizes?.length > 0 && (
-            <p className="text-xs text-stone-500 mt-1">
+            <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5 sm:mt-1">
               {product.sizes.join(" · ")}
             </p>
           )}
@@ -214,7 +232,7 @@ const JeansPage = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl md:text-7xl text-gray-800 font-serif tracking-tight mb-6">
-           Premium Denim Collection
+              Premium Denim Collection
             </h1>
             <div className="max-w-3xl mx-auto space-y-4">
               <p className="text-gray-600 text-lg md:text-xl font-light leading-relaxed">
@@ -253,7 +271,7 @@ const JeansPage = () => {
           ) : (
             <motion.div
               layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+              className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
             >
               <AnimatePresence>
                 {filteredAndSortedProducts.map((product) => (

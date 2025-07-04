@@ -175,7 +175,7 @@ const Top = () => {
             </p>
           </div>
           {hasDiscount && (
-            <div className="absolute top-4 left-4 bg-black text-white text-xs px-3 py-1.5 rounded-full font-medium tracking-wider">
+            <div className="absolute bottom-3 right-3 sm:top-4 sm:left-4 sm:bottom-auto sm:right-auto bg-black text-white text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-medium tracking-wider shadow-lg">
               {Math.round(
                 ((product.price - product.discountedPrice) / product.price) *
                   100
@@ -185,27 +185,27 @@ const Top = () => {
           )}
         </div>
         <div className="mt-4 text-center">
-          <h3 className="text-base font-light text-stone-800 mb-1 truncate">
+          <h3 className="text-sm sm:text-base font-light text-stone-800 mb-0.5 sm:mb-1 truncate">
             {product.name}
           </h3>
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center gap-1 sm:gap-2">
             {hasDiscount ? (
               <>
-                <p className="text-stone-600 text-sm">
+                <p className="text-stone-600 text-xs sm:text-sm">
                   ₹{product.discountedPrice.toFixed(2)}
                 </p>
-                <p className="text-stone-400 text-sm line-through">
+                <p className="text-stone-400 text-xs sm:text-sm line-through">
                   ₹{product.price.toFixed(2)}
                 </p>
               </>
             ) : (
-              <p className="text-stone-600 text-sm">
+              <p className="text-stone-600 text-xs sm:text-sm">
                 ₹{product.price.toFixed(2)}
               </p>
             )}
           </div>
           {product.sizes?.length > 0 && (
-            <p className="text-xs text-stone-500 mt-1">
+            <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5 sm:mt-1">
               {product.sizes.join(" · ")}
             </p>
           )}
@@ -270,7 +270,7 @@ const Top = () => {
           ) : (
             <motion.div
               layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+              className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
             >
               <AnimatePresence>
                 {filteredAndSortedProducts.map((product) => (

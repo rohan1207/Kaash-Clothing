@@ -100,7 +100,9 @@ const WesternPage = () => {
 
       <div className="space-y-8">
         <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-4">Price Range</h3>
+          <h3 className="text-xl font-semibold text-gray-700 mb-4">
+            Price Range
+          </h3>
           <div className="space-y-2">
             {priceRanges.map((range) => (
               <button
@@ -135,16 +137,18 @@ const WesternPage = () => {
   );
 
   const ProductCard = ({ product }) => {
-    const hasDiscount = product.discountedPrice && product.discountedPrice < product.price;
+    const hasDiscount =
+      product.discountedPrice && product.discountedPrice < product.price;
     const [isHovered, setIsHovered] = useState(false);
 
     const firstAdditionalImage = product.additionalMedia?.find(
       (media) => media.type === "image"
     )?.url;
 
-    const currentImageUrl = isHovered && firstAdditionalImage
-      ? firstAdditionalImage
-      : product.mainImage.url;
+    const currentImageUrl =
+      isHovered && firstAdditionalImage
+        ? firstAdditionalImage
+        : product.mainImage.url;
 
     return (
       <motion.div
@@ -152,42 +156,56 @@ const WesternPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="group cursor-pointer"
+        className="group cursor-pointer relative"
         onClick={() => navigate(`/product/${product._id}`)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100">
+        <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100 mb-3">
           <img
             key={currentImageUrl}
             src={`${API_URL}${currentImageUrl}`}
             alt={product.name}
-            className="w-full h-full object-cover transition-all duration-300 ease-in-out"
+            className="w-full h-full object-cover object-center transition-all duration-300 ease-in-out"
           />
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="absolute bottom-0 left-0 right-0 p-4 text-center translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out">
-            <p className="text-white text-sm font-medium tracking-wider">View Details</p>
-          </div>
           {hasDiscount && (
-            <div className="absolute top-4 left-4 bg-black text-white text-xs px-3 py-1.5 rounded-full font-medium tracking-wider">
-              {Math.round(((product.price - product.discountedPrice) / product.price) * 100)}% OFF
+            <div className="absolute md:top-2 md:left-2 bottom-2 right-2 md:bottom-auto md:right-auto bg-black/90 text-white text-xs md:text-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full font-medium tracking-wider shadow-lg">
+              {Math.round(
+                ((product.price - product.discountedPrice) / product.price) *
+                  100
+              )}
+              % OFF
             </div>
           )}
+          <div className="absolute bottom-0 left-0 right-0 p-3 text-center translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out bg-black/60">
+            <p className="text-white text-sm font-medium tracking-wider">
+              View Details
+            </p>
+          </div>
         </div>
-        <div className="mt-4 text-center">
-          <h3 className="text-base font-light text-stone-800 mb-1 truncate">{product.name}</h3>
-          <div className="flex items-center justify-center gap-2">
+        <div className="space-y-1 text-center px-1">
+          <h3 className="text-sm md:text-base font-medium text-gray-800 line-clamp-1">
+            {product.name}
+          </h3>
+          <div className="flex items-center justify-center gap-2 text-sm">
             {hasDiscount ? (
               <>
-                <p className="text-stone-600 text-sm">₹{product.discountedPrice.toFixed(2)}</p>
-                <p className="text-stone-400 text-sm line-through">₹{product.price.toFixed(2)}</p>
+                <span className="text-gray-900 font-medium">
+                  ₹{product.discountedPrice.toFixed(2)}
+                </span>
+                <span className="text-gray-400 line-through">
+                  ₹{product.price.toFixed(2)}
+                </span>
               </>
             ) : (
-              <p className="text-stone-600 text-sm">₹{product.price.toFixed(2)}</p>
+              <span className="text-gray-900 font-medium">
+                ₹{product.price.toFixed(2)}
+              </span>
             )}
           </div>
           {product.sizes?.length > 0 && (
-            <p className="text-xs text-stone-500 mt-1">
+            <p className="text-xs text-gray-500 font-medium">
               {product.sizes.join(" · ")}
             </p>
           )}
@@ -214,7 +232,7 @@ const WesternPage = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl md:text-7xl text-gray-800 font-serif tracking-tight mb-6">
-               Western Collection
+              Western Collection
             </h1>
             <div className="max-w-3xl mx-auto space-y-4">
               <p className="text-gray-600 text-lg md:text-xl font-light leading-relaxed">
@@ -226,18 +244,48 @@ const WesternPage = () => {
           </motion.div>
         </header>
 
-        <div className="container mx-auto px-6">
-          <div className="mb-10 flex justify-between items-center">
-            <button
-              onClick={() => setIsFilterOpen(true)}
-              className="flex items-center gap-3 text-lg text-gray-700 hover:text-gray-900 transition-colors font-medium bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 hover:border-gray-300"
-            >
-              <FiFilter />
-              <span>Filter & Sort</span>
-            </button>
-            <p className="text-md text-gray-500 font-medium">
-              {filteredAndSortedProducts.length} items
-            </p>
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-6">
+            <div className="flex flex-wrap gap-4 justify-center items-center">
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="sortBy"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Sort by:
+                </label>
+                <select
+                  id="sortBy"
+                  value={filters.sortBy}
+                  onChange={(e) => handleFilterChange("sortBy", e.target.value)}
+                  className="p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="newest">Latest</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="priceRange"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Price Range:
+                </label>
+                <select
+                  id="priceRange"
+                  value={filters.price}
+                  onChange={(e) => handleFilterChange("price", e.target.value)}
+                  className="p-2 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="All">All</option>
+                  <option value="Under ₹1000">Under ₹1000</option>
+                  <option value="₹1000 - ₹2000">₹1000 - ₹2000</option>
+                  <option value="₹2000 - ₹5000">₹2000 - ₹5000</option>
+                  <option value="Above ₹5000">Above ₹5000</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           {loading ? (
@@ -250,10 +298,18 @@ const WesternPage = () => {
               <h2 className="text-2xl font-bold mb-2">An Error Occurred</h2>
               <p>{error}</p>
             </div>
+          ) : filteredAndSortedProducts.length === 0 ? (
+            <div className="text-center text-gray-500 py-8">
+              <h2 className="text-xl font-semibold mb-4">No Products Found</h2>
+              <p className="text-gray-700">
+                We couldn't find any products matching your criteria. Please try
+                adjusting your filters or check back later.
+              </p>
+            </div>
           ) : (
             <motion.div
               layout
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
             >
               <AnimatePresence>
                 {filteredAndSortedProducts.map((product) => (

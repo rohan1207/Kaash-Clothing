@@ -305,6 +305,84 @@ const ProductDetails = () => {
     );
   };
 
+  const RelatedProductCard = ({ product }) => {
+    const hasDiscount =
+      product.discountedPrice && product.discountedPrice < product.price;
+    const [isHovered, setIsHovered] = useState(false);
+
+    const firstAdditionalImage = product.additionalMedia?.find(
+      (media) => media.type === "image"
+    )?.url;
+
+    const currentImageUrl =
+      isHovered && firstAdditionalImage
+        ? firstAdditionalImage
+        : product.mainImage.url;
+
+    return (
+      <motion.div
+        layout
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="group cursor-pointer relative"
+        onClick={() => navigate(`/product/${product._id}`)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100 mb-3">
+          <img
+            key={currentImageUrl}
+            src={`${API_URL}${currentImageUrl}`}
+            alt={product.name}
+            className="w-full h-full object-cover object-center transition-all duration-300 ease-in-out"
+          />
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {hasDiscount && (
+            <div className="absolute md:top-2 md:left-2 bottom-2 right-2 md:bottom-auto md:right-auto bg-black/90 text-white text-xs md:text-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full font-medium tracking-wider shadow-lg">
+              {Math.round(
+                ((product.price - product.discountedPrice) / product.price) *
+                  100
+              )}
+              % OFF
+            </div>
+          )}
+          <div className="absolute bottom-0 left-0 right-0 p-3 text-center translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out bg-black/60">
+            <p className="text-white text-sm font-medium tracking-wider">
+              View Details
+            </p>
+          </div>
+        </div>
+        <div className="space-y-1 text-center px-1">
+          <h3 className="text-sm md:text-base font-medium text-gray-800 line-clamp-1">
+            {product.name}
+          </h3>
+          <div className="flex items-center justify-center gap-2 text-sm">
+            {hasDiscount ? (
+              <>
+                <span className="text-gray-900 font-medium">
+                  ₹{product.discountedPrice.toFixed(2)}
+                </span>
+                <span className="text-gray-400 line-through">
+                  ₹{product.price.toFixed(2)}
+                </span>
+              </>
+            ) : (
+              <span className="text-gray-900 font-medium">
+                ₹{product.price.toFixed(2)}
+              </span>
+            )}
+          </div>
+          {product.sizes?.length > 0 && (
+            <p className="text-xs text-gray-500 font-medium">
+              {product.sizes.join(" · ")}
+            </p>
+          )}
+        </div>
+      </motion.div>
+    );
+  };
+
   return (
     <div className="bg-white font-sans">
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
@@ -541,34 +619,14 @@ const ProductDetails = () => {
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <section className="bg-gray-50 py-20">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
-              You May Also Like
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
-              {relatedProducts.map((p) => (
-                <motion.div
-                  key={p._id}
-                  onClick={() => navigate(`/product/${p._id}`)}
-                  className="cursor-pointer group"
-                >
-                  <div className="aspect-w-1 aspect-h-1 bg-gray-200 rounded-xl overflow-hidden">
-                    <img
-                      src={`${API_URL}${p.mainImage.url}`}
-                      alt={p.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-                  <h3 className="mt-4 text-base font-medium text-gray-800 truncate">
-                    {p.name}
-                  </h3>
-                  <p className="mt-1 text-lg font-semibold text-gray-900">
-                    ₹{p.price.toFixed(2)}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
+        <section className="mt-16 mb-8 px-4">
+          <h2 className="text-2xl font-serif text-gray-800 mb-6 text-center">
+            You May Also Like
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {relatedProducts.map((product) => (
+              <RelatedProductCard key={product._id} product={product} />
+            ))}
           </div>
         </section>
       )}
