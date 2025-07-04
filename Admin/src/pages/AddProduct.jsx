@@ -147,18 +147,6 @@ const AddProduct = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Validate required fields including sub-category
-    if (!formData.category || !formData.sub_category) {
-      toast.error("Please select both category and sub-category");
-      return;
-    }
-
-    // Validate that sub-category matches the selected category
-    if (!subCategoryMap[formData.category]?.includes(formData.sub_category)) {
-      toast.error("Invalid sub-category selected for the chosen category");
-      return;
-    }
-
     try {
       // Get the auth token
       const token = getAuthToken();
@@ -166,80 +154,87 @@ const AddProduct = () => {
         throw new Error("Not authenticated. Please login again.");
       }
 
-      // Client-side validation
-      if (
-        !formData.name ||
-        !formData.category ||
-        !formData.sub_category ||
-        !formData.description ||
-        !formData.price ||
-        !formData.stock
-      ) {
-        throw new Error("Please fill in all required fields");
-      }
+      // Debug logging
+      console.log("Submitting form data:", {
+        name: formData.name,
+        category: formData.category,
+        sub_category: formData.sub_category,
+        price: formData.price,
+        stock: formData.stock
+      });
 
-      // Validate that sub-category matches the selected category
-      if (!subCategoryMap[formData.category]?.includes(formData.sub_category)) {
-        throw new Error(`Invalid sub-category '${formData.sub_category}' for category '${formData.category}'`);
-      }
-
-      if (!formData.mainImage) {
-        throw new Error("Main image is required");
-      }
+      // Enhanced validation
+      if (!formData.name?.trim()) throw new Error("Product name is required");
+      if (!formData.category?.trim()) throw new Error("Category is required");
+      if (!formData.sub_category?.trim()) throw new Error("Sub-category is required");
+      if (!formData.description?.trim()) throw new Error("Description is required");
+      if (!formData.price) throw new Error("Price is required");
+      if (!formData.stock) throw new Error("Stock is required");
+      if (!formData.mainImage) throw new Error("Main image is required");
 
       const formDataToSend = new FormData();
 
-      // Append all fields
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("category", formData.category);
-      formDataToSend.append("sub_category", formData.sub_category); // Make sure this is a string
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("status", formData.status);
-      formDataToSend.append("featured", formData.featured.toString()); // Convert boolean to string
-      formDataToSend.append("material", formData.material || "");
-
-      // Append numbers
-      formDataToSend.append("price", parseFloat(formData.price));
-      formDataToSend.append("stock", parseInt(formData.stock, 10));
+      // Basic Information - with trimming and type conversion
+      formDataToSend.append("name", formData.name.trim());
+      formDataToSend.append("category", formData.category.trim());
+      formDataToSend.append("sub_category", formData.sub_category.trim());
+      formDataToSend.append("description", formData.description.trim());
+      
+      // Numbers with type conversion
+      formDataToSend.append("price", Number(formData.price).toString());
+      formDataToSend.append("stock", Number(formData.stock).toString());
       if (formData.discountedPrice) {
-        formDataToSend.append(
-          "discountedPrice",
-          parseFloat(formData.discountedPrice)
-        );
+        formDataToSend.append("discountedPrice", Number(formData.discountedPrice).toString());
       }
       if (formData.discountPercentage) {
-        formDataToSend.append(
-          "discountPercentage",
-          parseFloat(formData.discountPercentage)
-        );
+        formDataToSend.append("discountPercentage", Number(formData.discountPercentage).toString());
       }
 
-      // Append arrays as JSON strings
+      // Status and Features
+      formDataToSend.append("status", formData.status || 'draft');
+      formDataToSend.append("featured", Boolean(formData.featured).toString());
+      formDataToSend.append("material", (formData.material || '').trim());
+
+      // Arrays as JSON strings with empty array fallbacks
       formDataToSend.append("tags", JSON.stringify(formData.tags || []));
       formDataToSend.append("sizes", JSON.stringify(formData.sizes || []));
       formDataToSend.append("colors", JSON.stringify(formData.colors || []));
       formDataToSend.append("care", JSON.stringify(formData.care || []));
 
-      // Append coupon if it exists
+      // Coupon with proper type conversion
       if (formData.coupon && (formData.coupon.name || formData.coupon.discountAmount)) {
         const couponData = {
           ...formData.coupon,
           discountAmount: formData.coupon.discountAmount ? Number(formData.coupon.discountAmount) : undefined,
           minPurchaseAmount: formData.coupon.minPurchaseAmount ? Number(formData.coupon.minPurchaseAmount) : undefined,
+          active: Boolean(formData.coupon.active)
         };
         formDataToSend.append("coupon", JSON.stringify(couponData));
       }
 
-      // Append files
-      formDataToSend.append("mainImage", formData.mainImage);
-      formData.additionalMedia.forEach((media) => {
-        if (media.file) {
-          formDataToSend.append("additionalMedia", media.file);
-        }
-      });
+      // Files
+      if (formData.mainImage instanceof File) {
+        formDataToSend.append("mainImage", formData.mainImage);
+      } else {
+        throw new Error("Invalid main image file");
+      }
 
-      // Log for debugging
-      console.log("Sending form data:", Object.fromEntries(formDataToSend));
+      if (formData.additionalMedia?.length > 0) {
+        formData.additionalMedia.forEach((media, index) => {
+          if (media.file instanceof File) {
+            formDataToSend.append("additionalMedia", media.file);
+          }
+        });
+      }
+
+      // Log final form data for debugging
+      console.log("Final form data:", {
+        name: formDataToSend.get("name"),
+        category: formDataToSend.get("category"),
+        sub_category: formDataToSend.get("sub_category"),
+        price: formDataToSend.get("price"),
+        stock: formDataToSend.get("stock")
+      });
 
       // Make the request with auth token
       const response = await axios.post(
