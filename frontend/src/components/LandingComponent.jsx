@@ -681,7 +681,7 @@ ELEGANCE</span>
               Curated collection of luxurious fashion pieces designed to blend
               traditional charm with modern sophistication.
             </p>
-            <button className="px-4 py-1.5 text-[10px] tracking-widest border border-black hover:bg-black hover:text-white transition-colors">
+            <button className="px-4 py-1.5 text-[10px] tracking-widest border border-black hover:bg-black hover:text-white transition-colors mb-5">
               EXPLORE COLLECTION
             </button>
           </div>

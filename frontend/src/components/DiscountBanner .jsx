@@ -7,7 +7,7 @@ const DiscountBanner = () => {
   };
 
   return (
-    <div className="relative w-full py-20 overflow-hidden">
+    <div className="hidden md:block relative w-full py-20 overflow-hidden">
       {/* Subtle background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-stone-50 to-white"></div>
 
