@@ -56,7 +56,7 @@ const AddProduct = () => {
     // Basic Information
     name: "",
     category: "",
-    sub_category: "", // Added sub_category
+    sub_category: "",
     description: "",
     tags: [],
 
@@ -89,6 +89,9 @@ const AddProduct = () => {
     status: "draft",
     featured: false,
   });
+
+  // State for sub-category validation error
+  const [subCategoryError, setSubCategoryError] = useState('');
 const handleChange = (e) => {
   const { name, value, files, type: inputType, checked } = e.target;
   
@@ -116,12 +119,14 @@ const handleChange = (e) => {
       }));
     }
   } else if (name === "category") {
-    // When category changes, reset sub_category - FIX: Use spread operator properly
+    // When category changes, reset sub_category and ensure it's set before submission
     setFormData(prev => ({
       ...prev,
       [name]: value,
       sub_category: "", // Reset sub-category when main category changes
     }));
+    // Clear any previous sub-category validation error
+    setSubCategoryError('');
   } else if (name.includes('.')) {
     // Handle nested object properties (e.g., coupon.name, coupon.discountAmount)
     const [parent, child] = name.split('.');
@@ -167,8 +172,9 @@ const handleChange = (e) => {
       // Enhanced validation
       if (!formData.name?.trim()) throw new Error("Product name is required");
       if (!formData.category?.trim()) throw new Error("Category is required");
-      if (!formData.sub_category?.trim())
-        throw new Error("Sub-category is required");
+      if (!formData.sub_category?.trim() || !subCategoryMap[formData.category]?.includes(formData.sub_category)) {
+        throw new Error(`Please select a valid sub-category from the available options for ${formData.category}`);
+      }
       if (!formData.description?.trim())
         throw new Error("Description is required");
       if (!formData.price) throw new Error("Price is required");
@@ -430,6 +436,9 @@ const handleChange = (e) => {
                     </option>
                   ))}
               </select>
+              {subCategoryError && (
+                <p className="mt-1 text-sm text-red-500">{subCategoryError}</p>
+              )}
             </div>
 
             {/* Description */}
