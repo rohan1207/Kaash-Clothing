@@ -8,6 +8,7 @@ export const createProduct = async (req, res) => {
         const {
             name,
             category,
+            sub_category, // Added missing sub_category destructuring
             description,
             price,
             discountedPrice,
@@ -39,6 +40,7 @@ export const createProduct = async (req, res) => {
         const product = await Product.create({
             name,
             category,
+            sub_category,
             description,
             price,
             discountedPrice,
@@ -214,6 +216,7 @@ export const updateProduct = async (req, res) => {
         const {
             name,
             category,
+            sub_category, // Added missing sub_category destructuring
             description,
             price,
             discountedPrice,
@@ -239,6 +242,7 @@ export const updateProduct = async (req, res) => {
         // Update fields
         if (name) product.name = name;
         if (category) product.category = category;
+        if (sub_category) product.sub_category = sub_category; // Added sub_category update
         if (description) product.description = description;
         if (price) product.price = price;
         if (discountedPrice !== undefined) product.discountedPrice = discountedPrice;
