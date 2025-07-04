@@ -139,13 +139,13 @@ const NewArrivals = () => {
 
     const getViewAllLink = (category) => {
       const routeMap = {
-        'Sarees': '/saree',
-        'Tops': '/top',
-        'Kurtis': '/kurti',
-        'Jeans': '/jeans',
-        'Western': '/westerns'
+        Sarees: "/saree",
+        Tops: "/top",
+        Kurtis: "/kurti",
+        Jeans: "/jeans",
+        Western: "/westerns",
       };
-      return routeMap[category] || '/';
+      return routeMap[category] || "/";
     };
 
     const scroll = (direction) => {
@@ -159,7 +159,9 @@ const NewArrivals = () => {
     return (
       <div className="mb-12 md:mb-16">
         <div className="flex items-center justify-between mb-4 md:mb-6">
-          <h2 className="text-xl md:text-2xl font-serif text-gray-800">{title}</h2>
+          <h2 className="text-xl md:text-2xl font-serif text-gray-800">
+            {title}
+          </h2>
           <Link
             to={getViewAllLink(title)}
             className="text-sky-600 hover:text-sky-700 text-xs md:text-sm font-medium tracking-wider"
@@ -178,8 +180,8 @@ const NewArrivals = () => {
             ref={scrollContainerRef}
             className="flex flex-wrap md:flex-nowrap gap-4 md:gap-6 md:overflow-x-auto md:pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent md:scrollbar-track-gray-100 scroll-smooth"
             style={{
-              scrollbarWidth: 'thin',
-              msOverflowStyle: 'none'
+              scrollbarWidth: "thin",
+              msOverflowStyle: "none",
             }}
           >
             {products.map((product) => (

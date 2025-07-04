@@ -50,23 +50,23 @@ const Footer = () => {
           </form>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
-          {/* Brand Section */}
-          <div className="md:col-span-1 mb-8 md:mb-0">
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="text-xl md:text-2xl tracking-[0.3em] font-light cursor-pointer"
-        >
-          TSK
-        </motion.div>
-            <p className="text-sm text-stone-400 leading-relaxed">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center md:text-left">
+          {/* Brand Section - Full width on mobile */}
+          <div className="col-span-2 md:col-span-1 mb-8 md:mb-0">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="text-xl md:text-2xl tracking-[0.3em] font-light cursor-pointer"
+            >
+              TSK
+            </motion.div>
+            <p className="text-sm text-stone-400 leading-relaxed mt-2">
               Timeless elegance, modern design. Discover curated collections
               that define luxury.
             </p>
           </div>
 
-          {/* Links Sections */}
-          <div>
+          {/* Shop Section - Half width on mobile */}
+          <div className="col-span-1">
             <h3 className="font-semibold text-white tracking-wider uppercase mb-4">
               Shop
             </h3>
@@ -77,7 +77,8 @@ const Footer = () => {
             </div>
           </div>
 
-          <div>
+          {/* About Section - Half width on mobile */}
+          <div className="col-span-1">
             <h3 className="font-semibold text-white tracking-wider uppercase mb-4">
               About
             </h3>
@@ -88,7 +89,8 @@ const Footer = () => {
             </div>
           </div>
 
-          <div>
+          {/* Support Section - Full width on mobile */}
+          <div className="col-span-2 md:col-span-1 mt-8 md:mt-0">
             <h3 className="font-semibold text-white tracking-wider uppercase mb-4">
               Support
             </h3>
