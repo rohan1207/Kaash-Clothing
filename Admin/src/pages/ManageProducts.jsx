@@ -108,7 +108,9 @@ const ManageProducts = () => {
 
       // Update local state
       setProducts((prevProducts) =>
-        prevProducts.map((p) => (p._id === productId ? response.data.product : p))
+        prevProducts.map((p) =>
+          p._id === productId ? response.data.product : p
+        )
       );
 
       toast.success("Product updated successfully");
@@ -131,7 +133,9 @@ const ManageProducts = () => {
 
       // Update local state
       setProducts((prevProducts) =>
-        prevProducts.map((p) => (p._id === productId ? response.data.product : p))
+        prevProducts.map((p) =>
+          p._id === productId ? response.data.product : p
+        )
       );
 
       toast.success("Images updated successfully");
@@ -143,7 +147,8 @@ const ManageProducts = () => {
 
   // Handle product deletion
   const handleDeleteProduct = async (productId) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
 
     try {
       await axios.delete(`${API_URL}/api/products/${productId}`);
@@ -198,11 +203,11 @@ const ManageProducts = () => {
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      
+
       try {
         // First, update the product details
         await handleUpdateProduct(product._id, formData);
-        
+
         // Then, if there are new images, update them
         if (newImages.length > 0) {
           const formDataWithImages = new FormData();
@@ -211,7 +216,7 @@ const ManageProducts = () => {
           });
           await handleImageUpdate(product._id, formDataWithImages);
         }
-        
+
         setEditingProduct(null);
       } catch (error) {
         console.error("Error saving product:", error);

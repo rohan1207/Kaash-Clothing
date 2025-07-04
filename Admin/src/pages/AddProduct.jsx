@@ -89,53 +89,54 @@ const AddProduct = () => {
     status: "draft",
     featured: false,
   });
-  const handleChange = (e) => {
-    const { name, value, files, type: inputType, checked } = e.target;
-    
-    if (name === "mainImage") {
-      // Handle main image upload
-      if (files && files[0]) {
-        setFormData(prev => ({
-          ...prev,
-          mainImage: files[0]
-        }));
-      }
-    } else if (name === "additionalMedia") {
-      // Handle additional media uploads
-      if (files && files.length) {
-        const newFiles = Array.from(files).slice(0, 5 - formData.additionalMedia.length);
-        const newMedia = newFiles.map(file => ({
-          file,
-          type: file.type.startsWith('image/') ? 'image' : 'video',
-          preview: URL.createObjectURL(file)
-        }));
-        
-        setFormData(prev => ({
-          ...prev,
-          additionalMedia: [...prev.additionalMedia, ...newMedia].slice(0, 5)
-        }));
-      }
-    } else if (name === "category") {
-      // When category changes, reset sub_category
-      setFormData({
-        ...formData,
-        [name]: value,
-        sub_category: "", // Reset sub-category when main category changes
-      });
-    } else if (name.includes('.')) {
-      // Handle nested object properties (e.g., coupon.name, coupon.discountAmount)
-      const [parent, child] = name.split('.');
-      setFormData((prev) => ({
+const handleChange = (e) => {
+  const { name, value, files, type: inputType, checked } = e.target;
+  
+  if (name === "mainImage") {
+    // Handle main image upload
+    if (files && files[0]) {
+      setFormData(prev => ({
         ...prev,
-        [parent]: {
-          ...prev[parent],
-          [child]: inputType === 'checkbox' ? checked : value
-        }
+        mainImage: files[0]
       }));
-    } else {
-      setFormData({ ...formData, [name]: value });
     }
-  };
+  } else if (name === "additionalMedia") {
+    // Handle additional media uploads
+    if (files && files.length) {
+      const newFiles = Array.from(files).slice(0, 5 - formData.additionalMedia.length);
+      const newMedia = newFiles.map(file => ({
+        file,
+        type: file.type.startsWith('image/') ? 'image' : 'video',
+        preview: URL.createObjectURL(file)
+      }));
+      
+      setFormData(prev => ({
+        ...prev,
+        additionalMedia: [...prev.additionalMedia, ...newMedia].slice(0, 5)
+      }));
+    }
+  } else if (name === "category") {
+    // When category changes, reset sub_category - FIX: Use spread operator properly
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+      sub_category: "", // Reset sub-category when main category changes
+    }));
+  } else if (name.includes('.')) {
+    // Handle nested object properties (e.g., coupon.name, coupon.discountAmount)
+    const [parent, child] = name.split('.');
+    setFormData((prev) => ({
+      ...prev,
+      [parent]: {
+        ...prev[parent],
+        [child]: inputType === 'checkbox' ? checked : value
+      }
+    }));
+  } else {
+    // FIX: Use spread operator for all other cases
+    setFormData(prev => ({ ...prev, [name]: value }));
+  }
+};
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -160,14 +161,16 @@ const AddProduct = () => {
         category: formData.category,
         sub_category: formData.sub_category,
         price: formData.price,
-        stock: formData.stock
+        stock: formData.stock,
       });
 
       // Enhanced validation
       if (!formData.name?.trim()) throw new Error("Product name is required");
       if (!formData.category?.trim()) throw new Error("Category is required");
-      if (!formData.sub_category?.trim()) throw new Error("Sub-category is required");
-      if (!formData.description?.trim()) throw new Error("Description is required");
+      if (!formData.sub_category?.trim())
+        throw new Error("Sub-category is required");
+      if (!formData.description?.trim())
+        throw new Error("Description is required");
       if (!formData.price) throw new Error("Price is required");
       if (!formData.stock) throw new Error("Stock is required");
       if (!formData.mainImage) throw new Error("Main image is required");
@@ -179,21 +182,27 @@ const AddProduct = () => {
       formDataToSend.append("category", formData.category.trim());
       formDataToSend.append("sub_category", formData.sub_category.trim());
       formDataToSend.append("description", formData.description.trim());
-      
+
       // Numbers with type conversion
       formDataToSend.append("price", Number(formData.price).toString());
       formDataToSend.append("stock", Number(formData.stock).toString());
       if (formData.discountedPrice) {
-        formDataToSend.append("discountedPrice", Number(formData.discountedPrice).toString());
+        formDataToSend.append(
+          "discountedPrice",
+          Number(formData.discountedPrice).toString()
+        );
       }
       if (formData.discountPercentage) {
-        formDataToSend.append("discountPercentage", Number(formData.discountPercentage).toString());
+        formDataToSend.append(
+          "discountPercentage",
+          Number(formData.discountPercentage).toString()
+        );
       }
 
       // Status and Features
-      formDataToSend.append("status", formData.status || 'draft');
+      formDataToSend.append("status", formData.status || "draft");
       formDataToSend.append("featured", Boolean(formData.featured).toString());
-      formDataToSend.append("material", (formData.material || '').trim());
+      formDataToSend.append("material", (formData.material || "").trim());
 
       // Arrays as JSON strings with empty array fallbacks
       formDataToSend.append("tags", JSON.stringify(formData.tags || []));
@@ -202,12 +211,19 @@ const AddProduct = () => {
       formDataToSend.append("care", JSON.stringify(formData.care || []));
 
       // Coupon with proper type conversion
-      if (formData.coupon && (formData.coupon.name || formData.coupon.discountAmount)) {
+      if (
+        formData.coupon &&
+        (formData.coupon.name || formData.coupon.discountAmount)
+      ) {
         const couponData = {
           ...formData.coupon,
-          discountAmount: formData.coupon.discountAmount ? Number(formData.coupon.discountAmount) : undefined,
-          minPurchaseAmount: formData.coupon.minPurchaseAmount ? Number(formData.coupon.minPurchaseAmount) : undefined,
-          active: Boolean(formData.coupon.active)
+          discountAmount: formData.coupon.discountAmount
+            ? Number(formData.coupon.discountAmount)
+            : undefined,
+          minPurchaseAmount: formData.coupon.minPurchaseAmount
+            ? Number(formData.coupon.minPurchaseAmount)
+            : undefined,
+          active: Boolean(formData.coupon.active),
         };
         formDataToSend.append("coupon", JSON.stringify(couponData));
       }
@@ -233,7 +249,7 @@ const AddProduct = () => {
         category: formDataToSend.get("category"),
         sub_category: formDataToSend.get("sub_category"),
         price: formDataToSend.get("price"),
-        stock: formDataToSend.get("stock")
+        stock: formDataToSend.get("stock"),
       });
 
       // Make the request with auth token
@@ -241,11 +257,10 @@ const AddProduct = () => {
         "https://kaash-clothing.onrender.com/api/products",
         formDataToSend,
         {
-          headers:
-            {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -317,7 +332,7 @@ const AddProduct = () => {
   useEffect(() => {
     return () => {
       // Cleanup object URLs when component unmounts
-      formData.additionalMedia.forEach(media => {
+      formData.additionalMedia.forEach((media) => {
         if (media.preview) {
           URL.revokeObjectURL(media.preview);
         }
@@ -827,7 +842,11 @@ const AddProduct = () => {
                 <div className="mt-4">
                   <div className="relative inline-block">
                     <img
-                      src={formData.mainImage instanceof File ? URL.createObjectURL(formData.mainImage) : formData.mainImage}
+                      src={
+                        formData.mainImage instanceof File
+                          ? URL.createObjectURL(formData.mainImage)
+                          : formData.mainImage
+                      }
                       alt="Main product image"
                       className="w-32 h-32 rounded-lg object-cover"
                     />
@@ -878,16 +897,16 @@ const AddProduct = () => {
                       strokeLinejoin="round"
                       strokeWidth="1.5"
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <span className="text-sm text-gray-500">
-                  Click to upload images or videos
-                </span>
-                <span className="text-xs text-gray-400">
-                  {formData.additionalMedia.length >= 5
-                    ? "Maximum limit reached"
-                    : "PNG, JPG, MP4 up to 10MB each"}
-                </span>
+                    />
+                  </svg>
+                  <span className="text-sm text-gray-500">
+                    Click to upload images or videos
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {formData.additionalMedia.length >= 5
+                      ? "Maximum limit reached"
+                      : "PNG, JPG, MP4 up to 10MB each"}
+                  </span>
                 </label>
               </div>
               {formData.additionalMedia.length > 0 && (
