@@ -61,7 +61,10 @@ async function migrate() {
       }
 
       if (updated) {
-        await product.save();
+        await Product.updateOne({ _id: product._id }, {
+          mainImage: product.mainImage,
+          additionalMedia: product.additionalMedia
+        });
         console.log(`Updated product ${product._id}`);
       }
     }
