@@ -5,6 +5,12 @@ import { FiLoader, FiAlertTriangle } from "react-icons/fi";
 
 const API_URL = "https://kaash-clothing.onrender.com";
 
+// Helper to handle both Cloudinary (absolute) and legacy relative URLs
+const buildUrl = (path) => {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${API_URL}${path}`;
+};
+
 const ProductCard = ({ product, index }) => {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
@@ -17,8 +23,8 @@ const ProductCard = ({ product, index }) => {
   // Determine current image URL based on hover state
   const currentImageUrl =
     isHovered && firstAdditionalImage
-      ? firstAdditionalImage
-      : product.mainImage.url;
+      ? buildUrl(firstAdditionalImage)
+      : buildUrl(product.mainImage.url);
 
   // Calculate discount percentage if there's a discounted price
   const hasDiscount =
@@ -43,7 +49,7 @@ const ProductCard = ({ product, index }) => {
       <div className="relative overflow-hidden aspect-[3/4] rounded-md sm:aspect-[3/4]">
         <img
           key={currentImageUrl}
-          src={`${API_URL}${currentImageUrl}`}
+          src={currentImageUrl}
           alt={product.name}
           className="w-full h-full object-cover transition-all duration-300 ease-in-out"
           loading="lazy"

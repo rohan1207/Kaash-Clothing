@@ -11,6 +11,12 @@ import axios from "axios";
 
 const API_URL = "https://kaash-clothing.onrender.com";
 
+// Helper to handle both Cloudinary (absolute) and legacy relative URLs
+const buildUrl = (path) => {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${API_URL}${path}`;
+};
+
 const categories = ["Sarees", "Tops", "Kurtis", "Jeans", "Western"];
 
 const fadeIn = {
@@ -67,8 +73,8 @@ const NewArrivals = () => {
 
     const currentImageUrl =
       isHovered && firstAdditionalImage
-        ? firstAdditionalImage
-        : product.mainImage.url;
+        ? buildUrl(firstAdditionalImage)
+        : buildUrl(product.mainImage.url);
 
     return (
       <motion.div
@@ -84,7 +90,7 @@ const NewArrivals = () => {
         <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100 mb-2 md:mb-3">
           <img
             key={currentImageUrl}
-            src={`${API_URL}${currentImageUrl}`}
+            src={currentImageUrl}
             alt={product.name}
             className="w-full h-full object-cover object-center transition-all duration-300 ease-in-out"
           />
