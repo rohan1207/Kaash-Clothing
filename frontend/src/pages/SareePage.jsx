@@ -14,7 +14,7 @@ const priceRanges = [
   "Above ₹5000",
 ];
 
-const Top = () => {
+const SareePage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -145,10 +145,12 @@ const Top = () => {
       (media) => media.type === "image"
     )?.url;
 
+    const baseImage = product.mainImage?.url || firstAdditionalImage || "";
+
     const currentImageUrl =
       isHovered && firstAdditionalImage
         ? firstAdditionalImage
-        : product.mainImage.url;
+        : baseImage;
 
     return (
       <motion.div
@@ -164,7 +166,7 @@ const Top = () => {
         <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100">
           <img
             key={currentImageUrl}
-            src={`${API_URL}${currentImageUrl}`}
+            src={currentImageUrl?.startsWith("http") ? currentImageUrl : `${API_URL}${currentImageUrl.startsWith('/') ? '' : '/'}${currentImageUrl.replace(/\\/g,'/')}`}
             alt={product.name}
             className="w-full h-full object-cover transition-all duration-300 ease-in-out"
           />
@@ -232,12 +234,13 @@ const Top = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl md:text-7xl text-gray-800 font-serif tracking-tight mb-6">
-              Designer Sarees
+              Premium Saree Collection
             </h1>
             <div className="max-w-3xl mx-auto space-y-4">
               <p className="text-gray-600 text-lg md:text-xl font-light leading-relaxed">
-                Experience the pinnacle of craftsmanship and style. Each piece
-                is a statement of elegance, designed for the modern connoisseur.
+                Explore our curated selection of premium Sarees. From
+                classic Paithani styles, find the perfect Saree that
+                combines comfort with timeless style.
               </p>
             </div>
           </motion.div>
@@ -285,4 +288,4 @@ const Top = () => {
   );
 };
 
-export default Top;
+export default SareePage;
