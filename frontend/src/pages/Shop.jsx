@@ -193,7 +193,7 @@ const Shop = () => {
         <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100">
           <img
             key={currentImageUrl}
-            src={`${API_URL}${currentImageUrl}`}
+            src={currentImageUrl?.startsWith("http") ? currentImageUrl : `${API_URL}${currentImageUrl}`}
             alt={product.name}
             className="w-full h-full object-cover transition-all duration-300 ease-in-out"
           />

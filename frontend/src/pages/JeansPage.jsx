@@ -145,10 +145,12 @@ const JeansPage = () => {
       (media) => media.type === "image"
     )?.url;
 
+    const baseImage = product.mainImage?.url || firstAdditionalImage || "";
+
     const currentImageUrl =
       isHovered && firstAdditionalImage
         ? firstAdditionalImage
-        : product.mainImage.url;
+        : baseImage;
 
     return (
       <motion.div
@@ -164,7 +166,7 @@ const JeansPage = () => {
         <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100">
           <img
             key={currentImageUrl}
-            src={`${API_URL}${currentImageUrl}`}
+            src={currentImageUrl?.startsWith("http") ? currentImageUrl : `${API_URL}${currentImageUrl.startsWith('/') ? '' : '/'}${currentImageUrl.replace(/\\/g,'/')}`}
             alt={product.name}
             className="w-full h-full object-cover transition-all duration-300 ease-in-out"
           />

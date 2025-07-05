@@ -1,4 +1,4 @@
-const apiKey = '44ac26248b464281a14f38a32103758a85900e5b6c5ee8575edfe5eadb3abbba'; // TODO: Move to a secure environment variable
+const apiKey = 'b669427cc4204a41b77e03d22200811a0366223c1cb5f00fb61134ba3113812b'; // TODO: Move to a secure environment variable
 const baseUrl = 'https://platform.fitroom.app/api/tryon';
 
 /**
