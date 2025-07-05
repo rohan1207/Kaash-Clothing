@@ -1,4 +1,6 @@
 import Product from '../models/Product.js';
+import cloudinary from '../utils/cloudinary.js';
+import fs from 'fs';
 
 // @desc    Create a new product
 // @route   POST /api/products
@@ -24,18 +26,39 @@ export const createProduct = async (req, res) => {
         } = req.body;
 
         // Handle main image
-        const mainImage = req.files.mainImage ? {
-            url: `/uploads/${req.files.mainImage[0].filename}`,
-            public_id: req.files.mainImage[0].filename
-        } : null;
+        let mainImage = null;
+        if (req.files.mainImage && req.files.mainImage[0]) {
+            const uploadRes = await cloudinary.uploader.upload(req.files.mainImage[0].path, {
+                folder: 'products'
+            });
+            mainImage = {
+                url: uploadRes.secure_url,
+                public_id: uploadRes.public_id
+            };
+            // remove temp file
+            fs.unlink(req.files.mainImage[0].path, () => {});
+        }
 
         // Handle additional media
-        const additionalMedia = req.files.additionalMedia ? 
-            req.files.additionalMedia.map(file => ({
-                url: `/uploads/${file.filename}`,
-                public_id: file.filename,
-                type: file.mimetype.startsWith('image/') ? 'image' : 'video'
-            })) : [];
+        let additionalMedia = [];
+        if (req.files.additionalMedia) {
+            const uploads = await Promise.all(
+                req.files.additionalMedia.map(async (file) => {
+                    const result = await cloudinary.uploader.upload(file.path, {
+                        folder: 'products',
+                        resource_type: file.mimetype.startsWith('video') ? 'video' : 'image'
+                    });
+                    // remove temp file
+                    fs.unlink(file.path, () => {});
+                    return {
+                        url: result.secure_url,
+                        public_id: result.public_id,
+                        type: file.mimetype.startsWith('image/') ? 'image' : 'video'
+                    };
+                })
+            );
+            additionalMedia = uploads;
+        }
 
         const product = await Product.create({
             name,
@@ -256,21 +279,35 @@ export const updateProduct = async (req, res) => {
         if (material) product.material = material;
         if (care) product.care = JSON.parse(care);
 
-        // Handle main image if provided
+        // Upload main image to Cloudinary if provided
         if (req.files?.mainImage) {
+            const mainRes = await cloudinary.uploader.upload(req.files.mainImage[0].path, {
+                folder: 'products'
+            });
             product.mainImage = {
-                url: `/uploads/${req.files.mainImage[0].filename}`,
-                public_id: req.files.mainImage[0].filename
+                url: mainRes.secure_url,
+                public_id: mainRes.public_id
             };
-        }
+            fs.unlink(req.files.mainImage[0].path, () => {});    
+        };
 
         // Handle additional media if provided
         if (req.files?.additionalMedia) {
-            const newMedia = req.files.additionalMedia.map(file => ({
-                url: `/uploads/${file.filename}`,
-                public_id: file.filename,
-                type: file.mimetype.startsWith('image/') ? 'image' : 'video'
-            }));
+            const cloudUploads = await Promise.all(
+                req.files.additionalMedia.map(async (file) => {
+                    const up = await cloudinary.uploader.upload(file.path, {
+                        folder: 'products',
+                        resource_type: file.mimetype.startsWith('video') ? 'video' : 'image'
+                    });
+                    fs.unlink(file.path, () => {});
+                    return {
+                        url: up.secure_url,
+                        public_id: up.public_id,
+                        type: file.mimetype.startsWith('image/') ? 'image' : 'video'
+                    };
+                })
+            );
+            const newMedia = cloudUploads;
             product.additionalMedia = [...product.additionalMedia, ...newMedia];
         }
 
