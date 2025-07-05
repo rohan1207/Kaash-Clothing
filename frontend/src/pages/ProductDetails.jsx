@@ -135,11 +135,12 @@ const ProductDetails = () => {
 
   const galleryItems = [
     ...(product.mainImage
-      ? [{ type: "image", url: `${API_URL}${product.mainImage.url}` }]
+      ? [{ type: "image", url: buildUrl(product.mainImage.url) }]
       : []),
     ...(product.additionalMedia || []).map((media) => ({
       ...media,
-      url: `${API_URL}${media.url}`,
+      url: buildUrl(media.url),
+      thumbnail: media.thumbnail ? buildUrl(media.thumbnail) : undefined,
     })),
   ];
 
