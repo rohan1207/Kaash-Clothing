@@ -264,7 +264,6 @@ const handleChange = (e) => {
         formDataToSend,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
