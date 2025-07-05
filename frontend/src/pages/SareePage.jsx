@@ -6,44 +6,20 @@ import axios from "axios";
 
 const API_URL = "https://kaash-clothing.onrender.com";
 
-// Update category names to match with subcategories
-const categories = [
-  "All",
-  "Silk",
-  "Cotton",
-  "Designer",
-  "Casual",
-  "Wedding",
-  "Printed",
-];
-
-const fabricTypes = [
-  "All Fabrics",
-  "Pure Silk",
-  "Banarasi Silk",
-  "Cotton",
-  "Georgette",
-  "Chiffon",
-  "Crepe",
-  "Linen",
-];
-
 const priceRanges = [
   "All",
-  "Under ₹2000",
+  "Under ₹1000",
+  "₹1000 - ₹2000",
   "₹2000 - ₹5000",
-  "₹5000 - ₹10000",
-  "Above ₹10000",
+  "Above ₹5000",
 ];
 
-const SareePage = () => {
+const Top = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
-    category: "All",
-    fabric: "All Fabrics",
     price: "All",
     sortBy: "newest",
   });
@@ -74,34 +50,15 @@ const SareePage = () => {
   const filteredAndSortedProducts = useMemo(() => {
     let items = [...products];
 
-    // Filter by subcategory
-    if (filters.category !== "All") {
-      const subcategoryMap = {
-        Silk: "Silk Sarees",
-        Cotton: "Cotton Sarees",
-        Designer: "Designer Sarees",
-        Casual: "Casual Sarees",
-        Wedding: "Wedding Sarees",
-        Printed: "Printed Sarees",
-      };
-      const mappedSubcategory = subcategoryMap[filters.category];
-      items = items.filter((p) => p.sub_category === mappedSubcategory);
-    }
-
-    // Filter by fabric
-    if (filters.fabric !== "All Fabrics") {
-      items = items.filter((p) => p.material === filters.fabric);
-    }
-
     if (filters.price !== "All") {
       items = items.filter((p) => {
         const price = p.discountedPrice || p.price;
-        if (filters.price === "Under ₹2000") return price < 2000;
+        if (filters.price === "Under ₹1000") return price < 1000;
+        if (filters.price === "₹1000 - ₹2000")
+          return price >= 1000 && price <= 2000;
         if (filters.price === "₹2000 - ₹5000")
           return price >= 2000 && price <= 5000;
-        if (filters.price === "₹5000 - ₹10000")
-          return price >= 5000 && price <= 10000;
-        if (filters.price === "Above ₹10000") return price > 10000;
+        if (filters.price === "Above ₹5000") return price > 5000;
         return true;
       });
     }
@@ -132,7 +89,7 @@ const SareePage = () => {
       className="fixed top-0 left-0 h-full w-full max-w-md bg-white shadow-2xl z-50 p-8 font-sans overflow-y-auto"
     >
       <div className="flex justify-between items-center mb-12">
-        <h2 className="text-3xl font-serif text-gray-800">Refine Selection</h2>
+        <h2 className="text-3xl font-serif text-gray-800">Filter & Sort</h2>
         <button
           onClick={() => setIsFilterOpen(false)}
           className="text-gray-500 hover:text-gray-900 transition-transform duration-300 hover:rotate-90"
@@ -141,50 +98,12 @@ const SareePage = () => {
         </button>
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-8">
         <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-5">Category</h3>
-          <div className="space-y-3">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => handleFilterChange("category", cat)}
-                className={`w-full text-left p-3 rounded-lg transition-all duration-300 text-lg ${
-                  filters.category === cat
-                    ? "bg-gray-800 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-5">Fabric</h3>
-          <div className="space-y-3">
-            {fabricTypes.map((fabric) => (
-              <button
-                key={fabric}
-                onClick={() => handleFilterChange("fabric", fabric)}
-                className={`w-full text-left p-3 rounded-lg transition-all duration-300 text-lg ${
-                  filters.fabric === fabric
-                    ? "bg-gray-800 text-white shadow-md"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                {fabric}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-5">
+          <h3 className="text-xl font-semibold text-gray-700 mb-4">
             Price Range
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {priceRanges.map((range) => (
               <button
                 key={range}
@@ -202,7 +121,7 @@ const SareePage = () => {
         </div>
 
         <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-5">Sort By</h3>
+          <h3 className="text-xl font-semibold text-gray-700 mb-4">Sort By</h3>
           <select
             value={filters.sortBy}
             onChange={(e) => handleFilterChange("sortBy", e.target.value)}
@@ -222,17 +141,14 @@ const SareePage = () => {
       product.discountedPrice && product.discountedPrice < product.price;
     const [isHovered, setIsHovered] = useState(false);
 
-    // Get the first additional image if available
     const firstAdditionalImage = product.additionalMedia?.find(
       (media) => media.type === "image"
     )?.url;
 
-    const baseImage = product.mainImage?.url || firstAdditionalImage || "";
-
     const currentImageUrl =
       isHovered && firstAdditionalImage
         ? firstAdditionalImage
-        : baseImage;
+        : product.mainImage.url;
 
     return (
       <motion.div
@@ -248,7 +164,7 @@ const SareePage = () => {
         <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100">
           <img
             key={currentImageUrl}
-            src={currentImageUrl?.startsWith("http") ? currentImageUrl : `${API_URL}${currentImageUrl.startsWith('/') ? '' : '/'}${currentImageUrl.replace(/\\/g,'/')}`}
+            src={`${API_URL}${currentImageUrl}`}
             alt={product.name}
             className="w-full h-full object-cover transition-all duration-300 ease-in-out"
           />
@@ -288,6 +204,11 @@ const SareePage = () => {
               </p>
             )}
           </div>
+          {product.sizes?.length > 0 && (
+            <p className="text-[10px] sm:text-xs text-stone-500 mt-0.5 sm:mt-1">
+              {product.sizes.join(" · ")}
+            </p>
+          )}
         </div>
       </motion.div>
     );
@@ -311,17 +232,12 @@ const SareePage = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl md:text-7xl text-gray-800 font-serif tracking-tight mb-6">
-              Timeless Sarees
+              Designer Sarees
             </h1>
             <div className="max-w-3xl mx-auto space-y-4">
               <p className="text-gray-600 text-lg md:text-xl font-light leading-relaxed">
-                Discover our exquisite collection of handcrafted sarees, where
-                tradition meets contemporary elegance. Each piece tells a story
-                of artisanal excellence and timeless beauty.
-              </p>
-              <p className="text-gray-500 text-base md:text-lg font-light">
-                From classic Banarasi silks to modern designer pieces, find your
-                perfect drape.
+                Experience the pinnacle of craftsmanship and style. Each piece
+                is a statement of elegance, designed for the modern connoisseur.
               </p>
             </div>
           </motion.div>
@@ -334,10 +250,10 @@ const SareePage = () => {
               className="flex items-center gap-3 text-lg text-gray-700 hover:text-gray-900 transition-colors font-medium bg-white px-6 py-3 rounded-lg shadow-sm border border-gray-200 hover:border-gray-300"
             >
               <FiFilter />
-              <span>Browse Collection</span>
+              <span>Filter & Sort</span>
             </button>
             <p className="text-md text-gray-500 font-medium">
-              {filteredAndSortedProducts.length} sarees
+              {filteredAndSortedProducts.length} items
             </p>
           </div>
 
@@ -369,4 +285,4 @@ const SareePage = () => {
   );
 };
 
-export default SareePage;
+export default Top;
