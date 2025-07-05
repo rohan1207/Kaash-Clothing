@@ -4,7 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiTrash2, FiPlus, FiMinus } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
-const API_URL = "https://kaash-clothing.onrender.com"; // Add API_URL constant
+const API_URL = "https://kaash-clothing.onrender.com";
+
+// Helper for Cloudinary or legacy relative URLs
+const buildUrl = (path) => (path.startsWith("http") ? path : `${API_URL}${path}`);
 
 const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, cartCount } = useCart();
@@ -70,7 +73,7 @@ const Cart = () => {
                   >
                     <div className="w-full sm:w-24 h-48 sm:h-32 md:w-32 md:h-40 flex-shrink-0">
                       <img
-                        src={`${API_URL}${item.image}`}
+                        src={buildUrl(item.image)}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />

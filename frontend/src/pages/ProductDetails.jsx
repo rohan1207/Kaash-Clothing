@@ -22,6 +22,12 @@ import {
 
 const API_URL = "https://kaash-clothing.onrender.com";
 
+// Helper to handle both Cloudinary (absolute) and legacy relative URLs
+const buildUrl = (path) => {
+  if (!path) return "";
+  return path.startsWith("http") ? path : `${API_URL}${path}`;
+};
+
 const ProductDetails = () => {
   const { addToCart } = useCart();
   const { productId } = useParams();
@@ -62,12 +68,12 @@ const ProductDetails = () => {
         if (data && data.product) {
           setProduct(data.product);
           if (data.product.mainImage) {
-            setMainImage(`${API_URL}${data.product.mainImage.url}`);
+            setMainImage(buildUrl(data.product.mainImage.url));
           } else if (
             data.product.additionalMedia &&
             data.product.additionalMedia.length > 0
           ) {
-            setMainImage(`${API_URL}${data.product.additionalMedia[0].url}`);
+            setMainImage(buildUrl(data.product.additionalMedia[0].url));
           }
           if (data.product.colors && data.product.colors.length > 0) {
             setSelectedColor(data.product.colors[0]);
@@ -216,7 +222,7 @@ const ProductDetails = () => {
     try {
       // 1. Get the main product image
       const clothImageUrl = product.mainImage
-        ? `${API_URL}${product.mainImage.url}`
+        ? buildUrl(product.mainImage.url)
         : mainImage;
       const clothImageResponse = await fetch(clothImageUrl);
       const clothImageBlob = await clothImageResponse.blob();
@@ -316,8 +322,8 @@ const ProductDetails = () => {
 
     const currentImageUrl =
       isHovered && firstAdditionalImage
-        ? firstAdditionalImage
-        : product.mainImage.url;
+        ? buildUrl(firstAdditionalImage)
+        : buildUrl(product.mainImage.url);
 
     return (
       <motion.div
@@ -333,7 +339,7 @@ const ProductDetails = () => {
         <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100 mb-3">
           <img
             key={currentImageUrl}
-            src={`${API_URL}${currentImageUrl}`}
+            src={currentImageUrl}
             alt={product.name}
             className="w-full h-full object-cover object-center transition-all duration-300 ease-in-out"
           />
