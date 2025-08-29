@@ -5,7 +5,7 @@ import { FiFilter, FiX, FiLoader, FiAlertTriangle } from "react-icons/fi";
 
 const API_URL = "https://kaash-clothing.onrender.com"; // Your backend server URL
 
-const categories = ["All", "Kurtis", "Tops", "Jeans", "Sarees", "Western"];
+const categories = ["All", "Kurtis"];
 const priceRanges = [
   "All",
   "Under 1000",
@@ -30,7 +30,7 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/api/products`);
+        const response = await fetch(`${API_URL}/api/products?category=Kurtis`);
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }

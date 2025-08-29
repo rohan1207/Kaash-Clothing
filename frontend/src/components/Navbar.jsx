@@ -85,7 +85,7 @@ const Navbar = () => {
                       whileHover={{ scale: 1.05 }}
                       className="text-xl md:text-2xl tracking-[0.3em] font-light cursor-pointer"
                     >
-                      Kaash & Co.
+                      <img src="/logo1.png" alt="Kaash & Co." className="h-12" />
                     </motion.div>
                   </Link>
                 </motion.div>
@@ -258,7 +258,7 @@ const Navbar = () => {
                     whileHover={{ scale: 1.05 }}
                     className="text-xl tracking-[0.3em] font-light cursor-pointer"
                   >
-                    Kaash & Co.
+                    <img src="/logo1.png" alt="Kaash & Co." className="h-12" />
                   </motion.div>
                 </Link>
                 <button

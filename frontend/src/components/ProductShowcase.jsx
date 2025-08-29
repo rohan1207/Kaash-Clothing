@@ -106,7 +106,7 @@ const ValueProp = ({ icon, title, description, index }) => (
 const ProductShowcase = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [visibleProducts, setVisibleProducts] = useState(6); // Initially show 6 products
+  const [visibleProducts, setVisibleProducts] = useState(8); // Initially show 6 products
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 

@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const words = ["Grace","Charm","Elegance","Vibe"];
+const words = [
+  "FLAT 50% OFF ON ALL KURTIS!",
+  "LIMITED TIME OFFER - SHOP NOW!",
+  "FREE SHIPPING ON ORDERS ABOVE ₹1999",
+  "NEW COLLECTION LAUNCH - UPTO 60% OFF"
+];
 
 const Ribbon = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -37,7 +42,7 @@ const Ribbon = () => {
       }`}
       style={
         isOutlined
-          ? { WebkitTextStroke: isSmallScreen ? "1px #ec4899" : "2px #ec4899" }
+          ? { WebkitTextStroke: isSmallScreen ? "1px #F472B6" : "2px #F472B6" }
           : {}
       }
     >
