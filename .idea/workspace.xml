@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3726a154-b7c6-4881-842e-532da3f204df" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Admin/.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/.env.production" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/eslint.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/eslint.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/postcss.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/postcss.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/render.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/render.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/src/api/fitroom.js" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/src/api/fitroom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/src/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/src/config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/src/context/CartContext.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/src/context/CartContext.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/src/main.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/src/pages/AddProduct.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/src/pages/AddProduct.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/src/pages/ProductDetails.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/src/pages/ProductDetails.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/static.json" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/static.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/vercel.json" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/vercel.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Admin/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/Admin/vite.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/models/Product.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/Product.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Footer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Footer.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Hero.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/data/new_arrival_products.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/data/products_data.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/data/products_data.new.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/HomePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/HomePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/tailwind.config.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2zJ8NlwxfBJPcr1gr5gcxktsFxZ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3726a154-b7c6-4881-842e-532da3f204df" name="Changes" comment="" />
+      <created>1751437778653</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1751437778653</updated>
+    </task>
+    <servers />
+  </component>
+</project>

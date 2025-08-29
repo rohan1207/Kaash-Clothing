@@ -216,7 +216,7 @@ const ProductDetails = () => {
         >
           ADD TO CART
         </button>
-        <button onClick={() => setIsTryOnModalOpen(true)} className="w-full bg-sky-600 text-white py-3 font-sans font-medium tracking-wider hover:bg-sky-700 transition-colors duration-300 disabled:bg-sky-300 rounded-md">Virtual Try-On</button>
+        <button onClick={() => setIsTryOnModalOpen(true)} className="w-full bg-sky text-white py-3 font-sans font-medium tracking-wider hover:bg-pink-700 transition-colors duration-300 disabled:bg-pink-300 rounded-md">Virtual Try-On</button>
       </div>
 
       <div className="mt-12 border-t border-stone-200">
@@ -347,7 +347,7 @@ const ProductDetails = () => {
               {isLoading && (
                 <div className="text-center space-y-4 py-8">
                   <p className="text-stone-700">Processing your request...</p>
-                  <div className="w-full bg-stone-200 rounded-full h-2.5"><div className="bg-sky-600 h-2.5 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div></div>
+                  <div className="w-full bg-stone-200 rounded-full h-2.5"><div className="bg-sky h-2.5 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div></div>
                   <p className="text-lg font-medium text-stone-800">{progress}%</p>
                   <p className="text-sm text-stone-500">Please keep this window open.</p>
                 </div>
