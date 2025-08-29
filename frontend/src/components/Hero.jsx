@@ -74,30 +74,31 @@ const Hero = ({
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
 
       {/* Foreground content */}
-      <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-center gap-6 px-6 md:gap-8 md:px-10">
-        <h1 className="max-w-3xl text-left font-extrabold leading-[0.95] tracking-tight">
-          <span className="block text-5xl md:text-7xl lg:text-8xl">
-            TIMELESS <span className="text-[#ec4899]">FASHION</span>
-          </span>
-          <span className="mt-1 block text-5xl md:text-7xl lg:text-8xl">
-            ESSENCE
-          </span>
-        </h1>
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center gap-6 px-6 text-center md:gap-8 md:px-10">
+        {/* Main Heading */}
+        <div className="space-y-2">
+          <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-white md:text-7xl lg:text-8xl">
+            <span className="block">TIMELESS <span className="text-[#ec4899]">FASHION</span></span>
+            <span className="block">ESSENCE</span>
+          </h1>
+        </div>
 
-        <p className="max-w-2xl text-base text-white/85 md:text-lg">
+        {/* Subheadline */}
+        <p className="max-w-2xl text-lg text-white/90 md:text-xl">
           {subheadline}
         </p>
 
-        <div className="mt-2 flex items-center gap-4">
+        {/* CTA Buttons */}
+        <div className="mt-4 flex items-center justify-center gap-4">
           {/* Circular icon button */}
           <button
             type="button"
             onClick={handleCta}
-            className="group inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-gray-900 transition hover:scale-105 hover:shadow-xl"
+            className="group inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-gray-900 transition-all duration-300 hover:scale-110 hover:shadow-xl"
             aria-label={ctaText}
           >
             <svg
-              className="h-6 w-6 transition-transform group-hover:translate-x-0.5"
+              className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-1"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -116,7 +117,7 @@ const Hero = ({
           <button
             type="button"
             onClick={handleCta}
-            className="inline-flex items-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow-lg transition hover:scale-[1.02] hover:shadow-xl md:text-base"
+            className="inline-flex items-center rounded-full bg-white px-8 py-4 text-base font-semibold text-gray-900 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl md:px-10 md:py-4 md:text-lg"
           >
             {ctaText}
           </button>
