@@ -170,7 +170,7 @@ const NewArrivals = () => {
           </h2>
           <Link
             to={getViewAllLink(title)}
-            className="text-sky-600 hover:text-sky-700 text-xs md:text-sm font-medium tracking-wider"
+            className="text-sky hover:text-pink-700 text-xs md:text-sm font-medium tracking-wider"
           >
             View All
           </Link>

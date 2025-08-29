@@ -105,7 +105,7 @@ const ContactUs = () => {
 
 const InfoCard = ({ icon, title, lines }) => (
   <div className="flex items-start gap-4">
-    <div className="text-sky-600 mt-1">{icon}</div>
+    <div className="text-sky mt-1">{icon}</div>
     <div>
       <h3 className="text-lg text-stone-800 font-semibold mb-1">{title}</h3>
       {lines.map((line, i) => (
@@ -121,7 +121,7 @@ const InputField = ({ name, label, ...props }) => (
     <input
       id={name}
       name={name}
-      className="w-full p-3 border border-stone-300 bg-stone-50 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors duration-300"
+      className="w-full p-3 border border-stone-300 bg-stone-50 focus:ring-2 focus:ring-sky focus:border-sky transition-colors duration-300"
       {...props}
     />
   </div>
@@ -134,7 +134,7 @@ const TextAreaField = ({ name, label, ...props }) => (
       id={name}
       name={name}
       rows="5"
-      className="w-full p-3 border border-stone-300 bg-stone-50 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors duration-300 resize-none"
+      className="w-full p-3 border border-stone-300 bg-stone-50 focus:ring-2 focus:ring-sky focus:border-sky transition-colors duration-300 resize-none"
       {...props}
     />
   </div>

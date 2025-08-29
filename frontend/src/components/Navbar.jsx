@@ -4,7 +4,7 @@ import { useCart } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NavIcon = ({ children }) => (
-  <button className="text-stone-800 hover:text-sky-600 transition-colors duration-300">
+  <button className="text-stone-800 hover:text-sky transition-colors duration-300">
     {children}
   </button>
 );
@@ -15,7 +15,7 @@ const MobileNavLink = ({ to, children, onClick }) => (
     onClick={onClick}
     className={({ isActive }) =>
       `block px-4 py-3 text-base font-medium transition-colors duration-300 rounded-lg ${
-        isActive ? "bg-sky-50 text-sky-600" : "text-gray-800 hover:bg-gray-50"
+        isActive ? "bg-pink-50 text-sky" : "text-gray-800 hover:bg-gray-50"
       }`
     }
   >
@@ -100,8 +100,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `text-sm font-medium tracking-wider uppercase transition-colors duration-300 ${
                   isActive
-                    ? "text-sky-600"
-                    : "text-stone-700 hover:text-sky-600"
+                    ? "text-sky"
+                    : "text-stone-700 hover:text-sky"
                 }`
               }
             >
@@ -112,8 +112,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `text-sm font-medium tracking-wider uppercase transition-colors duration-300 ${
                   isActive
-                    ? "text-sky-600"
-                    : "text-stone-700 hover:text-sky-600"
+                    ? "text-sky"
+                    : "text-stone-700 hover:text-sky"
                 }`
               }
             >
@@ -124,8 +124,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `text-sm font-medium tracking-wider uppercase transition-colors duration-300 ${
                   isActive
-                    ? "text-sky-600"
-                    : "text-stone-700 hover:text-sky-600"
+                    ? "text-sky"
+                    : "text-stone-700 hover:text-sky"
                 }`
               }
             >
@@ -136,8 +136,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `text-sm font-medium tracking-wider uppercase transition-colors duration-300 ${
                   isActive
-                    ? "text-sky-600"
-                    : "text-stone-700 hover:text-sky-600"
+                    ? "text-sky"
+                    : "text-stone-700 hover:text-sky"
                 }`
               }
             >
@@ -148,8 +148,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `text-sm font-medium tracking-wider uppercase transition-colors duration-300 ${
                   isActive
-                    ? "text-sky-600"
-                    : "text-stone-700 hover:text-sky-600"
+                    ? "text-sky"
+                    : "text-stone-700 hover:text-sky"
                 }`
               }
             >
@@ -178,7 +178,7 @@ const Navbar = () => {
 
             <Link
               to="/cart"
-              className="relative text-stone-800 hover:text-sky-600 transition-colors duration-300"
+              className="relative text-stone-800 hover:text-sky transition-colors duration-300"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -195,7 +195,7 @@ const Navbar = () => {
                 />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-sky-600 rounded-full">
+                <span className="absolute -top-2 -right-2 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-sky rounded-full">
                   {cartCount}
                 </span>
               )}
@@ -287,7 +287,7 @@ const Navbar = () => {
                   <input
                     type="text"
                     placeholder="Search products..."
-                    className="w-full px-4 py-3 pl-12 bg-gray-50 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-sky-600 transition-all duration-300"
+                    className="w-full px-4 py-3 pl-12 bg-gray-50 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-sky transition-all duration-300"
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -373,7 +373,7 @@ const Navbar = () => {
                       <span className="font-medium">Shopping Cart</span>
                     </div>
                     {cartCount > 0 && (
-                      <span className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-sky-600 rounded-full">
+                      <span className="flex items-center justify-center w-6 h-6 text-sm font-bold text-white bg-sky rounded-full">
                         {cartCount}
                       </span>
                     )}
@@ -386,7 +386,7 @@ const Navbar = () => {
                 <div className="flex justify-center space-x-6">
                   <a
                     href="#"
-                    className="text-gray-600 hover:text-sky-600 transition-colors duration-300"
+                    className="text-gray-600 hover:text-sky transition-colors duration-300"
                   >
                     <span className="sr-only">Facebook</span>
                     <svg
@@ -399,7 +399,7 @@ const Navbar = () => {
                   </a>
                   <a
                     href="#"
-                    className="text-gray-600 hover:text-sky-600 transition-colors duration-300"
+                    className="text-gray-600 hover:text-sky transition-colors duration-300"
                   >
                     <span className="sr-only">Instagram</span>
                     <svg

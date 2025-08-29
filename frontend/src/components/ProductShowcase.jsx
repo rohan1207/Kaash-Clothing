@@ -114,7 +114,7 @@ const ProductShowcase = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${API_URL}/api/products`);
+        const response = await fetch(`${API_URL}/api/products?category=Kurtis`);
         if (!response.ok) throw new Error("Failed to fetch products.");
         const data = await response.json();
         const shuffled = data.products.sort(() => 0.5 - Math.random());
@@ -278,7 +278,7 @@ const ProductShowcase = () => {
       <section className="relative bg-stone-800 text-white py-24 md:py-40">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: "url('/coming_soon1.png')" }}
+          style={{ backgroundImage: "url('/kurti1.png')" }}
         ></div>
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.h2

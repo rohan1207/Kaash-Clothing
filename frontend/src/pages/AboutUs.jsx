@@ -68,7 +68,7 @@ const AboutUs = () => {
               className="relative h-[50vh] md:h-[70vh]"
             >
               <img
-                src="https://images.pexels.com/photos/3757942/pexels-photo-3757942.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                src="/kurti1.png"
                 alt="Brand Vision"
                 className="w-full h-full object-cover shadow-xl"
               />
@@ -121,7 +121,7 @@ const AboutUs = () => {
             viewport={{ once: true, amount: 0.5 }}
           >
             <motion.div variants={fadeIn} className="p-8">
-              <FaPenNib className="text-4xl text-sky-600 mx-auto mb-6" />
+              <FaPenNib className="text-4xl text-[#ec4899] mx-auto mb-6" />
               <h4 className="text-xl font-semibold mb-3">Intentional Design</h4>
               <p className="text-stone-600 font-sans leading-relaxed">
                 Our process begins with inspiration, sketching timeless
@@ -129,7 +129,7 @@ const AboutUs = () => {
               </p>
             </motion.div>
             <motion.div variants={fadeIn} className="p-8">
-              <FaLeaf className="text-4xl text-sky-600 mx-auto mb-6" />
+              <FaLeaf className="text-4xl text-[#ec4899] mx-auto mb-6" />
               <h4 className="text-xl font-semibold mb-3">
                 Sustainable Materials
               </h4>
@@ -139,7 +139,7 @@ const AboutUs = () => {
               </p>
             </motion.div>
             <motion.div variants={fadeIn} className="p-8">
-              <FaCut className="text-4xl text-sky-600 mx-auto mb-6" />
+              <FaCut className="text-4xl text-[#ec4899] mx-auto mb-6" />
               <h4 className="text-xl font-semibold mb-3">
                 Expert Craftsmanship
               </h4>
@@ -188,7 +188,7 @@ const AboutUs = () => {
               className="relative h-[50vh] md:h-[70vh] md:order-1"
             >
               <img
-                src="https://images.pexels.com/photos/5860371/pexels-photo-5860371.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                src="kurti3.png"
                 alt="Founder"
                 className="w-full h-full object-cover shadow-xl"
               />

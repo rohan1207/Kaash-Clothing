@@ -39,11 +39,11 @@ const Footer = () => {
             <input
               type="email"
               placeholder="Enter your email"
-              className="bg-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-sky-500 w-full sm:w-auto flex-grow"
+              className="bg-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-sky w-full sm:w-auto flex-grow"
             />
             <button
               type="submit"
-              className="bg-sky-600 text-white font-semibold px-6 py-3 mt-2 sm:mt-0 rounded-md sm:rounded-l-none hover:bg-sky-700 transition-colors duration-300"
+              className="bg-sky text-white font-semibold px-6 py-3 mt-2 sm:mt-0 rounded-md sm:rounded-l-none hover:bg-pink-700 transition-colors duration-300"
             >
               Subscribe
             </button>
