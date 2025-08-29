@@ -507,7 +507,7 @@ const LandingPage = () => {
         {/* Header */}
         <div className="absolute top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm">
           <h1 className="text-xl font-light tracking-widest text-center py-3">
-            TSK
+            Kaash & Co.
           </h1>
         </div>
 
@@ -784,7 +784,7 @@ ELEGANCE</span>
               transition: "all 0.8s ease-out",
             }}
           >
-            At TSK, we curate a timeless collection of luxurious kurtis,
+            At Kaash & Co., we curate a timeless collection of luxurious kurtis,
             graceful sarees, contemporary tops, and more. Each piece is designed
             to blend traditional charm with modern sophistication — celebrating
             the essence of every woman.

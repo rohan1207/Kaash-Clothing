@@ -57,7 +57,7 @@ const Footer = () => {
               whileHover={{ scale: 1.05 }}
               className="text-xl md:text-2xl tracking-[0.3em] font-light cursor-pointer"
             >
-              TSK
+              Kaash & Co.
             </motion.div>
             <p className="text-sm text-stone-400 leading-relaxed mt-2">
               Timeless elegance, modern design. Discover curated collections

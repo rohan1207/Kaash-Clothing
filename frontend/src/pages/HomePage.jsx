@@ -2,16 +2,17 @@ import React from "react";
 
 
 import ProductShowcase from "../components/ProductShowcase";
-import LandingComponent from "../components/LandingComponent"; 
-import DiscountBanner  from "../components/DiscountBanner "; 
+import Hero from "../components/Hero"; 
+import Ribbon from "../components/Ribbon"; 
+// import DiscountBanner  from "../components/DiscountBanner "; 
 
 const HomePage = () => {
   return (
     <div>
      
-     <LandingComponent />
-     <DiscountBanner  />
-   
+     <Hero />
+     
+   <Ribbon/>
       <ProductShowcase />
     </div>
   );
