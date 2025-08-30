@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+// ...existing code...
 import { Link, NavLink } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,6 +8,114 @@ const Navbar = () => {
   const { cartCount } = useCart();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [searchPopupOpen, setSearchPopupOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [showResults, setShowResults] = useState(false);
+  const [sortBy, setSortBy] = useState("Relevance");
+  const searchPopupRef = useRef(null);
+  // Dummy data for results view (Kurtis only)
+  const activeTags = [
+    "kurti",
+    "cotton kurti",
+    "designer kurti",
+    "printed kurti",
+    "long kurti",
+    "short kurti",
+  ];
+  const categories = [
+    "ALL KURTIS",
+    "COTTON KURTIS",
+    "DESIGNER KURTIS",
+    "PRINTED KURTIS",
+    "LONG KURTIS",
+    "SHORT KURTIS",
+  ];
+  const colors = ["BLACK", "WHITE", "RED", "BLUE", "GREEN", "YELLOW", "PINK"];
+  const products = [
+    { name: "Classic Cotton Kurti", price: "₹999", image: "/public/kurti.png" },
+    { name: "Designer Kurti", price: "₹1499", image: "/public/kurti1.png" },
+    {
+      name: "Printed Kurti",
+      price: "₹799",
+      oldPrice: "₹999",
+      image: "/public/kurti3.png",
+      discount: "20%",
+    },
+    { name: "Long Kurti", price: "₹1299", image: "/public/kurti.png" },
+    { name: "Short Kurti", price: "₹899", image: "/public/kurti1.png" },
+    { name: "Festive Kurti", price: "₹1599", image: "/public/kurti3.png" },
+    { name: "Casual Kurti", price: "₹699", image: "/public/kurti.png" },
+    { name: "Embroidered Kurti", price: "₹1799", image: "/public/kurti1.png" },
+  ];
+  // Dummy data for search popup (Kurtis only)
+  const popularSearches = [
+    "Classic Kurti",
+    "Cotton Kurti",
+    "Designer Kurti",
+    "Printed Kurti",
+    "Long Kurti",
+    "Short Kurti",
+    "Festive Kurti",
+    "Casual Kurti",
+    "Embroidered Kurti",
+  ];
+  const recommendedProducts = [
+    {
+      name: "Classic Cotton Kurti",
+      price: "₹999",
+      image: "/public/kurti.png",
+    },
+    {
+      name: "Designer Kurti",
+      price: "₹1499",
+      image: "/public/kurti1.png",
+    },
+    {
+      name: "Printed Kurti",
+      price: "₹799",
+      image: "/public/kurti3.png",
+    },
+    {
+      name: "Long Kurti",
+      price: "₹1299",
+      image: "/public/kurti.png",
+    },
+    {
+      name: "Short Kurti",
+      price: "₹899",
+      image: "/public/kurti1.png",
+    },
+    {
+      name: "Festive Kurti",
+      price: "₹1599",
+      image: "/public/kurti3.png",
+    },
+  ];
+  // Close popup on outside click
+  useEffect(() => {
+    function handleClick(e) {
+      if (
+        searchPopupOpen &&
+        searchPopupRef.current &&
+        !searchPopupRef.current.contains(e.target)
+      ) {
+        setSearchPopupOpen(false);
+        setShowResults(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+
+    // Prevent background scroll when popup is open
+    if (searchPopupOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.body.style.overflow = "";
+    };
+  }, [searchPopupOpen]);
 
   const handleScroll = () => {
     setIsScrolled(window.scrollY > 20);
@@ -89,21 +198,21 @@ const Navbar = () => {
                 <motion.span
                   className={`w-6 h-0.5 rounded-full transition-all duration-300 ${
                     isScrolled ? "bg-gray-800" : "bg-white"
-                  } group-hover:bg-sky-600`}
+                  } group-hover:bg-[#ec4899]`}
                   animate={isOpen ? { rotate: 45, y: 3 } : { rotate: 0, y: 0 }}
                   transition={{ duration: 0.3 }}
                 />
                 <motion.span
                   className={`w-6 h-0.5 rounded-full mt-1.5 transition-all duration-300 ${
                     isScrolled ? "bg-gray-800" : "bg-white"
-                  } group-hover:bg-sky-600`}
+                  } group-hover:bg-[#ec4899]`}
                   animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
                   transition={{ duration: 0.2 }}
                 />
                 <motion.span
                   className={`w-6 h-0.5 rounded-full mt-1.5 transition-all duration-300 ${
                     isScrolled ? "bg-gray-800" : "bg-white"
-                  } group-hover:bg-sky-600`}
+                  } group-hover:bg-[#ec4899]`}
                   animate={
                     isOpen ? { rotate: -45, y: -3 } : { rotate: 0, y: 0 }
                   }
@@ -116,8 +225,8 @@ const Navbar = () => {
                 onClick={() => setIsOpen(true)}
                 className={`hidden sm:block text-sm lg:text-base tracking-normal transition-colors ${
                   isScrolled
-                    ? "text-gray-800 hover:text-sky-700"
-                    : "text-white hover:text-sky-200"
+                    ? "text-gray-800 hover:text-pink-600"
+                    : "text-white hover:text-pink-200"
                 }`}
               >
                 Menu
@@ -125,10 +234,11 @@ const Navbar = () => {
 
               {/* Search hint (like the reference) */}
               <button
+                onClick={() => setSearchPopupOpen(true)}
                 className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${
                   isScrolled
-                    ? "text-gray-600 border-gray-200 hover:border-gray-300 hover:text-gray-800"
-                    : "text-white/90 border-white/30 hover:border-white/60 hover:text-white"
+                    ? "text-gray-600 border-gray-200 hover:border-pink-300 hover:text-gray-800"
+                    : "text-white/90 border-white/30 hover:border-pink-200 hover:text-white"
                 }`}
               >
                 <svg
@@ -148,6 +258,300 @@ const Navbar = () => {
                 <span className="text-sm">Search our catalog</span>
               </button>
             </div>
+            {/* Elegant Search Popup (desktop) with premium animation and results view */}
+            <AnimatePresence>
+              {searchPopupOpen && (
+                <motion.div
+                  initial={{ y: -60, opacity: 0, scale: 0.98 }}
+                  animate={{ y: 0, opacity: 1, scale: 1 }}
+                  exit={{ y: -60, opacity: 0, scale: 0.98 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 32,
+                    duration: 0.5,
+                  }}
+                  className={`fixed left-0 top-0 w-full z-[999] bg-white/95 shadow-2xl backdrop-blur-lg border-b border-neutral-200 ${
+                    showResults ? "h-screen" : ""
+                  }`}
+                  style={{
+                    minHeight: showResults ? "100vh" : "340px",
+                    maxHeight: "100vh",
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.10)",
+
+                    overflowY: showResults ? "auto" : "visible",
+                  }}
+                >
+                  <div
+                    ref={searchPopupRef}
+                    className={`max-w-7xl mx-auto px-8 py-6 flex flex-col gap-6 ${
+                      showResults ? "h-full" : ""
+                    }`}
+                    style={
+                      showResults
+                        ? {
+                            maxHeight: "calc(100vh - 32px)",
+                            overflowY: "auto",
+                            scrollBehavior: "smooth",
+                            scrollbarWidth: "none",
+                          }
+                        : {}
+                    }
+                  >
+                    <style>{`
+                [data-search-popup-scroll]::-webkit-scrollbar { display: none; }
+                [data-search-popup-scroll] { scrollbar-width: none; -ms-overflow-style: none; }
+              `}</style>
+                    {/* Top search bar and close */}
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="text"
+                        value={searchValue}
+                        onChange={(e) => {
+                          setSearchValue(e.target.value);
+                          setShowResults(e.target.value.length > 0);
+                        }}
+                        autoFocus
+                        placeholder="Search..."
+                        className="w-full px-4 py-2 rounded-full border border-neutral-300 bg-white text-lg font-light shadow-sm focus:outline-none focus:ring-2 focus:ring-[#ec4899]"
+                        style={{ fontFamily: "Cormorant Garamond, serif" }}
+                      />
+                      <button
+                        onClick={() => {
+                          setSearchPopupOpen(false);
+                          setShowResults(false);
+                        }}
+                        className="ml-2 px-3 py-2 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 text-sm font-medium shadow"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    {/* Results view */}
+                    {showResults ? (
+                      <div className="flex flex-col gap-6 h-full">
+                        {/* Active tags */}
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {activeTags.map((tag, i) => (
+                            <span
+                              key={i}
+                              className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium shadow-sm border border-gray-200"
+                              style={{
+                                fontFamily: "Cormorant Garamond, serif",
+                              }}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex gap-8 h-full">
+                          {/* Left: Filters */}
+                          <div className="w-64 min-w-[220px] flex-shrink-0 flex flex-col gap-8">
+                            {/* Price filter */}
+                            <div>
+                              <div className="font-semibold text-sm text-neutral-700 mb-2">
+                                Price
+                              </div>
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="bg-gray-900 text-white px-2 py-1 rounded text-xs font-bold">
+                                  34 ₹
+                                </span>
+                                <span className="bg-gray-900 text-white px-2 py-1 rounded text-xs font-bold">
+                                  390 ₹
+                                </span>
+                              </div>
+                              <input
+                                type="range"
+                                min="34"
+                                max="390"
+                                className="w-full accent-gray-900"
+                              />
+                              <div className="flex justify-between text-xs text-neutral-500 mt-1">
+                                <span>34 ₹</span>
+                                <span>212 ₹</span>
+                                <span>390 ₹</span>
+                              </div>
+                            </div>
+                            {/* Categories */}
+                            <div>
+                              <div className="font-semibold text-sm text-neutral-700 mb-2">
+                                Categories
+                              </div>
+                              <ul className="space-y-1">
+                                {categories.map((cat, i) => (
+                                  <li
+                                    key={i}
+                                    className="text-sm text-neutral-700 hover:text-yellow-600 cursor-pointer transition"
+                                    style={{
+                                      fontFamily: "Cormorant Garamond, serif",
+                                    }}
+                                  >
+                                    {cat}
+                                  </li>
+                                ))}
+                              </ul>
+                              <button className="text-xs text-neutral-500 mt-2 underline">
+                                View more
+                              </button>
+                            </div>
+                            {/* Colors */}
+                            <div>
+                              <div className="font-semibold text-sm text-neutral-700 mb-2">
+                                Colors
+                              </div>
+                              <ul className="space-y-1">
+                                {colors.map((col, i) => (
+                                  <li
+                                    key={i}
+                                    className="text-sm text-neutral-700 hover:text-yellow-600 cursor-pointer transition"
+                                    style={{
+                                      fontFamily: "Cormorant Garamond, serif",
+                                    }}
+                                  >
+                                    {col}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                          {/* Right: Results grid */}
+                          <div className="flex-1 flex flex-col">
+                            {/* Sort and results count */}
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="text-sm text-neutral-700 font-medium">
+                                76 results found
+                              </div>
+                              <div className="relative">
+                                <button
+                                  onClick={() => {}}
+                                  className="text-xs text-neutral-500 font-medium px-3 py-2 rounded hover:bg-gray-100 border border-gray-200"
+                                >
+                                  Sorted by: {sortBy}{" "}
+                                  <span className="ml-1">▼</span>
+                                </button>
+                                {/* Sort dropdown (dummy, not interactive) */}
+                                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10 hidden">
+                                  <ul className="py-2">
+                                    <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                      Relevance
+                                    </li>
+                                    <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                      Price (Lowest to highest)
+                                    </li>
+                                    <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                      Price (Highest to lowest)
+                                    </li>
+                                    <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                      Name from A to Z
+                                    </li>
+                                    <li className="px-4 py-2 hover:bg-gray-50 cursor-pointer">
+                                      Name from Z to A
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                            {/* Product grid */}
+                            <div className="grid grid-cols-4 gap-8">
+                              {products.map((prod, i) => (
+                                <div
+                                  key={i}
+                                  className="bg-white rounded-md shadow-lg border border-neutral-100 flex flex-col items-center p-4 transition hover:scale-105"
+                                  style={{
+                                    fontFamily: "Cormorant Garamond, serif",
+                                  }}
+                                >
+                                  <div className="relative w-full flex justify-center">
+                                    <img
+                                      src={prod.image}
+                                      alt={prod.name}
+                                      className="w-48 h-64 object-cover rounded-md mb-2"
+                                    />
+                                    {prod.discount && (
+                                      <span className="absolute top-2 right-2 bg-black text-white text-xs font-bold px-2 py-1 rounded">
+                                        {prod.discount}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div
+                                    className="text-[15px] font-medium text-neutral-800 text-center mb-1"
+                                    style={{ letterSpacing: "0.01em" }}
+                                  >
+                                    {prod.name}
+                                  </div>
+                                  <div className="text-sm text-neutral-700">
+                                    {prod.price}
+                                    {prod.oldPrice && (
+                                      <span className="line-through text-xs text-neutral-400 ml-2">
+                                        {prod.oldPrice}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      // Initial view (popular searches + recommended products)
+                      <div className="grid grid-cols-12 gap-8">
+                        {/* Popular searches */}
+                        <div className="col-span-2">
+                          <div className="text-xs font-semibold text-neutral-500 mb-2 tracking-wide">
+                            Popular searches
+                          </div>
+                          <ul className="space-y-2">
+                            {popularSearches.map((term, i) => (
+                              <li
+                                key={i}
+                                className="text-sm text-neutral-700 hover:text-yellow-600 cursor-pointer transition"
+                                style={{
+                                  fontFamily: "Cormorant Garamond, serif",
+                                }}
+                              >
+                                {term}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        {/* Recommended products */}
+                        <div className="col-span-10">
+                          <div className="text-xs font-semibold text-neutral-500 mb-2 tracking-wide">
+                            Recommended products
+                          </div>
+                          <div className="flex gap-6 overflow-x-auto pb-2">
+                            {recommendedProducts.map((prod, i) => (
+                              <div
+                                key={i}
+                                className="min-w-[140px] max-w-[160px] bg-white rounded-md shadow-lg border border-neutral-100 flex flex-col items-center p-3 transition hover:scale-105"
+                                style={{
+                                  fontFamily: "Cormorant Garamond, serif",
+                                }}
+                              >
+                                <img
+                                  src={prod.image}
+                                  alt={prod.name}
+                                  className="w-24 h-24 object-cover rounded-md mb-2"
+                                />
+                                <div
+                                  className="text-[15px] font-medium text-neutral-800 text-center mb-1"
+                                  style={{ letterSpacing: "0.01em" }}
+                                >
+                                  {prod.name}
+                                </div>
+                                <div className="text-xs text-neutral-500">
+                                  {prod.price}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Center Logo */}
             <div className="absolute left-1/2 transform -translate-x-1/2">
@@ -173,8 +577,8 @@ const Navbar = () => {
                 to="/account"
                 className={`text-sm transition-colors ${
                   isScrolled
-                    ? "text-gray-800 hover:text-sky-700"
-                    : "text-white hover:text-sky-200"
+                    ? "text-gray-800 hover:text-pink-600"
+                    : "text-white hover:text-pink-200"
                 }`}
               >
                 Log in
@@ -183,8 +587,8 @@ const Navbar = () => {
                 to="/wishlist"
                 className={`text-sm transition-colors ${
                   isScrolled
-                    ? "text-gray-800 hover:text-sky-700"
-                    : "text-white hover:text-sky-200"
+                    ? "text-gray-800 hover:text-pink-600"
+                    : "text-white hover:text-pink-200"
                 }`}
               >
                 Wishlist
@@ -193,8 +597,8 @@ const Navbar = () => {
                 to="/cart"
                 className={`relative text-sm transition-colors ${
                   isScrolled
-                    ? "text-gray-800 hover:text-sky-700"
-                    : "text-white hover:text-sky-200"
+                    ? "text-gray-800 hover:text-pink-600"
+                    : "text-white hover:text-pink-200"
                 }`}
               >
                 Cart
@@ -207,8 +611,8 @@ const Navbar = () => {
               <button
                 className={`flex items-center gap-1 text-sm transition-colors ${
                   isScrolled
-                    ? "text-gray-800 hover:text-sky-700"
-                    : "text-white hover:text-sky-200"
+                    ? "text-gray-800 hover:text-pink-600"
+                    : "text-white hover:text-pink-200"
                 }`}
               >
                 En
@@ -295,7 +699,7 @@ const Navbar = () => {
                   <input
                     type="text"
                     placeholder="Search our catalog"
-                    className="w-full px-4 py-3 pl-12 bg-gray-50/80 border border-gray-200/50 rounded-xl text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all duration-300"
+                    className="w-full px-4 py-3 pl-12 bg-gray-50/80 border border-gray-200/50 rounded-md text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-400 transition-all duration-300"
                   />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -334,9 +738,9 @@ const Navbar = () => {
                       <NavLink to={link.to} onClick={() => setIsOpen(false)}>
                         {({ isActive }) => (
                           <span
-                            className={`block px-6 py-4 text-lg font-light tracking-wide transition-all duration-300 rounded-xl group ${
+                            className={`block px-6 py-4 text-lg font-light tracking-wide transition-all duration-300 rounded-md group ${
                               isActive
-                                ? "bg-sky-50 text-sky-700 border-l-4 border-sky-500"
+                                ? "bg-pink-50 text-[#ec4899] border-l-4 border-pink-500"
                                 : "text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:translate-x-2"
                             }`}
                           >
@@ -345,7 +749,7 @@ const Navbar = () => {
                               <svg
                                 className={`w-4 h-4 transition-transform duration-300 ${
                                   isActive
-                                    ? "text-sky-500"
+                                    ? "text-pink-500"
                                     : "text-gray-400 group-hover:translate-x-1"
                                 }`}
                                 fill="none"
@@ -381,7 +785,7 @@ const Navbar = () => {
                   <motion.a
                     href="#"
                     whileHover={{ scale: 1.1, y: -2 }}
-                    className="text-gray-400 hover:text-sky-600 transition-colors duration-300"
+                    className="text-gray-400 hover:text-pink-600 transition-colors duration-300"
                   >
                     <span className="sr-only">Facebook</span>
                     <svg
@@ -395,7 +799,7 @@ const Navbar = () => {
                   <motion.a
                     href="#"
                     whileHover={{ scale: 1.1, y: -2 }}
-                    className="text-gray-400 hover:text-sky-600 transition-colors duration-300"
+                    className="text-gray-400 hover:text-pink-600 transition-colors duration-300"
                   >
                     <span className="sr-only">Instagram</span>
                     <svg

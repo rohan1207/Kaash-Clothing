@@ -255,20 +255,20 @@ const DualSpotlight = ({ items }) => {
   const [openIndex, setOpenIndex] = useState(null);
   const data = items || [
     {
-      title: "Hanks shirt",
-      titleLines: ["Hanks", "shirt"],
+      title: "Olive Aura",
+      titleLines: ["Olive", "Aura"],
       image: "/kaashkurti1.jpg",
       cardImage: "/kaashkurti1.jpg",
-      price: "€320.00",
+      price: "₹320.00",
       hotspot: { x: "56%", y: "64%", side: "left" },
       cta: "/shop",
     },
     {
-      title: "Colombo jacket",
-      titleLines: ["Colombo", "jacket"],
+      title: "Patchwork Charm",
+      titleLines: ["Patchwork", "Charm"],
       image: "/kaashkurti2.jpg",
       cardImage: "/kaashkurti2.jpg",
-      price: "€320.00",
+      price: "₹320.00",
       hotspot: { x: "47%", y: "66%", side: "right" },
       cta: "/shop",
     },
