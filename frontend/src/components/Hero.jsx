@@ -14,19 +14,17 @@ import React from "react";
  * Usage:
  * <NewHero videos={["/videos/v1.mp4","/videos/v2.mp4","/videos/v3.mp4"]} />
  */
+import { useState } from "react";
+
 const Hero = ({
-  videos = [
-    // Replace these with your local files in /public/videos
-    "/video1.mp4",
-    "/video2.mp4",
-    "/video3.mp4",
-  ],
+  videos = ["/video1.mp4", "/video2.mp4", "/video3.mp4"],
   headline = "TIMELESS FASHION",
   subheadline = "Discover fashion that transcends trends. Elevate style with classic, elegant, and enduring designs.",
   ctaText = "EXPLORE NOW",
   onCtaClick,
   showRibbon = true,
 }) => {
+  const [hovered, setHovered] = useState(false);
   const handleCta = () => {
     if (typeof onCtaClick === "function") onCtaClick();
   };
@@ -78,7 +76,9 @@ const Hero = ({
         {/* Main Heading */}
         <div className="space-y-2">
           <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-white md:text-7xl lg:text-8xl">
-            <span className="block">TIMELESS <span className="text-[#ec4899]">FASHION</span></span>
+            <span className="block">
+              TIMELESS <span className="text-[#ec4899]">FASHION</span>
+            </span>
             <span className="block">ESSENCE</span>
           </h1>
         </div>
@@ -89,38 +89,40 @@ const Hero = ({
         </p>
 
         {/* CTA Buttons */}
-        <div className="mt-4 flex items-center justify-center gap-4">
-          {/* Circular icon button */}
-          <button
-            type="button"
-            onClick={handleCta}
-            className="group inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-gray-900 transition-all duration-300 hover:scale-110 hover:shadow-xl"
-            aria-label={ctaText}
-          >
-            <svg
-              className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-1"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+        <div className="mt-4 flex items-center justify-center">
+          <div className="group relative flex items-center">
+            {/* Arrow Button with initial gap (mr-5) that collapses on hover */}
+            <button
+              type="button"
+              onClick={handleCta}
+              aria-label={ctaText}
+              className="relative z-20 inline-flex h-14 w-14 items-center justify-center rounded-full bg-white text-gray-900 transition-all duration-500 ease-out mr-5 group-hover:-mr-8 group-hover:bg-black group-hover:text-white group-hover:rounded-l-full group-hover:h-12 group-hover:w-12"
             >
-              <path
-                d="M5 12h14M13 5l7 7-7 7"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
+              <svg
+                className="h-6 w-6 transition-all duration-500 ease-out"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 12h14M13 5l7 7-7 7"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
 
-          {/* Primary CTA */}
-          <button
-            type="button"
-            onClick={handleCta}
-            className="inline-flex items-center rounded-full bg-white px-8 py-4 text-base font-semibold text-gray-900 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl md:px-10 md:py-4 md:text-lg"
-          >
-            {ctaText}
-          </button>
+            {/* Explore Now Button: single-line, expands to the LEFT by increasing left padding and shifting left on hover */}
+            <button
+              type="button"
+              onClick={handleCta}
+              className="relative z-10 inline-flex h-14 items-center rounded-full bg-white text-gray-900 border border-transparent px-8 py-3 text-base font-semibold shadow-lg transition-all duration-500 ease-out whitespace-nowrap group-hover:-ml-5 group-hover:pl-24 group-hover:shadow-xl md:px-10 md:text-lg"
+            >
+              {ctaText}
+            </button>
+          </div>
         </div>
       </div>
 

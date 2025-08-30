@@ -32,20 +32,20 @@ const Navbar = () => {
   ];
   const colors = ["BLACK", "WHITE", "RED", "BLUE", "GREEN", "YELLOW", "PINK"];
   const products = [
-    { name: "Classic Cotton Kurti", price: "₹999", image: "/public/kurti.png" },
-    { name: "Designer Kurti", price: "₹1499", image: "/public/kurti1.png" },
+    { name: "Classic Cotton Kurti", price: "₹999", image: "/kurti.png" },
+    { name: "Designer Kurti", price: "₹1499", image: "/kurti1.png" },
     {
       name: "Printed Kurti",
       price: "₹799",
       oldPrice: "₹999",
-      image: "/public/kurti3.png",
+      image: "/kurti3.png",
       discount: "20%",
     },
-    { name: "Long Kurti", price: "₹1299", image: "/public/kurti.png" },
-    { name: "Short Kurti", price: "₹899", image: "/public/kurti1.png" },
-    { name: "Festive Kurti", price: "₹1599", image: "/public/kurti3.png" },
-    { name: "Casual Kurti", price: "₹699", image: "/public/kurti.png" },
-    { name: "Embroidered Kurti", price: "₹1799", image: "/public/kurti1.png" },
+    { name: "Long Kurti", price: "₹1299", image: "/kurti.png" },
+    { name: "Short Kurti", price: "₹899", image: "/kurti1.png" },
+    { name: "Festive Kurti", price: "₹1599", image: "/kurti3.png" },
+    { name: "Casual Kurti", price: "₹699", image: "/kurti.png" },
+    { name: "Embroidered Kurti", price: "₹1799", image: "/kurti1.png" },
   ];
   // Dummy data for search popup (Kurtis only)
   const popularSearches = [
@@ -63,32 +63,32 @@ const Navbar = () => {
     {
       name: "Classic Cotton Kurti",
       price: "₹999",
-      image: "/public/kurti.png",
+      image: "/kurti.png",
     },
     {
       name: "Designer Kurti",
       price: "₹1499",
-      image: "/public/kurti1.png",
+      image: "/kurti1.png",
     },
     {
       name: "Printed Kurti",
       price: "₹799",
-      image: "/public/kurti3.png",
+      image: "/kurti3.png",
     },
     {
       name: "Long Kurti",
       price: "₹1299",
-      image: "/public/kurti.png",
+      image: "/kurti.png",
     },
     {
       name: "Short Kurti",
       price: "₹899",
-      image: "/public/kurti1.png",
+      image: "/kurti1.png",
     },
     {
       name: "Festive Kurti",
       price: "₹1599",
-      image: "/public/kurti3.png",
+      image: "/kurti3.png",
     },
   ];
   // Close popup on outside click
