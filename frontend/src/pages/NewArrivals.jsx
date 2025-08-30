@@ -37,10 +37,10 @@ const staggerContainer = {
 
 const staggerItem = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.5, ease: "easeOut" } 
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
   },
 };
 
@@ -67,7 +67,9 @@ const NewArrivals = () => {
         });
 
         setProducts(response.data.products);
-        setTotalProducts(response.data.totalProducts || response.data.products.length);
+        setTotalProducts(
+          response.data.totalProducts || response.data.products.length
+        );
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch new arrivals");
@@ -91,7 +93,7 @@ const NewArrivals = () => {
     const currentImageUrl =
       isHovered && firstAdditionalImage
         ? buildUrl(firstAdditionalImage)
-        : buildUrl(product.mainImage?.url || '');
+        : buildUrl(product.mainImage?.url || "");
 
     return (
       <motion.div
@@ -109,20 +111,22 @@ const NewArrivals = () => {
             alt={product.name}
             className="w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105"
           />
-          
+
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
+
           {/* Discount badge */}
           {hasDiscount && (
-            <motion.div 
+            <motion.div
               initial={{ scale: 0, rotate: -10 }}
               animate={{ scale: 1, rotate: 0 }}
               className="absolute top-3 left-3 bg-black text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg"
             >
               {Math.round(
-                ((product.price - product.discountedPrice) / product.price) * 100
-              )}% OFF
+                ((product.price - product.discountedPrice) / product.price) *
+                  100
+              )}
+              % OFF
             </motion.div>
           )}
 
@@ -134,10 +138,10 @@ const NewArrivals = () => {
             }}
             className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
           >
-            <FiHeart 
+            <FiHeart
               className={`w-4 h-4 transition-colors duration-200 ${
-                isLiked ? 'text-black fill-current' : 'text-gray-700'
-              }`} 
+                isLiked ? "text-black fill-current" : "text-gray-700"
+              }`}
             />
           </button>
 
@@ -148,7 +152,7 @@ const NewArrivals = () => {
 
           {/* Quick view overlay */}
           <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out">
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/product/${product._id}`);
@@ -165,7 +169,7 @@ const NewArrivals = () => {
           <h3 className="text-base font-medium text-gray-900 line-clamp-2 leading-tight">
             {product.name}
           </h3>
-          
+
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {hasDiscount ? (
@@ -183,7 +187,7 @@ const NewArrivals = () => {
                 </span>
               )}
             </div>
-            
+
             {/* Rating (placeholder) */}
             <div className="flex items-center gap-1">
               <FiStar className="w-3 h-3 text-amber-400 fill-current" />
@@ -216,7 +220,9 @@ const NewArrivals = () => {
         >
           <FiLoader className="text-4xl md:text-5xl text-gray-800" />
         </motion.div>
-        <p className="mt-4 text-gray-600 font-medium">Loading new arrivals...</p>
+        <p className="mt-4 text-gray-600 font-medium">
+          Loading new arrivals...
+        </p>
       </div>
     );
   }
@@ -226,9 +232,11 @@ const NewArrivals = () => {
       <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-stone-50 to-white">
         <div className="text-center">
           <FiAlertTriangle className="mx-auto text-4xl text-rose-500 mb-4" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Oops! Something went wrong</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+            Oops! Something went wrong
+          </h2>
           <p className="text-gray-600">{error}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="mt-4 px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors duration-200"
           >
@@ -260,19 +268,20 @@ const NewArrivals = () => {
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-black rounded-full"></div>
             </h1>
           </motion.div>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
             className="text-gray-600 text-base md:text-lg max-w-3xl mx-auto leading-relaxed px-4"
           >
-            Discover our latest collection of exquisite Kurtis, where traditional elegance meets contemporary style. 
-            Each piece is carefully curated to bring you the finest in ethnic fashion.
+            Discover our latest collection of exquisite Kurtis, where
+            traditional elegance meets contemporary style. Each piece is
+            carefully curated to bring you the finest in ethnic fashion.
           </motion.p>
 
           {/* Decorative elements */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
@@ -293,19 +302,29 @@ const NewArrivals = () => {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
-              <h3 className="text-2xl md:text-3xl font-serif text-gray-900">{totalProducts}+</h3>
+              <h3 className="text-2xl md:text-3xl font-serif text-gray-900">
+                {totalProducts}+
+              </h3>
               <p className="text-sm text-gray-600 font-medium">New Designs</p>
             </div>
             <div>
-              <h3 className="text-2xl md:text-3xl font-serif text-gray-900">100%</h3>
-              <p className="text-sm text-gray-600 font-medium">Premium Quality</p>
+              <h3 className="text-2xl md:text-3xl font-serif text-gray-900">
+                100%
+              </h3>
+              <p className="text-sm text-gray-600 font-medium">
+                Premium Quality
+              </p>
             </div>
             <div>
-              <h3 className="text-2xl md:text-3xl font-serif text-gray-900">24/7</h3>
+              <h3 className="text-2xl md:text-3xl font-serif text-gray-900">
+                24/7
+              </h3>
               <p className="text-sm text-gray-600 font-medium">Fresh Updates</p>
             </div>
             <div>
-              <h3 className="text-2xl md:text-3xl font-serif text-gray-900">Hand</h3>
+              <h3 className="text-2xl md:text-3xl font-serif text-gray-900">
+                Hand
+              </h3>
               <p className="text-sm text-gray-600 font-medium">picked</p>
             </div>
           </div>
@@ -339,7 +358,11 @@ const NewArrivals = () => {
           {products.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
               {products.map((product, index) => (
-                <ProductCard key={product._id} product={product} index={index} />
+                <ProductCard
+                  key={product._id}
+                  product={product}
+                  index={index}
+                />
               ))}
             </div>
           ) : (
@@ -349,7 +372,8 @@ const NewArrivals = () => {
                 New Collection Coming Soon
               </h3>
               <p className="text-gray-600 max-w-md mx-auto">
-                We're adding fresh designs to our Kurti collection. Check back soon for the latest styles!
+                We're adding fresh designs to our Kurti collection. Check back
+                soon for the latest styles!
               </p>
             </div>
           )}
@@ -368,8 +392,8 @@ const NewArrivals = () => {
               disabled={currentPage === 1}
               className={`p-2 md:p-3 rounded-xl transition-all duration-200 ${
                 currentPage === 1
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-white/80 hover:shadow-md'
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-gray-700 hover:text-gray-900 hover:bg-white/80 hover:shadow-md"
               }`}
             >
               <FiChevronLeft className="w-5 h-5" />
@@ -384,8 +408,8 @@ const NewArrivals = () => {
                     onClick={() => setCurrentPage(pageNum)}
                     className={`w-8 h-8 md:w-10 md:h-10 rounded-xl text-sm font-medium transition-all duration-200 ${
                       currentPage === pageNum
-                        ? 'bg-gray-900 text-white shadow-lg scale-110'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/80'
+                        ? "bg-gray-900 text-white shadow-lg scale-110"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-white/80"
                     }`}
                   >
                     {pageNum}
@@ -395,12 +419,14 @@ const NewArrivals = () => {
             </div>
 
             <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages}
               className={`p-2 md:p-3 rounded-xl transition-all duration-200 ${
                 currentPage === totalPages
-                  ? 'text-gray-400 cursor-not-allowed'
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-white/80 hover:shadow-md'
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-gray-700 hover:text-gray-900 hover:bg-white/80 hover:shadow-md"
               }`}
             >
               <FiChevronRight className="w-5 h-5" />
@@ -421,14 +447,15 @@ const NewArrivals = () => {
             <div className="absolute bottom-10 right-10 w-32 h-32 border border-white/20 rounded-full"></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 border border-white/10 rounded-full"></div>
           </div>
-          
+
           <div className="relative z-10">
             <h3 className="text-2xl md:text-3xl lg:text-4xl font-serif mb-4 md:mb-6">
               Exclusive Kurti Collection
             </h3>
             <p className="text-base md:text-lg text-black max-w-2xl mx-auto mb-6 md:mb-8 leading-relaxed">
-              From casual everyday wear to elegant festive pieces, explore our handpicked selection of Kurtis 
-              that blend comfort with sophistication.
+              From casual everyday wear to elegant festive pieces, explore our
+              handpicked selection of Kurtis that blend comfort with
+              sophistication.
             </p>
             <Link
               to="/kurti"
@@ -441,7 +468,6 @@ const NewArrivals = () => {
         </motion.div>
 
         {/* Newsletter Section */}
-        
       </div>
     </div>
   );

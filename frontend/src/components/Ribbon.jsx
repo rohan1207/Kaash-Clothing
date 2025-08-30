@@ -5,7 +5,7 @@ const words = [
   "FLAT 50% OFF ON ALL KURTIS!",
   "LIMITED TIME OFFER - SHOP NOW!",
   "FREE SHIPPING ON ORDERS ABOVE ₹1999",
-  "NEW COLLECTION LAUNCH - UPTO 60% OFF"
+  "NEW COLLECTION LAUNCH - UPTO 60% OFF",
 ];
 
 const Ribbon = () => {
@@ -38,12 +38,12 @@ const Ribbon = () => {
   const Word = ({ children, isOutlined }) => (
     <span
       className={`text-5xl sm:text-6xl lg:text-8xl font-black uppercase whitespace-nowrap mx-4 sm:mx-6 lg:mx-8 ${
-        isOutlined ? "text-transparent" : "text-gray-900"
+        isOutlined ? "text-transparent" : "text-transparent"
       }`}
       style={
         isOutlined
           ? { WebkitTextStroke: isSmallScreen ? "1px #F472B6" : "2px #F472B6" }
-          : {}
+          : { WebkitTextStroke: isSmallScreen ? "1px #111827" : "2px #111827" }
       }
     >
       {children}

@@ -274,44 +274,7 @@ const ProductShowcase = () => {
         </div>
       </section>
 
-      {/* Seasonal Spotlight */}
-      <section className="relative bg-stone-800 text-white py-24 md:py-40">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{ backgroundImage: "url('/kurti1.png')" }}
-        ></div>
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-thin tracking-tight mb-4"
-          >
-            The Winter Collection
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="max-w-2xl mx-auto text-stone-300 mb-8"
-          >
-            Arriving soon. A curated selection of pieces designed for warmth,
-            comfort, and effortless style.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            viewport={{ once: true }}
-          >
-            <button className="bg-white text-stone-900 font-medium tracking-widest text-sm uppercase px-10 py-3.5 rounded-full hover:bg-opacity-90 transform hover:scale-105 transition-all duration-300 ease-out">
-              Get Notified
-            </button>
-          </motion.div>
-        </div>
-      </section>
+     
     </div>
   );
 };

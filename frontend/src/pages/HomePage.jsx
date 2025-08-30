@@ -1,19 +1,22 @@
 import React from "react";
-
-
 import ProductShowcase from "../components/ProductShowcase";
-import Hero from "../components/Hero"; 
-import Ribbon from "../components/Ribbon"; 
-// import DiscountBanner  from "../components/DiscountBanner "; 
-
+import PremiumHero from "../components/PremiumHero";
+import Ribbon from "../components/Ribbon";
+import DualSpotlight from "../components/DualSpotlight";
+import Hero from "../components/Hero";
 const HomePage = () => {
   return (
     <div>
-     
-     <Hero />
-     
-   <Ribbon/>
+      {/* Premium fullscreen hero */}
+
+      {/* Dual product spotlight section */}
+
+      {/* Existing sections */}
+      <Hero />
+      <Ribbon />
+      <DualSpotlight />
       <ProductShowcase />
+      <PremiumHero />
     </div>
   );
 };
