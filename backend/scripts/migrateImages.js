@@ -9,7 +9,7 @@ import cloudinary from '../utils/cloudinary.js';
 
 dotenv.config();
 
-const UPLOAD_BASE_URL = process.env.UPLOAD_BASE_URL || 'https://kaash-clothing.onrender.com';
+const UPLOAD_BASE_URL = process.env.UPLOAD_BASE_URL || 'https://kaash-clothing-q4td.onrender.com';
 
 async function migrate() {
   try {

@@ -260,7 +260,7 @@ const handleChange = (e) => {
 
       // Make the request with auth token
       const response = await axios.post(
-        "https://kaash-clothing.onrender.com/api/products",
+        "https://kaash-clothing-q4td.onrender.com/api/products",
         formDataToSend,
         {
           headers: {

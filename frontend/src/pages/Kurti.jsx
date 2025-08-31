@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiFilter, FiX, FiLoader, FiAlertTriangle } from "react-icons/fi";
 import axios from "axios";
 
-const API_URL = "https://kaash-clothing.onrender.com";
+const API_URL = "https://kaash-clothing-q4td.onrender.com";
 
 const priceRanges = [
   "All",

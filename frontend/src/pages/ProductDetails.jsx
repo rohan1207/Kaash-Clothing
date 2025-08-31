@@ -20,7 +20,7 @@ import {
   FiX,
 } from "react-icons/fi";
 
-const API_URL = "https://kaash-clothing.onrender.com";
+const API_URL = "https://kaash-clothing-q4td.onrender.com";
 
 // Helper to handle both Cloudinary (absolute) and legacy relative URLs
 const buildUrl = (path) => {

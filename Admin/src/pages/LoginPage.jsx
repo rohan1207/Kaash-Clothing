@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
 
-const API_URL = "https://kaash-clothing.onrender.com";
+const API_URL = "https://kaash-clothing-q4td.onrender.com";
 
 const LoginPage = ({ onLogin, isAuthenticated }) => {
   const navigate = useNavigate();

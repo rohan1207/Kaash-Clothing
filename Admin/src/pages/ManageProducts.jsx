@@ -15,7 +15,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 
-const API_URL = "https://kaash-clothing.onrender.com";
+const API_URL = "https://kaash-clothing-q4td.onrender.com";
 
 // Product categories
 const PRODUCT_CATEGORIES = [
@@ -68,7 +68,7 @@ const ManageProducts = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "https://kaash-clothing.onrender.com/api/products"
+        "https://kaash-clothing-q4td.onrender.com/api/products"
       );
       setProducts(response.data.products);
     } catch (error) {
@@ -586,7 +586,7 @@ const ManageProducts = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-4">
                         <img
-                          src={`https://kaash-clothing.onrender.com${product.mainImage.url}`}
+                          src={`https://kaash-clothing-q4td.onrender.com${product.mainImage.url}`}
                           alt={product.name}
                           className="w-12 h-12 rounded-lg object-cover"
                         />

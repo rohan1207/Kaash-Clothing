@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiFilter, FiX, FiLoader, FiAlertTriangle } from "react-icons/fi";
 
-const API_URL = "https://kaash-clothing.onrender.com"; // Your backend server URL
+const API_URL = "https://kaash-clothing-q4td.onrender.com"; // Your backend server URL
 
 const categories = ["All", "Kurtis"];
 const priceRanges = [

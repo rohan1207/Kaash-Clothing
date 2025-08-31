@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiTrash2, FiPlus, FiMinus } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
-const API_URL = "https://kaash-clothing.onrender.com";
+const API_URL = "https://kaash-clothing-q4td.onrender.com";
 
 // Helper for Cloudinary or legacy relative URLs
 const buildUrl = (path) => (path.startsWith("http") ? path : `${API_URL}${path}`);
