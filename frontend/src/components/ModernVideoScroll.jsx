@@ -94,10 +94,7 @@ const ModernVideoScroll = () => {
                 playsInline
                 poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='675'%3E%3Crect width='100%25' height='100%25' fill='%23000'/%3E%3C/svg%3E"
               >
-                <source src="
-                
-                
-                " type="video/mp4" />
+                <source src="/video11.mp4" type="video/mp4" />
               </video>
               
               {/* Hero text overlay */}
@@ -121,7 +118,7 @@ const ModernVideoScroll = () => {
 
           {/* Card 1 - Top Right */}
           <div
-            className="absolute top-1/2 right-8 md:right-16 z-30 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl max-w-sm transition-all duration-1000 ease-out"
+            className="absolute top-1/2 right-8 md:right-16 z-30 bg-white/95 backdrop-blur-sm rounded-md p-6 shadow-2xl max-w-sm transition-all duration-1000 ease-out"
             style={{
               transform: `translate(${100 - card1Transform}%, -50%)`,
               opacity: card1Progress,
@@ -140,7 +137,7 @@ const ModernVideoScroll = () => {
 
           {/* Card 2 - Bottom Left */}
           <div
-            className="absolute bottom-1/2 left-8 md:left-16 z-30 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl max-w-sm transition-all duration-1000 ease-out"
+            className="absolute bottom-1/2 left-8 md:left-16 z-30 bg-white/95 backdrop-blur-sm rounded-md p-6 shadow-2xl max-w-sm transition-all duration-1000 ease-out"
             style={{
               transform: `translate(${-100 + card2Transform}%, 50%)`,
               opacity: card2Progress,
@@ -150,7 +147,7 @@ const ModernVideoScroll = () => {
               100% Original
             </h3>
             <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-              At Our Store, we take pride in offering 100% original products, crafted with premium materials.
+              At Kaash, we take pride in offering 100% original products, crafted with premium materials.
             </p>
             <button className="w-full py-3 px-6 border-2 border-gray-900 text-gray-900 rounded-full font-semibold hover:bg-gray-900 hover:text-white transition-all duration-300 transform hover:scale-105">
               Explore
@@ -158,7 +155,7 @@ const ModernVideoScroll = () => {
           </div>
 
           {/* Scroll indicator */}
-          <div 
+          {/* <div 
             className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30 transition-all duration-500"
             style={{
               opacity: Math.max(0, 1 - scrollProgress * 3),
@@ -172,7 +169,7 @@ const ModernVideoScroll = () => {
               </div>
               <span className="text-sm font-medium">Scroll to explore</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Progress indicator */}
           <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-30">
