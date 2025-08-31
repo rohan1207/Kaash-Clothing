@@ -4,6 +4,7 @@ import PremiumHero from "../components/PremiumHero";
 import Ribbon from "../components/Ribbon";
 import DualSpotlight from "../components/DualSpotlight";
 import Hero from "../components/Hero";
+import MordernVideoScroll from "../components/ModernVideoScroll";
 const HomePage = () => {
   return (
     <div>
@@ -17,6 +18,7 @@ const HomePage = () => {
       <DualSpotlight />
       <ProductShowcase />
       <PremiumHero />
+      <MordernVideoScroll />
     </div>
   );
 };

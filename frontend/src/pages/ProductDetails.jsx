@@ -120,8 +120,8 @@ const ProductDetails = () => {
 
   if (pageLoading)
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-        <FiLoader className="animate-spin text-4xl text-gray-400" />
+      <div className="min-h-screen w-full flex items-center justify-center bg-stone-50">
+        <FiLoader className="animate-spin text-4xl text-stone-400" />
       </div>
     );
   if (pageError)
@@ -278,14 +278,14 @@ const ProductDetails = () => {
   const AccordionItem = ({ title, children }) => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-      <div className="border-b border-gray-200">
+      <div className="border-b border-stone-100 last:border-b-0">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex justify-between items-center w-full py-5 text-left"
+          className="flex justify-between items-center w-full py-6 text-left group"
         >
-          <span className="font-medium text-gray-800">{title}</span>
+          <span className="font-light text-stone-800 text-base tracking-wide">{title}</span>
           <FiChevronDown
-            className={`transform transition-transform duration-300 ${
+            className={`transform transition-transform duration-300 text-stone-400 group-hover:text-stone-600 ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -293,18 +293,15 @@ const ProductDetails = () => {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ height: 0, opacity: 0, marginTop: 0 }}
-              animate={{
-                height: "auto",
-                opacity: 1,
-                marginTop: "0.5rem",
-                marginBottom: "1rem",
-              }}
-              exit={{ height: 0, opacity: 0, marginTop: 0 }}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="overflow-hidden text-gray-600"
+              className="overflow-hidden pb-6"
             >
-              {children}
+              <div className="text-stone-600 leading-relaxed font-light">
+                {children}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -337,16 +334,16 @@ const ProductDetails = () => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative overflow-hidden aspect-[3/4] rounded-lg bg-stone-100 mb-3">
+        <div className="relative overflow-hidden aspect-[3/4] rounded-sm bg-stone-100 mb-4">
           <img
             key={currentImageUrl}
             src={currentImageUrl}
             alt={product.name}
-            className="w-full h-full object-cover object-center transition-all duration-300 ease-in-out"
+            className="w-full h-full object-cover object-center transition-all duration-500 ease-in-out group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           {hasDiscount && (
-            <div className="absolute md:top-2 md:left-2 bottom-2 right-2 md:bottom-auto md:right-auto bg-black/90 text-white text-xs md:text-sm px-2 py-1 md:px-3 md:py-1.5 rounded-full font-medium tracking-wider shadow-lg">
+            <div className="absolute top-4 left-4 bg-stone-900 text-stone-100 text-xs px-3 py-1.5 rounded-full font-light tracking-wider">
               {Math.round(
                 ((product.price - product.discountedPrice) / product.price) *
                   100
@@ -354,195 +351,269 @@ const ProductDetails = () => {
               % OFF
             </div>
           )}
-          <div className="absolute bottom-0 left-0 right-0 p-3 text-center translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out bg-black/60">
-            <p className="text-white text-sm font-medium tracking-wider">
-              View Details
-            </p>
-          </div>
         </div>
-        <div className="space-y-1 text-center px-1">
-          <h3 className="text-sm md:text-base font-medium text-gray-800 line-clamp-1">
+        <div className="space-y-2 text-center">
+          <h3 className="text-sm font-light text-stone-800 line-clamp-2 tracking-wide">
             {product.name}
           </h3>
-          <div className="flex items-center justify-center gap-2 text-sm">
+          <div className="flex items-center justify-center gap-3 text-sm">
             {hasDiscount ? (
               <>
-                <span className="text-gray-900 font-medium">
+                <span className="text-stone-900 font-light">
                   ₹{product.discountedPrice.toFixed(2)}
                 </span>
-                <span className="text-gray-400 line-through">
+                <span className="text-stone-400 line-through font-light">
                   ₹{product.price.toFixed(2)}
                 </span>
               </>
             ) : (
-              <span className="text-gray-900 font-medium">
+              <span className="text-stone-900 font-light">
                 ₹{product.price.toFixed(2)}
               </span>
             )}
           </div>
-          {product.sizes?.length > 0 && (
-            <p className="text-xs text-gray-500 font-medium">
-              {product.sizes.join(" · ")}
-            </p>
-          )}
         </div>
       </motion.div>
     );
   };
 
-  return (
-    <div className="bg-white font-sans">
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 lg:items-start gap-x-12">
-          {/* Image Gallery */}
-          <div className="lg:sticky lg:top-28">
-            <div className="flex flex-col-reverse lg:flex-row gap-4">
-              <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-x-hidden pb-4 lg:pb-0">
-                {galleryItems.map((item, index) => (
+  // Create the luxury gallery layout
+  const renderLuxuryGallery = () => {
+    const mainImageItem = galleryItems[0];
+    const additionalImages = galleryItems.slice(1);
+
+    return (
+      <div className="space-y-4">
+        {/* Main large image */}
+        <div className="aspect-[4/5] bg-stone-50 overflow-hidden rounded-sm">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={mainImage}
+              src={mainImage}
+              alt={product.name}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="w-full h-full object-cover object-center"
+            />
+          </AnimatePresence>
+        </div>
+
+        {/* Gallery grid */}
+        {additionalImages.length > 0 && (
+          <div className="space-y-4">
+            {/* First row - 2 images */}
+            {additionalImages.slice(0, 2).length > 0 && (
+              <div className="grid grid-cols-2 gap-4">
+                {additionalImages.slice(0, 2).map((item, index) => (
                   <button
                     key={index}
                     onClick={() => setMainImage(item.url)}
-                    className={`flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-                      mainImage === item.url
-                        ? "border-gray-900"
-                        : "border-transparent hover:border-gray-300"
-                    }`}
+                    className="aspect-[4/5] bg-stone-50 overflow-hidden rounded-sm hover:opacity-80 transition-opacity duration-300"
                   >
                     <img
                       src={item.type === "video" ? item.thumbnail : item.url}
-                      alt={`${product.name} thumbnail ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      alt={`${product.name} view ${index + 2}`}
+                      className="w-full h-full object-cover object-center"
                     />
                   </button>
                 ))}
               </div>
-              <div className="flex-grow w-full aspect-w-1 aspect-h-1 bg-gray-100 rounded-xl overflow-hidden">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={mainImage}
-                    src={mainImage}
-                    alt={product.name}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+            )}
+
+            {/* Second row - 1 image */}
+            {additionalImages[2] && (
+              <div className="grid grid-cols-1">
+                <button
+                  onClick={() => setMainImage(additionalImages[2].url)}
+                  className="aspect-[4/5] bg-stone-50 overflow-hidden rounded-sm hover:opacity-80 transition-opacity duration-300"
+                >
+                  <img
+                    src={additionalImages[2].type === "video" ? additionalImages[2].thumbnail : additionalImages[2].url}
+                    alt={`${product.name} view 4`}
                     className="w-full h-full object-cover object-center"
                   />
-                </AnimatePresence>
+                </button>
               </div>
-            </div>
+            )}
+
+            {/* Third row - 2 images */}
+            {additionalImages.slice(3, 5).length > 0 && (
+              <div className="grid grid-cols-2 gap-4">
+                {additionalImages.slice(3, 5).map((item, index) => (
+                  <button
+                    key={index + 3}
+                    onClick={() => setMainImage(item.url)}
+                    className="aspect-[4/5] bg-stone-50 overflow-hidden rounded-sm hover:opacity-80 transition-opacity duration-300"
+                  >
+                    <img
+                      src={item.type === "video" ? item.thumbnail : item.url}
+                      alt={`${product.name} view ${index + 5}`}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Continue pattern for remaining images */}
+            {additionalImages.slice(5).map((item, index) => {
+              const adjustedIndex = index + 5;
+              const isEven = adjustedIndex % 3 === 0;
+              
+              if (isEven) {
+                return (
+                  <div key={adjustedIndex} className="grid grid-cols-1">
+                    <button
+                      onClick={() => setMainImage(item.url)}
+                      className="aspect-[4/5] bg-stone-50 overflow-hidden rounded-sm hover:opacity-80 transition-opacity duration-300"
+                    >
+                      <img
+                        src={item.type === "video" ? item.thumbnail : item.url}
+                        alt={`${product.name} view ${adjustedIndex + 2}`}
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </button>
+                  </div>
+                );
+              }
+              
+              return null;
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="bg-stone-50 font-light min-h-screen">
+      <main className="container mx-auto px-6 lg:px-12 pt-32 pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+          {/* Luxury Image Gallery */}
+          <div className="lg:sticky lg:top-32">
+            {renderLuxuryGallery()}
           </div>
 
           {/* Product Info */}
-          <div className="mt-10 lg:mt-0 space-y-6 max-w-xl">
-            <h1 className="text-4xl font-light text-gray-900 tracking-tight">
-              {product.name}
-            </h1>
-            <div className="flex items-center gap-4">
-              <h2 className="text-2xl font-medium">
-                ₹
-                {product.discountedPrice?.toFixed(2) ||
-                  product.price.toFixed(2)}
-              </h2>
-              {product.discountedPrice && (
-                <div className="flex items-center gap-2">
-                  <p className="text-lg text-gray-400 line-through">
-                    ₹{product.price.toFixed(2)}
-                  </p>
-                  <span className="bg-orange-50 text-orange-500 px-2 py-1 rounded text-sm">
-                    {product.discountPercentage}% OFF
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className="flex">
-                {[...Array(5)].map((_, i) => (
-                  <FiStar
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.round(product.ratings || 0)
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
+          <div className="space-y-8 max-w-xl">
+            <div className="space-y-6">
+              <h1 className="text-4xl lg:text-5xl font-extralight text-stone-900 tracking-wide leading-tight">
+                {product.name}
+              </h1>
+              
+              <div className="flex items-baseline gap-4">
+                <h2 className="text-3xl font-light text-stone-900">
+                  ₹{product.discountedPrice?.toFixed(2) || product.price.toFixed(2)}
+                </h2>
+                {product.discountedPrice && (
+                  <div className="flex items-center gap-3">
+                    <p className="text-xl text-stone-400 line-through font-light">
+                      ₹{product.price.toFixed(2)}
+                    </p>
+                    <span className="bg-stone-900 text-stone-100 px-3 py-1 rounded-full text-xs font-light tracking-wide">
+                      {product.discountPercentage}% OFF
+                    </span>
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-gray-600">
-                {product.ratings?.toFixed(1)} ({product.reviews || 199} reviews)
-              </p>
+
+              <div className="flex items-center gap-3">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <FiStar
+                      key={i}
+                      className={`w-4 h-4 ${
+                        i < Math.round(product.ratings || 0)
+                          ? "text-yellow-500 fill-current"
+                          : "text-stone-300"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-stone-500 font-light">
+                  {product.ratings?.toFixed(1)} ({product.reviews || 199} reviews)
+                </p>
+              </div>
             </div>
 
-            <p className="text-stone-600 leading-relaxed font-light">
+            <p className="text-stone-600 leading-relaxed font-light text-base">
               {product.description}
             </p>
 
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-sm font-medium text-gray-900 mb-3">
-                  COLOR
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.colors?.map((color) => (
-                    <button
-                      key={color.code}
-                      onClick={() => setSelectedColor(color)}
-                      className={`w-10 h-10 rounded-full border-2 transition-all duration-200 ${
-                        selectedColor?.code === color.code
-                          ? "ring-2 ring-offset-2 ring-gray-900"
-                          : "ring-0"
-                      }`}
-                      style={{ backgroundColor: color.code }}
-                    >
-                      <span className="sr-only">{color.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">
-                    SIZE
+            <div className="space-y-8">
+              {/* Color Selection */}
+              {product.colors && product.colors.length > 0 && (
+                <div className="space-y-4">
+                  <h3 className="text-sm font-light text-stone-900 tracking-widest uppercase">
+                    Color
                   </h3>
-                  <div className="grid grid-cols-3 gap-2">
-                    {product.sizes?.map((size) => (
+                  <div className="flex gap-3">
+                    {product.colors.map((color) => (
                       <button
-                        key={size}
-                        onClick={() => {
-                          setSelectedSize(size);
-                          setCartError("");
-                        }}
-                        className={`py-2.5 text-sm font-medium rounded-md transition-colors duration-200 ${
-                          selectedSize === size
-                            ? "bg-gray-900 text-white"
-                            : "bg-white text-gray-900 border border-gray-200 hover:border-gray-900"
+                        key={color.code}
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-12 h-12 rounded-full border transition-all duration-200 ${
+                          selectedColor?.code === color.code
+                            ? "ring-2 ring-offset-2 ring-stone-900 border-stone-900"
+                            : "border-stone-200 hover:border-stone-400"
                         }`}
+                        style={{ backgroundColor: color.code }}
                       >
-                        {size}
+                        <span className="sr-only">{color.name}</span>
                       </button>
                     ))}
                   </div>
                 </div>
+              )}
 
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">
-                    QUANTITY
+              <div className="grid grid-cols-2 gap-12">
+                {/* Size Selection */}
+                {product.sizes && product.sizes.length > 0 && (
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-light text-stone-900 tracking-widest uppercase">
+                      Size
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      {product.sizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => {
+                            setSelectedSize(size);
+                            setCartError("");
+                          }}
+                          className={`py-3 text-sm font-light rounded-sm transition-all duration-200 border ${
+                            selectedSize === size
+                              ? "bg-stone-900 text-stone-100 border-stone-900"
+                              : "bg-transparent text-stone-900 border-stone-200 hover:border-stone-400"
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Quantity Selection */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-light text-stone-900 tracking-widest uppercase">
+                    Quantity
                   </h3>
-                  <div className="flex items-center gap-3 w-32">
+                  <div className="flex items-center gap-4 w-32">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:border-gray-900 transition-colors"
+                      className="w-10 h-10 flex items-center justify-center rounded-sm border border-stone-200 text-stone-600 hover:border-stone-400 transition-colors"
                     >
                       <FiMinus className="w-4 h-4" />
                     </button>
-                    <span className="flex-1 text-center font-medium">
+                    <span className="flex-1 text-center font-light text-lg">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-8 h-8 flex items-center justify-center rounded border border-gray-200 text-gray-600 hover:border-gray-900 transition-colors"
+                      className="w-10 h-10 flex items-center justify-center rounded-sm border border-stone-200 text-stone-600 hover:border-stone-400 transition-colors"
                     >
                       <FiPlus className="w-4 h-4" />
                     </button>
@@ -551,73 +622,54 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 pt-6">
+            {/* Action Buttons */}
+            <div className="space-y-4 pt-6">
               <button
                 onClick={handleAddToCart}
-                className="flex items-center justify-center gap-2 bg-gray-900 text-white py-3 px-6 rounded-md hover:bg-gray-800 transition-colors"
+                className="w-full bg-stone-900 text-stone-100 py-4 px-8 rounded-sm hover:bg-stone-800 transition-colors font-light tracking-widest uppercase text-sm"
               >
-                ADD TO CART
+                Add to Cart
               </button>
+              
               <button
-                onClick={() => {}}
-                className="flex items-center justify-center gap-2 bg-white text-gray-900 py-3 px-6 rounded-md border border-gray-200 hover:border-gray-900 transition-colors"
+                onClick={() => setIsTryOnModalOpen(true)}
+                className="w-full bg-transparent text-stone-900 py-4 px-8 rounded-sm border border-stone-200 hover:border-stone-400 transition-colors font-light tracking-widest uppercase text-sm"
               >
-                BUY NOW
+                Virtual Try-On
               </button>
             </div>
 
-            <button
-              onClick={() => setIsTryOnModalOpen(true)}
-              className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-700 transition-colors"
-            >
-              VIRTUAL TRY-ON
-            </button>
-
-            {cartError && <p className="text-red-500 text-sm">{cartError}</p>}
+            {cartError && <p className="text-red-500 text-sm font-light">{cartError}</p>}
             {addedToCartMessage && (
-              <p className="text-green-600 text-sm">{addedToCartMessage}</p>
+              <p className="text-green-600 text-sm font-light">{addedToCartMessage}</p>
             )}
 
-            {/* Accordion for details */}
-            <div className="mt-10">
+            {/* Accordion Details */}
+            <div className="mt-12 pt-8 border-t border-stone-100">
               <AccordionItem title="Product Details">
-                <ul className="list-disc pl-5 space-y-2 text-sm">
-                  {product.material && <li>Material: {product.material}</li>}
-                  {product.category && <li>Category: {product.category}</li>}
+                <div className="space-y-2">
+                  {product.material && <p>Material: {product.material}</p>}
+                  {product.category && <p>Category: {product.category}</p>}
                   {product.tags && product.tags.length > 0 && (
-                    <li>Tags: {product.tags.join(", ")}</li>
+                    <p>Tags: {product.tags.join(", ")}</p>
                   )}
-                </ul>
+                </div>
               </AccordionItem>
+              
               <AccordionItem title="Care Instructions">
-                <ul className="list-disc pl-5 space-y-2 text-sm">
+                <div className="space-y-2">
                   {(product.care || []).map((instruction, i) => (
-                    <li key={i}>{instruction}</li>
+                    <p key={i}>{instruction}</p>
                   ))}
-                </ul>
+                </div>
               </AccordionItem>
-              <AccordionItem title="Coupon Information">
-                {product.coupon && product.coupon.active ? (
-                  <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
-                    <p className="font-semibold">
-                      Coupon: {product.coupon.name}
-                    </p>
-                    <p>
-                      Get ₹{product.coupon.discountAmount} off on a minimum
-                      purchase of ₹{product.coupon.minPurchaseAmount}.
-                    </p>
-                    {product.coupon.expiryDate && (
-                      <p>
-                        Expires on:{" "}
-                        {new Date(
-                          product.coupon.expiryDate
-                        ).toLocaleDateString()}
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm">No active coupons for this product.</p>
-                )}
+              
+              <AccordionItem title="Delivery & Returns">
+                <div className="space-y-2">
+                  <p>Free delivery on orders over ₹2,000</p>
+                  <p>30-day return policy</p>
+                  <p>Express delivery available</p>
+                </div>
               </AccordionItem>
             </div>
           </div>
@@ -626,11 +678,11 @@ const ProductDetails = () => {
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <section className="mt-16 mb-8 px-4">
-          <h2 className="text-2xl font-serif text-gray-800 mb-6 text-center">
-            You May Also Like
+        <section className="mt-24 mb-16 px-6 lg:px-12">
+          <h2 className="text-3xl font-extralight text-stone-900 mb-12 text-center tracking-wide">
+            You might also like
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {relatedProducts.map((product) => (
               <RelatedProductCard key={product._id} product={product} />
             ))}
@@ -651,31 +703,31 @@ const ProductDetails = () => {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="bg-white rounded-2xl p-8 max-w-md w-full space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-sm p-8 max-w-md w-full space-y-6 relative shadow-2xl max-h-[90vh] overflow-y-auto"
             >
               <button
                 onClick={() => setIsTryOnModalOpen(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 transition-colors"
+                className="absolute top-6 right-6 text-stone-400 hover:text-stone-800 transition-colors"
               >
                 <FiX className="w-6 h-6" />
               </button>
 
-              <h2 className="text-3xl font-thin text-center text-gray-900">
+              <h2 className="text-3xl font-extralight text-center text-stone-900 tracking-wide">
                 Virtual Try-On
               </h2>
 
               {!tryOnResult && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-center gap-4">
-                    <div className="w-32 h-40 bg-gray-100 rounded-lg overflow-hidden ring-1 ring-gray-200">
+                <div className="space-y-6">
+                  <div className="flex items-center justify-center gap-6">
+                    <div className="w-32 h-40 bg-stone-100 rounded-sm overflow-hidden">
                       <img
                         src={mainImage}
                         alt="Cloth"
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="text-4xl font-thin text-gray-300">+</div>
-                    <div className="w-32 h-40 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden ring-1 ring-gray-200">
+                    <div className="text-4xl font-extralight text-stone-300">+</div>
+                    <div className="w-32 h-40 bg-stone-100 rounded-sm flex items-center justify-center overflow-hidden">
                       {modelImageUrl ? (
                         <img
                           src={modelImageUrl}
@@ -683,7 +735,7 @@ const ProductDetails = () => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="text-center text-gray-400 p-2">
+                        <div className="text-center text-stone-400 p-2">
                           <svg
                             className="w-10 h-10 mx-auto"
                             fill="none"
@@ -697,7 +749,7 @@ const ProductDetails = () => {
                               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                             />
                           </svg>
-                          <span className="text-xs mt-1 block">Your Image</span>
+                          <span className="text-xs mt-1 block font-light">Your Image</span>
                         </div>
                       )}
                     </div>
@@ -713,7 +765,7 @@ const ProductDetails = () => {
 
                   <button
                     onClick={() => fileInputRef.current.click()}
-                    className="w-full border border-gray-300 text-gray-800 py-2.5 rounded-lg hover:bg-gray-100 transition uppercase tracking-wider text-sm font-medium"
+                    className="w-full border border-stone-300 text-stone-800 py-3 rounded-sm hover:bg-stone-50 transition font-light tracking-wide text-sm"
                     disabled={tryOnLoading}
                   >
                     {tryOnLoading
@@ -726,7 +778,7 @@ const ProductDetails = () => {
                   {modelImage && !tryOnLoading && !tryOnError && (
                     <button
                       onClick={handleTryOn}
-                      className="w-full bg-gray-800 text-white py-3 rounded-lg uppercase tracking-wider hover:bg-gray-900 transition"
+                      className="w-full bg-stone-900 text-stone-100 py-3 rounded-sm tracking-wide hover:bg-stone-800 transition font-light text-sm"
                     >
                       Start Try-On
                     </button>
@@ -735,33 +787,33 @@ const ProductDetails = () => {
               )}
 
               {tryOnLoading && (
-                <div className="text-center space-y-4 py-8">
-                  <FiLoader className="animate-spin text-4xl text-blue-600 mx-auto" />
-                  <p className="text-gray-700">Processing your request...</p>
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div className="text-center space-y-6 py-8">
+                  <FiLoader className="animate-spin text-4xl text-stone-600 mx-auto" />
+                  <p className="text-stone-700 font-light">Processing your request...</p>
+                  <div className="w-full bg-stone-200 rounded-full h-2">
                     <div
-                      className="bg-blue-600 h-2.5 rounded-full transition-all duration-500"
+                      className="bg-stone-900 h-2 rounded-full transition-all duration-500"
                       style={{ width: `${progress}%` }}
                     ></div>
                   </div>
-                  <p className="text-lg font-medium text-gray-800">
+                  <p className="text-lg font-light text-stone-800">
                     {progress}%
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-stone-500 font-light">
                     Please keep this window open.
                   </p>
                 </div>
               )}
 
               {tryOnError && (
-                <div className="text-center space-y-4">
+                <div className="text-center space-y-6">
                   <FiAlertTriangle className="text-red-500 text-4xl mx-auto" />
-                  <p className="text-red-600 bg-red-50 p-3 rounded-lg text-sm">
+                  <p className="text-red-600 bg-red-50 p-4 rounded-sm text-sm font-light">
                     {tryOnError}
                   </p>
                   <button
                     onClick={handleResetTryOn}
-                    className="w-full border border-gray-300 text-gray-800 py-2.5 rounded-lg hover:bg-gray-100 transition uppercase tracking-wider text-sm font-medium"
+                    className="w-full border border-stone-300 text-stone-800 py-3 rounded-sm hover:bg-stone-50 transition font-light tracking-wide text-sm"
                   >
                     Try Again
                   </button>
@@ -769,11 +821,11 @@ const ProductDetails = () => {
               )}
 
               {tryOnResult && (
-                <div className="text-center space-y-4">
-                  <h3 className="text-xl font-thin text-gray-800">
-                    Here's Your Virtual Try-On!
+                <div className="text-center space-y-6">
+                  <h3 className="text-xl font-light text-stone-800 tracking-wide">
+                    Here's Your Virtual Try-On
                   </h3>
-                  <div className="w-full aspect-[4/5] bg-gray-100 rounded-lg overflow-hidden shadow-inner flex justify-center items-center">
+                  <div className="w-full aspect-[4/5] bg-stone-100 rounded-sm overflow-hidden shadow-inner flex justify-center items-center">
                     <img
                       src={tryOnResult}
                       alt="Try-on result"
@@ -782,7 +834,7 @@ const ProductDetails = () => {
                   </div>
                   <button
                     onClick={handleResetTryOn}
-                    className="w-full border border-gray-300 text-gray-800 py-2.5 rounded-lg hover:bg-gray-100 transition uppercase tracking-wider text-sm font-medium"
+                    className="w-full border border-stone-300 text-stone-800 py-3 rounded-sm hover:bg-stone-50 transition font-light tracking-wide text-sm"
                   >
                     Try Another Photo
                   </button>
