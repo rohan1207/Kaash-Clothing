@@ -5,6 +5,7 @@ import Ribbon from "../components/Ribbon";
 import DualSpotlight from "../components/DualSpotlight";
 import Hero from "../components/Hero";
 import MordernVideoScroll from "../components/ModernVideoScroll";
+import ExpertiseCards from "../components/ExpertiseCards";
 const HomePage = () => {
   return (
     <div>
@@ -16,6 +17,7 @@ const HomePage = () => {
       <Hero />
       <Ribbon />
       <DualSpotlight />
+      <ExpertiseCards/>
       <ProductShowcase />
       <PremiumHero />
       <MordernVideoScroll />

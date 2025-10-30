@@ -7,16 +7,22 @@ import {
   FiChevronRight,
   FiChevronLeft,
   FiStar,
-  FiHeart,
+  FiPlus,
+  FiMinus,
+  FiX,
 } from "react-icons/fi";
-import axios from "axios";
+import productsJson from "../Data/products.json";
+import { useCart } from "../context/CartContext";
 
 const API_URL = "https://kaash-clothing-q4td.onrender.com";
 
-// Helper to handle both Cloudinary (absolute) and legacy relative URLs
+// Helper to resolve image paths
 const buildUrl = (path) => {
   if (!path) return "";
-  return path.startsWith("http") ? path : `${API_URL}${path}`;
+  if (path.startsWith("http")) return path;
+  if (path.startsWith("/")) return path;
+  if (!path.includes("/")) return `/${path}`;
+  return `${API_URL}${path}`;
 };
 
 const fadeIn = {
@@ -46,170 +52,225 @@ const staggerItem = {
 
 const NewArrivals = () => {
   const navigate = useNavigate();
+  const { cartItems, addToCart, updateQuantity, removeFromCart } = useCart();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalProducts, setTotalProducts] = useState(0);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const productsPerPage = 12;
 
   useEffect(() => {
-    const fetchNewArrivals = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${API_URL}/api/products`, {
-          params: {
-            category: "Kurtis",
-            page: currentPage,
-            limit: productsPerPage,
-            sort: "-createdAt", // Sort by newest first
-          },
-        });
+    setLoading(true);
+    try {
+      // Map local JSON to match expected shape and sort by newest
+      const mapped = (productsJson || []).map((p) => ({
+        _id: p.id ? String(p.id) : p._id || "",
+        name: p.name || "",
+        price: p.mrp ?? p.price ?? 0,
+        discountedPrice: p.discountedPrice ?? null,
+        discountPercentage: p.discount
+          ? p.discount
+          : p.discountedPrice
+          ? Math.round(
+              ((p.mrp ?? p.price ?? 0) - p.discountedPrice) /
+                (p.mrp ?? p.price ?? 0) *
+                100
+            )
+          : 0,
+        mainImage: { url: p.heroImage || (p.mainImage && p.mainImage.url) || "" },
+        additionalMedia: (p.images || []).map((img) => ({ type: "image", url: img })),
+        description: p.description || "",
+        category: p.category || "Kurtis",
+        sizes: p.sizesAvailable || p.sizes || [],
+        colors: p.colorsAvailable || [],
+        material: p.material || "",
+        tags: p.tags || [],
+        ratings: p.ratings || 0,
+        reviews: p.reviews || 0,
+        createdAt: p.createdAt || new Date().toISOString(),
+      }));
 
-        setProducts(response.data.products);
-        setTotalProducts(
-          response.data.totalProducts || response.data.products.length
-        );
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to fetch new arrivals");
-        setLoading(false);
-      }
-    };
+      // Sort by newest first
+      const sorted = mapped.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setProducts(sorted);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load new arrivals.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    fetchNewArrivals();
-  }, [currentPage]);
-
-  const ProductCard = ({ product, index }) => {
+  const ProductCard = ({ product, onQuickAdd }) => {
     const hasDiscount =
       product.discountedPrice && product.discountedPrice < product.price;
     const [isHovered, setIsHovered] = useState(false);
-    const [isLiked, setIsLiked] = useState(false);
+    const [tabHovered, setTabHovered] = useState(false);
+    const [selectedSize, setSelectedSize] = useState(
+      product.sizes && product.sizes.length > 0 ? product.sizes[0] : null
+    );
 
     const firstAdditionalImage = product.additionalMedia?.find(
       (media) => media.type === "image"
     )?.url;
 
-    const currentImageUrl =
+    const currentImageUrl = buildUrl(
       isHovered && firstAdditionalImage
-        ? buildUrl(firstAdditionalImage)
-        : buildUrl(product.mainImage?.url || "");
+        ? firstAdditionalImage
+        : product.mainImage.url
+    );
 
     return (
       <motion.div
         variants={staggerItem}
         layout
-        className="group cursor-pointer relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
+        className="group cursor-pointer"
         onClick={() => navigate(`/product/${product._id}`)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative overflow-hidden aspect-[3/4] bg-gradient-to-br from-stone-50 to-stone-100">
-          <img
+        <div className="relative overflow-hidden aspect-[3/4] rounded-sm bg-stone-50 mb-4">
+          {/* Product Image */}
+          <motion.img
             key={currentImageUrl}
             src={currentImageUrl}
             alt={product.name}
-            className="w-full h-full object-cover object-center transition-all duration-700 ease-out group-hover:scale-105"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="w-full h-full object-cover"
           />
 
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-          {/* Discount badge */}
+          {/* Discount Badge */}
           {hasDiscount && (
             <motion.div
-              initial={{ scale: 0, rotate: -10 }}
-              animate={{ scale: 1, rotate: 0 }}
-              className="absolute top-3 left-3 bg-black text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-stone-900 text-xs px-3 py-1.5 rounded-full font-medium shadow-sm"
             >
-              {Math.round(
-                ((product.price - product.discountedPrice) / product.price) *
-                  100
-              )}
-              % OFF
+              {product.discountPercentage}% OFF
             </motion.div>
           )}
 
-          {/* Heart icon */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsLiked(!isLiked);
-            }}
-            className="absolute top-3 right-3 p-2 rounded-full bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110"
-          >
-            <FiHeart
-              className={`w-4 h-4 transition-colors duration-200 ${
-                isLiked ? "text-black fill-current" : "text-gray-700"
-              }`}
-            />
-          </button>
-
-          {/* New arrival badge */}
-          <div className="absolute bottom-3 left-3 bg-black/90 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-            New
-          </div>
-
-          {/* Quick view overlay */}
-          <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/product/${product._id}`);
-              }}
-              className="w-full bg-white/95 backdrop-blur-sm text-gray-900 py-2 rounded-lg font-medium text-sm hover:bg-white transition-colors duration-200"
-            >
-              Quick View
-            </button>
-          </div>
-        </div>
-
-        {/* Product details */}
-        <div className="p-4 space-y-2">
-          <h3 className="text-base font-medium text-gray-900 line-clamp-2 leading-tight">
-            {product.name}
-          </h3>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {hasDiscount ? (
-                <>
-                  <span className="text-lg font-semibold text-gray-900">
-                    ₹{product.discountedPrice.toFixed(0)}
-                  </span>
-                  <span className="text-sm text-gray-400 line-through">
-                    ₹{product.price.toFixed(0)}
-                  </span>
-                </>
-              ) : (
-                <span className="text-lg font-semibold text-gray-900">
-                  ₹{product.price.toFixed(0)}
-                </span>
-              )}
-            </div>
-
-            {/* Rating (placeholder) */}
-            <div className="flex items-center gap-1">
-              <FiStar className="w-3 h-3 text-amber-400 fill-current" />
-              <span className="text-xs text-gray-500">4.5</span>
-            </div>
-          </div>
-
-          {product.sizes?.length > 0 && (
-            <div className="flex items-center gap-1 pt-1">
-              <span className="text-xs text-gray-500">Sizes:</span>
-              <span className="text-xs text-gray-700 font-medium">
-                {product.sizes.slice(0, 3).join(", ")}
-                {product.sizes.length > 3 && ` +${product.sizes.length - 3}`}
+          {/* Rating Badge - top left */}
+          {product.ratings > 0 && (
+            <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-full flex items-center gap-1 shadow-sm">
+              <FiStar className="w-3 h-3 text-yellow-500 fill-current" />
+              <span className="text-xs font-medium text-stone-900">
+                {product.ratings.toFixed(1)}
               </span>
             </div>
           )}
+
+          {/* Quick View Tray at bottom */}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                initial={{ y: 64, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: 64, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="absolute left-0 right-0 bottom-3 px-3"
+              >
+                <motion.div
+                  onClick={(e) => e.stopPropagation()}
+                  onMouseEnter={() => setTabHovered(true)}
+                  onMouseLeave={() => setTabHovered(false)}
+                  animate={{ height: tabHovered ? 88 : 48 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 26 }}
+                  className="w-full rounded-md bg-white/95 backdrop-blur-md border border-stone-200 shadow-lg px-4 flex flex-col justify-center"
+                >
+                  <div className="flex items-center justify-between h-12">
+                    <span className="text-xs tracking-wider text-stone-900 font-medium">
+                      QUICK VIEW
+                    </span>
+                    <button
+                      aria-label="Add to cart"
+                      className="shrink-0 w-9 h-9 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-800 transition-colors"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const sizeToUse = selectedSize || (product.sizes?.[0] ?? "Default");
+                        onQuickAdd(product, sizeToUse);
+                      }}
+                    >
+                      <FiPlus size={18} />
+                    </button>
+                  </div>
+                  {tabHovered && product.sizes && product.sizes.length > 0 && (
+                    <div className="pb-3">
+                      <div className="flex flex-wrap gap-2">
+                        {product.sizes.slice(0, 6).map((size) => (
+                          <button
+                            key={size}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setSelectedSize(size);
+                            }}
+                            className={`text-[10px] px-2.5 py-1 rounded-full border transition-colors ${
+                              selectedSize === size
+                                ? "bg-stone-900 text-white border-stone-900"
+                                : "bg-white text-stone-700 border-stone-300 hover:border-stone-500"
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        ))}
+                        {product.sizes.length > 6 && (
+                          <span className="text-[10px] text-stone-500">
+                            +{product.sizes.length - 6}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Product Info */}
+        <div className="space-y-2">
+          <h3 className="text-sm font-light text-stone-900 line-clamp-2 tracking-wide group-hover:text-stone-600 transition-colors duration-200">
+            {product.name}
+          </h3>
+
+          {/* Material tag if available */}
+          {product.material && (
+            <p className="text-xs text-stone-500 font-light">
+              {product.material}
+            </p>
+          )}
+
+          <div className="flex items-center gap-3">
+            {hasDiscount ? (
+              <>
+                <span className="text-base font-medium text-stone-900">
+                  ₹{product.discountedPrice.toFixed(0)}
+                </span>
+                <span className="text-sm text-stone-400 line-through font-light">
+                  ₹{product.price.toFixed(0)}
+                </span>
+              </>
+            ) : (
+              <span className="text-base font-medium text-stone-900">
+                ₹{product.price.toFixed(0)}
+              </span>
+            )}
+          </div>
         </div>
       </motion.div>
     );
   };
 
+  // Pagination
+  const totalProducts = products.length;
   const totalPages = Math.ceil(totalProducts / productsPerPage);
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const paginatedProducts = products.slice(startIndex, startIndex + productsPerPage);
 
   if (loading) {
     return (
@@ -249,6 +310,112 @@ const NewArrivals = () => {
 
   return (
     <div className="bg-gradient-to-br from-stone-50 via-white to-stone-50 min-h-screen pt-20 md:pt-32 pb-16 md:pb-20">
+      {/* Cart Drawer and Overlay */}
+      <AnimatePresence>
+        {isCartOpen && (
+          <>
+            <motion.div
+              key="cart-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm cursor-crosshair"
+              onClick={() => setIsCartOpen(false)}
+            />
+            <motion.aside
+              key="cart-drawer"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 280, damping: 30 }}
+              className="fixed right-0 top-0 h-full w-full max-w-md bg-white z-50 shadow-2xl flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-6 py-5 border-b border-stone-200 flex items-center justify-between">
+                <h2 className="text-lg font-medium text-stone-900">Your Bag</h2>
+                <button
+                  className="text-stone-500 hover:text-stone-900"
+                  onClick={() => setIsCartOpen(false)}
+                  aria-label="Close"
+                >
+                  <FiX size={22} />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                {cartItems.length === 0 ? (
+                  <div className="p-8 text-stone-500 text-sm">Your cart is empty.</div>
+                ) : (
+                  <ul className="divide-y divide-stone-200">
+                    {cartItems.map((item) => (
+                      <li key={item.id} className="p-4 flex gap-4 items-center">
+                        <img
+                          src={buildUrl(item.image)}
+                          alt={item.name}
+                          className="w-16 h-20 object-cover rounded"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-stone-900 truncate">{item.name}</p>
+                          <p className="text-xs text-stone-500 mt-0.5">Size: {item.size}</p>
+                          <p className="text-sm text-stone-900 mt-1">₹{item.price?.toFixed?.(0) ?? item.price}</p>
+                          <div className="mt-2 flex items-center gap-2">
+                            <button
+                              className="w-7 h-7 rounded-full border border-stone-300 flex items-center justify-center hover:bg-stone-50"
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              aria-label="Decrease quantity"
+                            >
+                              <FiMinus size={14} />
+                            </button>
+                            <span className="text-sm w-6 text-center">{item.quantity}</span>
+                            <button
+                              className="w-7 h-7 rounded-full border border-stone-300 flex items-center justify-center hover:bg-stone-50"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              aria-label="Increase quantity"
+                            >
+                              <FiPlus size={14} />
+                            </button>
+                          </div>
+                        </div>
+                        <button
+                          className="text-stone-400 hover:text-red-500"
+                          onClick={() => removeFromCart(item.id)}
+                          aria-label="Remove item"
+                        >
+                          <FiX size={18} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div className="border-t border-stone-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm text-stone-600">Items</span>
+                  <span className="text-sm text-stone-900 font-medium">{cartItems.reduce((acc, i) => acc + i.quantity, 0)}</span>
+                </div>
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-base text-stone-900 font-medium">Subtotal</span>
+                  <span className="text-base text-stone-900 font-medium">₹{cartItems.reduce((acc, i) => acc + (i.price || 0) * i.quantity, 0).toFixed(0)}</span>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setIsCartOpen(false)}
+                    className="flex-1 h-11 rounded-full border border-stone-300 text-stone-700 hover:bg-stone-50"
+                  >
+                    Continue shopping
+                  </button>
+                  <button
+                    onClick={() => navigate("/cart")}
+                    className="flex-1 h-11 rounded-full bg-stone-900 text-white hover:bg-stone-800"
+                  >
+                    Go to cart
+                  </button>
+                </div>
+              </div>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
       <div className="container mx-auto px-4 md:px-6 lg:px-8">
         {/* Hero Header */}
         <motion.header
@@ -355,13 +522,16 @@ const NewArrivals = () => {
             </Link>
           </div>
 
-          {products.length > 0 ? (
+          {paginatedProducts.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
-              {products.map((product, index) => (
+              {paginatedProducts.map((product, index) => (
                 <ProductCard
                   key={product._id}
                   product={product}
-                  index={index}
+                  onQuickAdd={(p, size) => {
+                    addToCart(p, size, 1);
+                    setIsCartOpen(true);
+                  }}
                 />
               ))}
             </div>

@@ -61,9 +61,9 @@ const ModernVideoScroll = () => {
      
       
       {/* Main scroll component */}
-      <div className="relative w-full h-[400vh] bg-gray-900" ref={containerRef}>
+      <div className="relative w-full h-[400vh] bg-white" ref={containerRef}>
         {/* Sticky viewport - z-50 to overlap navbar */}
-        <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden bg-black z-50">
+        <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden bg-white z-50">
           
           {/* Animated black border/background */}
           <div
@@ -71,7 +71,7 @@ const ModernVideoScroll = () => {
             style={{
               transform: `scale(${borderScale})`,
               opacity: borderOpacity,
-              background: 'black',
+              background: 'white',
               transformOrigin: 'center',
             }}
           />

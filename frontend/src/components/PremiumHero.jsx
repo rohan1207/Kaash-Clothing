@@ -12,7 +12,7 @@ const PremiumHero = () => {
         className="absolute inset-0 w-full h-full"
       >
         <img
-          src="/banner12.png"
+          src="/banner12.JPG"
           alt="Premium Fashion"
           className="w-full h-full object-cover"
         />
