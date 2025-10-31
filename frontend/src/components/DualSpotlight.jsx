@@ -2,11 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 
-
-
-// Import images
-import kaashkurti1 from "/kaashkurti1.JPG";
-import kaashkurti2 from "/kaashkurti2.JPG";
+// Import images from public folder - Vite will resolve these at build time
+const kaashkurti1 = "/kaashkurti1.JPG";
+const kaashkurti2 = "/kaashkurti2.JPG";
 
 // Metallic text helper class
 const metallicTextClass =
