@@ -84,6 +84,7 @@ const ProductDetails = () => {
   const overviewRef = useRef(null);
   const descriptionRef = useRef(null);
   const specificationsRef = useRef(null);
+  const tabsRef = useRef(null);
 
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -93,6 +94,7 @@ const ProductDetails = () => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("overview");
   const [stock] = useState(30);
+  const [isTabsSticky, setIsTabsSticky] = useState(false);
 
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState("");
@@ -151,15 +153,23 @@ const ProductDetails = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 150; // offset for sticky header
+      const scrollPosition = window.scrollY;
+      const navbarHeight = 80; // Height of navbar (adjust if needed)
+      
+      // Check if tabs should be sticky
+      if (tabsRef.current && overviewRef.current) {
+        const tabsOriginalTop = overviewRef.current.offsetTop + overviewRef.current.offsetHeight - 80;
+        setIsTabsSticky(scrollPosition > tabsOriginalTop - navbarHeight);
+      }
 
+      // Handle active tab switching
       if (descriptionRef.current && specificationsRef.current) {
         const descTop = descriptionRef.current.offsetTop;
         const specTop = specificationsRef.current.offsetTop;
 
-        if (scrollPosition >= specTop) {
+        if (scrollPosition + 150 >= specTop) {
           setActiveTab("specifications");
-        } else if (scrollPosition >= descTop) {
+        } else if (scrollPosition + 150 >= descTop) {
           setActiveTab("description");
         } else {
           setActiveTab("overview");
@@ -232,10 +242,15 @@ const ProductDetails = () => {
 
   return (
     <div className="bg-white min-h-screen">
-      {/* Sticky Tab Navigation */}
-      <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
-        <div className="container mx-auto px-4 lg:px-8 py-4">
-          <div className="flex items-center justify-center gap-2">
+      {/* Sticky Tab Navigation - appears when scrolling */}
+      <div 
+        ref={tabsRef}
+        className={`fixed top-20 left-0 z-50 transition-all duration-300 ease-in-out ${
+          isTabsSticky ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        }`}
+      >
+        <div className="ml-4 lg:ml-8">
+          <div className="bg-stone-100/95 backdrop-blur-md rounded-full px-2 py-2 flex items-center gap-1 shadow-lg">
             <TabButton name="overview" activeTab={activeTab} onClick={handleTabClick} />
             <TabButton name="description" activeTab={activeTab} onClick={handleTabClick} />
             <TabButton name="specifications" activeTab={activeTab} onClick={handleTabClick} />
@@ -243,11 +258,11 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-8 pt-8 pb-12">
+      <div className="container mx-auto px-4 lg:px-8 pt-24 pb-12">
         {/* Main Product Section with Sticky Sides */}
         <div ref={overviewRef} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Main Image (Sticky) */}
-          <div className="lg:col-span-5 lg:sticky lg:top-44 h-fit">
+          <div className="lg:col-span-5 lg:sticky lg:top-24 h-fit">
             <div className="relative aspect-[3/4] bg-stone-100 overflow-hidden group">
               <AnimatePresence mode="wait">
                 {allImages[selectedImageIndex]?.type === "video" ? (
@@ -276,6 +291,19 @@ const ProductDetails = () => {
                   />
                 )}
               </AnimatePresence>
+
+              {/* Tab Navigation at Bottom Left of Image - original position */}
+              <div 
+                className={`absolute bottom-6 left-6 z-10 transition-opacity duration-300 ${
+                  isTabsSticky ? 'opacity-0' : 'opacity-100'
+                }`}
+              >
+                <div className="bg-stone-100/90 backdrop-blur-sm rounded-full px-2 py-2 flex items-center gap-1 shadow-lg">
+                  <TabButton name="overview" activeTab={activeTab} onClick={handleTabClick} />
+                  <TabButton name="description" activeTab={activeTab} onClick={handleTabClick} />
+                  <TabButton name="specifications" activeTab={activeTab} onClick={handleTabClick} />
+                </div>
+              </div>
 
               <button
                 onClick={handlePrevImage}
@@ -327,7 +355,7 @@ const ProductDetails = () => {
           </div>
 
           {/* Right Column: Product Info (Sticky) */}
-          <div className="lg:col-span-3 lg:sticky lg:top-44 h-fit">
+          <div className="lg:col-span-3 lg:sticky lg:top-24 h-fit">
             <h1 className="text-2xl lg:text-3xl font-normal text-stone-900 mb-4">{product.name}</h1>
 
             <div className="mb-6">
