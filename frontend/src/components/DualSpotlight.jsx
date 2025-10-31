@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 
 // Import images from public folder - Vite will resolve these at build time
-const kaashkurti1 = "/kaashkurti1.JPG";
-const kaashkurti2 = "/kaashkurti2.JPG";
+const kaashkurti1 = "/maroon3.JPG";
+const kaashkurti2 = "/green4.JPG";
 
 // Metallic text helper class
 const metallicTextClass =
