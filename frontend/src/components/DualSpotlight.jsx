@@ -2,6 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 
+
+
+// Import images
+import kaashkurti1 from "/kaashkurti1.JPG";
+import kaashkurti2 from "/kaashkurti2.JPG";
+
 // Metallic text helper class
 const metallicTextClass =
   "bg-gradient-to-br from-amber-200 via-amber-100 to-amber-300 text-transparent bg-clip-text drop-shadow-[0_6px_30px_rgba(0,0,0,0.25)]";
@@ -157,6 +163,8 @@ const ProductCard = ({ item, anchorPx, bounds, onClose }) => {
   );
 };
 
+
+
 const Panel = ({ item, index, isOpen, setOpen }) => {
   // hotspot position percentages relative to panel
   const {
@@ -257,8 +265,8 @@ const DualSpotlight = ({ items }) => {
     {
       title: "Dunes of Mauve",
       titleLines: ["Dunes of ", "Mauve"],
-      image: "/kaashkurti1.JPG",
-      cardImage: "/kaashkurti1.JPG",
+      image: kaashkurti1,
+      cardImage: kaashkurti1,
       price: "₹320.00",
       hotspot: { x: "56%", y: "64%", side: "left" },
       cta: "/shop",
@@ -266,8 +274,8 @@ const DualSpotlight = ({ items }) => {
     {
       title: "Al Khadra Grace",
       titleLines: ["Al Khadra ", "Grace"],
-      image: "/kaashkurti2.JPG",
-      cardImage: "/kaashkurti2.JPG",
+      image: kaashkurti2,
+      cardImage: kaashkurti2,
       price: "₹320.00",
       hotspot: { x: "47%", y: "66%", side: "right" },
       cta: "/shop",

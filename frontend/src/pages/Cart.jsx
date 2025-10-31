@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiPlus, FiMinus, FiTruck, FiMessageSquare, FiGift, FiChevronDown } from "react-icons/fi";
+import {
+  FiPlus,
+  FiMinus,
+  FiTruck,
+  FiMessageSquare,
+  FiGift,
+  FiChevronDown,
+} from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 
 const API_URL = "https://kaash-clothing-q4td.onrender.com";
@@ -26,7 +33,7 @@ const Cart = () => {
     (acc, item) => acc + parseFloat(item.price || 0) * item.quantity,
     0
   );
-  
+
   const shippingCost = 0; // Free shipping
   const total = subtotal + shippingCost;
 
@@ -47,11 +54,23 @@ const Cart = () => {
           >
             <div className="max-w-md mx-auto bg-white rounded-2xl p-12 shadow-sm">
               <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg className="w-10 h-10 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                <svg
+                  className="w-10 h-10 text-stone-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
                 </svg>
               </div>
-              <h2 className="text-2xl font-light text-stone-900 mb-3">Your cart is empty</h2>
+              <h2 className="text-2xl font-light text-stone-900 mb-3">
+                Your cart is empty
+              </h2>
               <p className="text-stone-500 mb-8 font-light">
                 Discover our collection and find something you love.
               </p>
@@ -73,13 +92,21 @@ const Cart = () => {
                 className="mb-8"
               >
                 <h1 className="text-4xl md:text-5xl font-light text-stone-900 mb-2">
-                  SHOPPING <span className="font-light" style={{ 
-                    WebkitTextStroke: '1px currentColor',
-                    WebkitTextFillColor: 'transparent'
-                  }}>BAG</span>
+                  SHOPPING{" "}
+                  <span
+                    className="font-light"
+                    style={{
+                      WebkitTextStroke: "1px currentColor",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    BAG
+                  </span>
                 </h1>
                 <p className="text-stone-600 font-light leading-relaxed max-w-2xl">
-                  Our store offers a diverse collection of stylish and high-quality clothing, designed to meet your fashion needs and keep you looking your best every day.
+                  Our store offers a diverse collection of stylish and
+                  high-quality clothing, designed to meet your fashion needs and
+                  keep you looking your best every day.
                 </p>
               </motion.div>
 
@@ -122,7 +149,13 @@ const Cart = () => {
                             </div>
                             <div className="text-right">
                               <p className="text-lg md:text-xl font-semibold text-stone-900">
-                                Rs. {(parseFloat(item.price || 0) * item.quantity).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                Rs.{" "}
+                                {(
+                                  parseFloat(item.price || 0) * item.quantity
+                                ).toLocaleString("en-IN", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}
                               </p>
                             </div>
                           </div>
@@ -131,7 +164,9 @@ const Cart = () => {
                           <div className="flex items-center justify-between mt-4">
                             <div className="flex items-center border border-stone-200 rounded-full overflow-hidden">
                               <button
-                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                onClick={() =>
+                                  updateQuantity(item.id, item.quantity - 1)
+                                }
                                 className="p-2 px-3 hover:bg-stone-50 transition-colors"
                                 aria-label="Decrease quantity"
                               >
@@ -141,7 +176,9 @@ const Cart = () => {
                                 {item.quantity}
                               </span>
                               <button
-                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                onClick={() =>
+                                  updateQuantity(item.id, item.quantity + 1)
+                                }
                                 className="p-2 px-3 hover:bg-stone-50 transition-colors"
                                 aria-label="Increase quantity"
                               >
@@ -194,7 +231,9 @@ const Cart = () => {
                   <div className="flex items-center gap-2 text-sm text-green-700 font-medium mb-2">
                     <div className="w-full bg-green-600 h-1 rounded-full"></div>
                   </div>
-                  <p className="text-sm text-stone-600">You got free shipping.</p>
+                  <p className="text-sm text-stone-600">
+                    You got free shipping.
+                  </p>
                 </div>
 
                 {/* Expandable Sections */}
@@ -206,9 +245,15 @@ const Cart = () => {
                   >
                     <div className="flex items-center gap-3">
                       <FiMessageSquare className="w-5 h-5 text-stone-600" />
-                      <span className="text-sm font-medium text-stone-900">Order special instructions</span>
+                      <span className="text-sm font-medium text-stone-900">
+                        Order special instructions
+                      </span>
                     </div>
-                    <FiPlus className={`w-5 h-5 text-stone-600 transition-transform ${showInstructions ? 'rotate-45' : ''}`} />
+                    <FiPlus
+                      className={`w-5 h-5 text-stone-600 transition-transform ${
+                        showInstructions ? "rotate-45" : ""
+                      }`}
+                    />
                   </button>
 
                   {/* Estimate Shipping */}
@@ -218,9 +263,15 @@ const Cart = () => {
                   >
                     <div className="flex items-center gap-3">
                       <FiTruck className="w-5 h-5 text-stone-600" />
-                      <span className="text-sm font-medium text-stone-900">Estimate Shipping</span>
+                      <span className="text-sm font-medium text-stone-900">
+                        Estimate Shipping
+                      </span>
                     </div>
-                    <FiPlus className={`w-5 h-5 text-stone-600 transition-transform ${showShipping ? 'rotate-45' : ''}`} />
+                    <FiPlus
+                      className={`w-5 h-5 text-stone-600 transition-transform ${
+                        showShipping ? "rotate-45" : ""
+                      }`}
+                    />
                   </button>
                 </div>
 
@@ -243,22 +294,44 @@ const Cart = () => {
                 <div className="space-y-3 mb-6 pb-6 border-b border-stone-200">
                   <div className="flex justify-between text-sm">
                     <span className="text-stone-600">Subtotal</span>
-                    <span className="text-stone-900 font-medium">Rs. {subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span className="text-stone-900 font-medium">
+                      Rs.{" "}
+                      {subtotal.toLocaleString("en-IN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </span>
                   </div>
                   <p className="text-xs text-stone-500">
-                    Taxes included. <span className="underline cursor-pointer hover:text-stone-700">Discounts</span> and <span className="underline cursor-pointer hover:text-stone-700">shipping</span> calculated at checkout.
+                    Taxes included.{" "}
+                    <span className="underline cursor-pointer hover:text-stone-700">
+                      Discounts
+                    </span>{" "}
+                    and{" "}
+                    <span className="underline cursor-pointer hover:text-stone-700">
+                      shipping
+                    </span>{" "}
+                    calculated at checkout.
                   </p>
                 </div>
 
                 {/* Grand Total */}
                 <div className="flex justify-between items-center mb-8">
-                  <span className="text-lg md:text-xl font-medium text-stone-900">Grand total</span>
-                  <span className="text-2xl md:text-3xl font-semibold text-stone-900">Rs. {total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span className="text-lg md:text-xl font-medium text-stone-900">
+                    Grand total
+                  </span>
+                  <span className="text-2xl md:text-3xl font-semibold text-stone-900">
+                    Rs.{" "}
+                    {total.toLocaleString("en-IN", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
                 </div>
 
                 {/* Checkout Button */}
-                <button 
-                  onClick={() => navigate('/checkout')}
+                <button
+                  onClick={() => navigate("/checkout")}
                   className="w-full bg-stone-900 text-white font-medium py-4 rounded-full hover:bg-stone-800 transition-all duration-300 shadow-lg hover:shadow-xl mb-4"
                 >
                   Check out

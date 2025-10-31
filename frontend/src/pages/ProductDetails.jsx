@@ -50,7 +50,9 @@ const ExpandableSection = ({ title, children }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between py-6 text-left"
       >
-        <span className="font-semibold text-white text-lg uppercase">{title}</span>
+        <span className="font-semibold text-white text-lg uppercase">
+          {title}
+        </span>
         <div
           className={`w-10 h-10 rounded-full border-2 border-white flex items-center justify-center transition-transform ${
             isOpen ? "rotate-45" : ""
@@ -111,7 +113,10 @@ const ProductDetails = () => {
         discountedPrice: p.discountedPrice ?? null,
         discountPercentage: p.discount ?? 0,
         mainImage: { url: p.heroImage || "" },
-        additionalMedia: (p.images || []).map((img) => ({ type: "image", url: img })),
+        additionalMedia: (p.images || []).map((img) => ({
+          type: "image",
+          url: img,
+        })),
         video: p.video || "",
         description: p.description || "",
         colors: p.colorsAvailable || [],
@@ -155,10 +160,11 @@ const ProductDetails = () => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       const navbarHeight = 80; // Height of navbar (adjust if needed)
-      
+
       // Check if tabs should be sticky
       if (tabsRef.current && overviewRef.current) {
-        const tabsOriginalTop = overviewRef.current.offsetTop + overviewRef.current.offsetHeight - 80;
+        const tabsOriginalTop =
+          overviewRef.current.offsetTop + overviewRef.current.offsetHeight - 80;
         setIsTabsSticky(scrollPosition > tabsOriginalTop - navbarHeight);
       }
 
@@ -185,7 +191,7 @@ const ProductDetails = () => {
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
-    
+
     if (tabName === "overview") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else if (tabName === "description" && descriptionRef.current) {
@@ -233,34 +239,55 @@ const ProductDetails = () => {
   };
 
   const handlePrevImage = () => {
-    setSelectedImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? allImages.length - 1 : prev - 1
+    );
   };
 
   const handleNextImage = () => {
-    setSelectedImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+    setSelectedImageIndex((prev) =>
+      prev === allImages.length - 1 ? 0 : prev + 1
+    );
   };
 
   return (
     <div className="bg-white min-h-screen">
       {/* Sticky Tab Navigation - appears when scrolling */}
-      <div 
+      <div
         ref={tabsRef}
         className={`fixed top-20 left-0 z-50 transition-all duration-300 ease-in-out ${
-          isTabsSticky ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+          isTabsSticky
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0"
         }`}
       >
         <div className="ml-4 lg:ml-8">
           <div className="bg-stone-100/95 backdrop-blur-md rounded-full px-2 py-2 flex items-center gap-1 shadow-lg">
-            <TabButton name="overview" activeTab={activeTab} onClick={handleTabClick} />
-            <TabButton name="description" activeTab={activeTab} onClick={handleTabClick} />
-            <TabButton name="specifications" activeTab={activeTab} onClick={handleTabClick} />
+            <TabButton
+              name="overview"
+              activeTab={activeTab}
+              onClick={handleTabClick}
+            />
+            <TabButton
+              name="description"
+              activeTab={activeTab}
+              onClick={handleTabClick}
+            />
+            <TabButton
+              name="specifications"
+              activeTab={activeTab}
+              onClick={handleTabClick}
+            />
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 lg:px-8 pt-24 pb-12">
         {/* Main Product Section with Sticky Sides */}
-        <div ref={overviewRef} className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div
+          ref={overviewRef}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+        >
           {/* Left Column: Main Image (Sticky) */}
           <div className="lg:col-span-5 lg:sticky lg:top-24 h-fit">
             <div className="relative aspect-[3/4] bg-stone-100 overflow-hidden group">
@@ -293,15 +320,27 @@ const ProductDetails = () => {
               </AnimatePresence>
 
               {/* Tab Navigation at Bottom Left of Image - original position */}
-              <div 
+              <div
                 className={`absolute bottom-6 left-6 z-10 transition-opacity duration-300 ${
-                  isTabsSticky ? 'opacity-0' : 'opacity-100'
+                  isTabsSticky ? "opacity-0" : "opacity-100"
                 }`}
               >
                 <div className="bg-stone-100/90 backdrop-blur-sm rounded-full px-2 py-2 flex items-center gap-1 shadow-lg">
-                  <TabButton name="overview" activeTab={activeTab} onClick={handleTabClick} />
-                  <TabButton name="description" activeTab={activeTab} onClick={handleTabClick} />
-                  <TabButton name="specifications" activeTab={activeTab} onClick={handleTabClick} />
+                  <TabButton
+                    name="overview"
+                    activeTab={activeTab}
+                    onClick={handleTabClick}
+                  />
+                  <TabButton
+                    name="description"
+                    activeTab={activeTab}
+                    onClick={handleTabClick}
+                  />
+                  <TabButton
+                    name="specifications"
+                    activeTab={activeTab}
+                    onClick={handleTabClick}
+                  />
                 </div>
               </div>
 
@@ -326,12 +365,16 @@ const ProductDetails = () => {
           <div className="lg:col-span-4">
             <div className="space-y-4">
               {allImages.slice(1).map((img, idx) => (
-                <div key={idx} className="aspect-[3/4] bg-stone-100 cursor-pointer relative group" onClick={() => setSelectedImageIndex(idx + 1)}>
+                <div
+                  key={idx}
+                  className="aspect-[3/4] bg-stone-100 cursor-pointer relative group"
+                  onClick={() => setSelectedImageIndex(idx + 1)}
+                >
                   {img.type === "video" ? (
-                    <video 
-                      src={img.url} 
-                      muted 
-                      loop 
+                    <video
+                      src={img.url}
+                      muted
+                      loop
                       playsInline
                       className="w-full h-full object-cover"
                       onMouseEnter={(e) => e.target.play()}
@@ -356,19 +399,26 @@ const ProductDetails = () => {
 
           {/* Right Column: Product Info (Sticky) */}
           <div className="lg:col-span-3 lg:sticky lg:top-24 h-fit">
-            <h1 className="text-2xl lg:text-3xl font-normal text-stone-900 mb-4">{product.name}</h1>
+            <h1 className="text-2xl lg:text-3xl font-normal text-stone-900 mb-4">
+              {product.name}
+            </h1>
 
             <div className="mb-6">
               <div className="flex items-baseline gap-3 mb-2">
                 <span className="text-3xl font-semibold text-stone-900">
-                  Rs. {(product.discountedPrice || product.price).toLocaleString("en-IN", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
+                  Rs.{" "}
+                  {(product.discountedPrice || product.price).toLocaleString(
+                    "en-IN",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  )}
                 </span>
                 {product.discountedPrice && (
                   <span className="text-lg text-stone-400 line-through">
-                    Rs. {product.price.toLocaleString("en-IN", {
+                    Rs.{" "}
+                    {product.price.toLocaleString("en-IN", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
@@ -376,7 +426,9 @@ const ProductDetails = () => {
                 )}
               </div>
               <p className="text-sm text-stone-600">
-                Taxes included. <span className="underline cursor-pointer">Shipping</span> calculated at checkout.
+                Taxes included.{" "}
+                <span className="underline cursor-pointer">Shipping</span>{" "}
+                calculated at checkout.
               </p>
             </div>
 
@@ -415,8 +467,18 @@ const ProductDetails = () => {
                   </label>
                   <button className="text-sm text-stone-600 underline hover:text-stone-900 flex items-center gap-1">
                     Size chart
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -465,36 +527,72 @@ const ProductDetails = () => {
 
             <div className="flex items-center gap-2 mb-6">
               <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-              <span className="text-sm font-medium text-stone-700">{stock} in stock</span>
+              <span className="text-sm font-medium text-stone-700">
+                {stock} in stock
+              </span>
             </div>
 
             <div className="bg-green-50 border border-green-200 p-4 mb-6 rounded-lg">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-stone-900 mb-1">Pickup available at California Warehouse</p>
+                  <p className="font-semibold text-stone-900 mb-1">
+                    Pickup available at California Warehouse
+                  </p>
                   <button className="text-sm text-stone-600 underline hover:text-stone-900">
                     Check availability at other stores
                   </button>
-                  <p className="text-sm text-stone-600 mt-2">Usually ready in 24 hours</p>
+                  <p className="text-sm text-stone-600 mt-2">
+                    Usually ready in 24 hours
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center gap-6 mb-6 text-sm text-stone-700">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                  />
                 </svg>
                 <span>Free delivery within 2 days</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
                 </svg>
                 <span>Free + easy returns</span>
               </div>
@@ -546,23 +644,28 @@ const ProductDetails = () => {
                 <FiX className="w-5 h-5" />
               </button>
               <h2 className="text-3xl font-bold uppercase mb-6">DESCRIPTION</h2>
-              <p className="leading-relaxed text-stone-100 mb-8 max-w-4xl">{product.description}</p>
+              <p className="leading-relaxed text-stone-100 mb-8 max-w-4xl">
+                {product.description}
+              </p>
 
               <ExpandableSection title="INTERNATIONAL SHIPPING AVAILABLE">
                 <p className="leading-relaxed">
-                  We ship to over 100 countries worldwide. Shipping rates and delivery times vary by location.
+                  We ship to over 100 countries worldwide. Shipping rates and
+                  delivery times vary by location.
                 </p>
               </ExpandableSection>
 
               <ExpandableSection title="PREMIUM FABRICS">
                 <p className="leading-relaxed">
-                  Made from {product.material || "premium quality fabric"}, ensuring durability and comfort.
+                  Made from {product.material || "premium quality fabric"},
+                  ensuring durability and comfort.
                 </p>
               </ExpandableSection>
 
               <ExpandableSection title="DISCOVER YOUR PERFECT SIZE">
                 <p className="leading-relaxed">
-                  Refer to our detailed size chart to find your perfect fit. Available in sizes {product.sizes?.join(", ")}.
+                  Refer to our detailed size chart to find your perfect fit.
+                  Available in sizes {product.sizes?.join(", ")}.
                 </p>
               </ExpandableSection>
             </div>
@@ -570,7 +673,9 @@ const ProductDetails = () => {
 
           <div ref={specificationsRef} className="mb-16">
             <div className="bg-stone-900 text-white p-8 lg:p-12 rounded-lg">
-              <h2 className="text-4xl font-bold text-center mb-12">Product Highlights</h2>
+              <h2 className="text-4xl font-bold text-center mb-12">
+                Product Highlights
+              </h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <div className="flex items-center gap-8">
                   <div className="flex-shrink-0 w-40">
@@ -581,13 +686,16 @@ const ProductDetails = () => {
                     />
                   </div>
                   <div className="flex-1 border-l-4 border-green-500 pl-8">
-                    <h3 className="font-bold text-xl mb-2">Soft Cotton Blend</h3>
+                    <h3 className="font-bold text-xl mb-2">
+                      Soft Cotton Blend
+                    </h3>
                     <p className="text-stone-300">
-                      Premium quality {product.material || "fabric"} for all-day comfort
+                      Premium quality {product.material || "fabric"} for all-day
+                      comfort
                     </p>
                   </div>
                 </div>
-                
+
                 <div>
                   <img
                     src={allImages[2]?.url || allImages[0]?.url}
@@ -598,9 +706,12 @@ const ProductDetails = () => {
 
                 <div className="lg:col-span-2">
                   <div className="border-l-4 border-green-500 pl-8">
-                    <h3 className="font-bold text-xl mb-2">Classic Crew Neck</h3>
+                    <h3 className="font-bold text-xl mb-2">
+                      Classic Crew Neck
+                    </h3>
                     <p className="text-stone-300">
-                      Timeless neckline suitable for layering or standalone styling.
+                      Timeless neckline suitable for layering or standalone
+                      styling.
                     </p>
                   </div>
                 </div>

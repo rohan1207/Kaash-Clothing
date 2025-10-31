@@ -27,7 +27,8 @@ const priceRanges = [
 
 const Shop = () => {
   const navigate = useNavigate();
-  const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart } =
+    useCart();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,13 +52,18 @@ const Shop = () => {
           ? p.discount
           : p.discountedPrice
           ? Math.round(
-              ((p.mrp ?? p.price ?? 0) - p.discountedPrice) /
-                (p.mrp ?? p.price ?? 0) *
+              (((p.mrp ?? p.price ?? 0) - p.discountedPrice) /
+                (p.mrp ?? p.price ?? 0)) *
                 100
             )
           : 0,
-        mainImage: { url: p.heroImage || (p.mainImage && p.mainImage.url) || "" },
-        additionalMedia: (p.images || []).map((img) => ({ type: "image", url: img })),
+        mainImage: {
+          url: p.heroImage || (p.mainImage && p.mainImage.url) || "",
+        },
+        additionalMedia: (p.images || []).map((img) => ({
+          type: "image",
+          url: img,
+        })),
         description: p.description || "",
         category: p.category || "Kurtis",
         sizes: p.sizesAvailable || p.sizes || [],
@@ -129,7 +135,9 @@ const Shop = () => {
     >
       <div className="p-8 space-y-10">
         <div className="flex justify-between items-center pb-6 border-b border-stone-100">
-          <h2 className="text-2xl font-light tracking-wide text-stone-900">Filters</h2>
+          <h2 className="text-2xl font-light tracking-wide text-stone-900">
+            Filters
+          </h2>
           <button
             onClick={() => setIsFilterOpen(false)}
             className="text-stone-400 hover:text-stone-900 transition-colors duration-200"
@@ -295,7 +303,8 @@ const Shop = () => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        const sizeToUse = selectedSize || (product.sizes?.[0] ?? "Default");
+                        const sizeToUse =
+                          selectedSize || (product.sizes?.[0] ?? "Default");
                         onQuickAdd(product, sizeToUse);
                       }}
                     >
@@ -375,7 +384,9 @@ const Shop = () => {
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-12 h-12 border-2 border-stone-200 border-t-stone-900 rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-stone-600 font-light">Loading collection...</p>
+          <p className="text-sm text-stone-600 font-light">
+            Loading collection...
+          </p>
         </div>
       </div>
     );
@@ -440,7 +451,9 @@ const Shop = () => {
               </div>
               <div className="flex-1 overflow-y-auto">
                 {cartItems.length === 0 ? (
-                  <div className="p-8 text-stone-500 text-sm">Your cart is empty.</div>
+                  <div className="p-8 text-stone-500 text-sm">
+                    Your cart is empty.
+                  </div>
                 ) : (
                   <ul className="divide-y divide-stone-200">
                     {cartItems.map((item) => (
@@ -451,21 +464,33 @@ const Shop = () => {
                           className="w-16 h-20 object-cover rounded"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-stone-900 truncate">{item.name}</p>
-                          <p className="text-xs text-stone-500 mt-0.5">Size: {item.size}</p>
-                          <p className="text-sm text-stone-900 mt-1">₹{item.price?.toFixed?.(0) ?? item.price}</p>
+                          <p className="text-sm text-stone-900 truncate">
+                            {item.name}
+                          </p>
+                          <p className="text-xs text-stone-500 mt-0.5">
+                            Size: {item.size}
+                          </p>
+                          <p className="text-sm text-stone-900 mt-1">
+                            ₹{item.price?.toFixed?.(0) ?? item.price}
+                          </p>
                           <div className="mt-2 flex items-center gap-2">
                             <button
                               className="w-7 h-7 rounded-full border border-stone-300 flex items-center justify-center hover:bg-stone-50"
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity - 1)
+                              }
                               aria-label="Decrease quantity"
                             >
                               <FiMinus size={14} />
                             </button>
-                            <span className="text-sm w-6 text-center">{item.quantity}</span>
+                            <span className="text-sm w-6 text-center">
+                              {item.quantity}
+                            </span>
                             <button
                               className="w-7 h-7 rounded-full border border-stone-300 flex items-center justify-center hover:bg-stone-50"
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity + 1)
+                              }
                               aria-label="Increase quantity"
                             >
                               <FiPlus size={14} />
@@ -487,11 +512,20 @@ const Shop = () => {
               <div className="border-t border-stone-200 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm text-stone-600">Items</span>
-                  <span className="text-sm text-stone-900 font-medium">{cartItems.reduce((acc, i) => acc + i.quantity, 0)}</span>
+                  <span className="text-sm text-stone-900 font-medium">
+                    {cartItems.reduce((acc, i) => acc + i.quantity, 0)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between mb-6">
-                  <span className="text-base text-stone-900 font-medium">Subtotal</span>
-                  <span className="text-base text-stone-900 font-medium">₹{cartItems.reduce((acc, i) => acc + (i.price || 0) * i.quantity, 0).toFixed(0)}</span>
+                  <span className="text-base text-stone-900 font-medium">
+                    Subtotal
+                  </span>
+                  <span className="text-base text-stone-900 font-medium">
+                    ₹
+                    {cartItems
+                      .reduce((acc, i) => acc + (i.price || 0) * i.quantity, 0)
+                      .toFixed(0)}
+                  </span>
                 </div>
                 <div className="flex gap-3">
                   <button

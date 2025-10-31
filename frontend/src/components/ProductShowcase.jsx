@@ -1,12 +1,14 @@
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiLoader, FiAlertTriangle, FiStar, FiPlus, FiMinus, FiX } from "react-icons/fi";
+import {
+  FiLoader,
+  FiAlertTriangle,
+  FiStar,
+  FiPlus,
+  FiMinus,
+  FiX,
+} from "react-icons/fi";
 import productsJson from "../Data/products.json";
 import { useCart } from "../context/CartContext";
 
@@ -127,7 +129,8 @@ const ProductCard = ({ product, index, onQuickAdd }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      const sizeToUse = selectedSize || (product.sizes?.[0] ?? "Default");
+                      const sizeToUse =
+                        selectedSize || (product.sizes?.[0] ?? "Default");
                       onQuickAdd(product, sizeToUse);
                     }}
                   >
@@ -238,8 +241,13 @@ const ProductShowcase = () => {
         price: p.mrp ?? p.price ?? 0,
         discountedPrice: p.discountedPrice ?? null,
         // mainImage expects { url }
-        mainImage: { url: p.heroImage || (p.mainImage && p.mainImage.url) || "" },
-        additionalMedia: (p.images || []).map((img) => ({ type: "image", url: img })),
+        mainImage: {
+          url: p.heroImage || (p.mainImage && p.mainImage.url) || "",
+        },
+        additionalMedia: (p.images || []).map((img) => ({
+          type: "image",
+          url: img,
+        })),
         // keep description available if needed elsewhere
         description: p.description || "",
         sizes: p.sizesAvailable || p.sizes || [],
@@ -347,7 +355,9 @@ const ProductShowcase = () => {
               </div>
               <div className="flex-1 overflow-y-auto">
                 {cartItems.length === 0 ? (
-                  <div className="p-8 text-stone-500 text-sm">Your cart is empty.</div>
+                  <div className="p-8 text-stone-500 text-sm">
+                    Your cart is empty.
+                  </div>
                 ) : (
                   <ul className="divide-y divide-stone-200">
                     {cartItems.map((item) => (
@@ -358,21 +368,33 @@ const ProductShowcase = () => {
                           className="w-16 h-20 object-cover rounded"
                         />
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-stone-900 truncate">{item.name}</p>
-                          <p className="text-xs text-stone-500 mt-0.5">Size: {item.size}</p>
-                          <p className="text-sm text-stone-900 mt-1">₹{item.price?.toFixed?.(0) ?? item.price}</p>
+                          <p className="text-sm text-stone-900 truncate">
+                            {item.name}
+                          </p>
+                          <p className="text-xs text-stone-500 mt-0.5">
+                            Size: {item.size}
+                          </p>
+                          <p className="text-sm text-stone-900 mt-1">
+                            ₹{item.price?.toFixed?.(0) ?? item.price}
+                          </p>
                           <div className="mt-2 flex items-center gap-2">
                             <button
                               className="w-7 h-7 rounded-full border border-stone-300 flex items-center justify-center hover:bg-stone-50"
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity - 1)
+                              }
                               aria-label="Decrease quantity"
                             >
                               <FiMinus size={14} />
                             </button>
-                            <span className="text-sm w-6 text-center">{item.quantity}</span>
+                            <span className="text-sm w-6 text-center">
+                              {item.quantity}
+                            </span>
                             <button
                               className="w-7 h-7 rounded-full border border-stone-300 flex items-center justify-center hover:bg-stone-50"
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity + 1)
+                              }
                               aria-label="Increase quantity"
                             >
                               <FiPlus size={14} />
@@ -394,11 +416,20 @@ const ProductShowcase = () => {
               <div className="border-t border-stone-200 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm text-stone-600">Items</span>
-                  <span className="text-sm text-stone-900 font-medium">{cartItems.reduce((acc, i) => acc + i.quantity, 0)}</span>
+                  <span className="text-sm text-stone-900 font-medium">
+                    {cartItems.reduce((acc, i) => acc + i.quantity, 0)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between mb-6">
-                  <span className="text-base text-stone-900 font-medium">Subtotal</span>
-                  <span className="text-base text-stone-900 font-medium">₹{cartItems.reduce((acc, i) => acc + (i.price || 0) * i.quantity, 0).toFixed(0)}</span>
+                  <span className="text-base text-stone-900 font-medium">
+                    Subtotal
+                  </span>
+                  <span className="text-base text-stone-900 font-medium">
+                    ₹
+                    {cartItems
+                      .reduce((acc, i) => acc + (i.price || 0) * i.quantity, 0)
+                      .toFixed(0)}
+                  </span>
                 </div>
                 <div className="flex gap-3">
                   <button
@@ -518,11 +549,8 @@ const ProductShowcase = () => {
           />
         </div>
       </section>
-
-     
     </div>
   );
 };
 
 export default ProductShowcase;
-
