@@ -247,11 +247,31 @@ const Panel = ({ item, index, isOpen, setOpen }) => {
         )}
       </AnimatePresence>
 
-      {/* Discover button */}
+      {/* Discover button - matching Hero explore button style */}
       <div className="absolute inset-x-0 bottom-6 flex items-center justify-center">
-        <button className="px-8 py-3 border border-white text-white text-sm tracking-[0.2em] hover:bg-white/50 hover:text-black transition-colors rounded-full">
-          discover
-        </button>
+        <Link
+          to={item.cta}
+          className="group/btn relative inline-flex items-center justify-center rounded-full px-10 py-3 h-14 text-base md:text-lg font-semibold text-white bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 ease-out hover:bg-white/20 hover:border-white/30 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/40 overflow-hidden"
+        >
+          <span className="relative z-10 flex items-center gap-2">
+            DISCOVER
+            <svg
+              className="w-5 h-5 transition-transform group-hover/btn:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </span>
+          {/* Shine effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
+        </Link>
       </div>
     </div>
   );
