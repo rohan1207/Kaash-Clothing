@@ -13,6 +13,7 @@ import OrderSuccess from "./pages/OrderSuccess";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
+import MobileRestriction from "./components/MobileRestriction";
 
 import SareePage from "./pages/SareePage";
 import Top from "./pages/Top";
@@ -24,6 +25,7 @@ import Kurti from "./pages/Kurti";
 const App = () => {
   return (
     <Router>
+      <MobileRestriction />
       <ScrollToTop />
       <div className="flex flex-col min-h-screen">
         <Navbar />
