@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+﻿﻿import React, { useState, useEffect, useRef } from "react";
 import { useCart } from "../context/CartContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -100,6 +100,29 @@ const ProductDetails = () => {
 
   const [pageLoading, setPageLoading] = useState(true);
   const [pageError, setPageError] = useState("");
+
+  // Image zoom state
+  const [isZooming, setIsZooming] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const mainImageRef = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (!mainImageRef.current) return;
+    
+    const rect = mainImageRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    setZoomPosition({ x, y });
+  };
+
+  const handleMouseEnter = () => {
+    setIsZooming(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsZooming(false);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -290,7 +313,13 @@ const ProductDetails = () => {
         >
           {/* Left Column: Main Image (Sticky) */}
           <div className="lg:col-span-4 lg:sticky lg:top-24 h-fit">
-            <div className="relative lg:h-[calc(100vh-6rem)] bg-stone-100 overflow-hidden group">
+            <div 
+              className="relative lg:h-[calc(100vh-6rem)] bg-stone-100 overflow-hidden group cursor-zoom-in"
+              onMouseMove={handleMouseMove}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              ref={mainImageRef}
+            >
               <AnimatePresence mode="wait">
                 {allImages[selectedImageIndex]?.type === "video" ? (
                   <motion.video
@@ -318,6 +347,46 @@ const ProductDetails = () => {
                   />
                 )}
               </AnimatePresence>
+
+              {/* Zoom Lens - Small magnifying window */}
+              <AnimatePresence>
+                {isZooming && allImages[selectedImageIndex]?.type !== "video" && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-4 right-4 w-64 h-64 rounded-xl overflow-hidden shadow-2xl border-4 border-white pointer-events-none z-30 backdrop-blur-sm"
+                    style={{
+                      background: `url(${allImages[selectedImageIndex]?.url})`,
+                      backgroundSize: '800%',
+                      backgroundPosition: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/5" />
+                    <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                      8x Zoom
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Zoom indicator - cursor area highlight */}
+              {isZooming && allImages[selectedImageIndex]?.type !== "video" && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute w-32 h-32 border-2 border-white/50 rounded-full pointer-events-none z-20 backdrop-blur-[1px]"
+                  style={{
+                    left: `${zoomPosition.x}%`,
+                    top: `${zoomPosition.y}%`,
+                    transform: 'translate(-50%, -50%)',
+                    boxShadow: '0 0 20px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.2)',
+                  }}
+                />
+              )}
 
               {/* Tab Navigation at Bottom Left of Image - original position */}
               <div
@@ -406,22 +475,11 @@ const ProductDetails = () => {
             <div className="mb-3">
               <div className="flex items-baseline gap-2 mb-1">
                 <span className="text-xl font-semibold text-stone-900">
-                  Rs.{" "}
-                  {(product.discountedPrice || product.price).toLocaleString(
-                    "en-IN",
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  )}
+                  {(product.discountedPrice || product.price).toFixed(0)} DHS
                 </span>
                 {product.discountedPrice && (
                   <span className="text-sm text-stone-400 line-through">
-                    Rs.{" "}
-                    {product.price.toLocaleString("en-IN", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                    {product.price.toFixed(0)} DHS
                   </span>
                 )}
               </div>
@@ -622,14 +680,29 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <button
                 onClick={handleAddToCart}
                 className="flex-1 bg-stone-900 text-white py-2.5 px-4 font-semibold hover:bg-stone-800 transition-colors rounded-full text-xs"
               >
                 Add to cart
               </button>
-              <button className="flex-1 bg-white text-stone-900 py-2.5 px-4 border-2 border-stone-900 font-semibold hover:bg-stone-50 transition-colors rounded-full text-xs">
+              <button 
+                onClick={() => {
+                  // Navigate to checkout with this specific product
+                  navigate("/checkout", {
+                    state: {
+                      items: [{
+                        ...product,
+                        size: selectedSize,
+                        quantity: quantity,
+                        selectedColor: selectedColor
+                      }]
+                    }
+                  });
+                }}
+                className="flex-1 bg-white text-stone-900 py-2.5 px-4 border-2 border-stone-900 font-semibold hover:bg-stone-50 transition-colors rounded-full text-xs"
+              >
                 Buy it now
               </button>
             </div>
@@ -640,9 +713,7 @@ const ProductDetails = () => {
         <div className="mt-16">
           <div ref={descriptionRef} className="mb-16">
             <div className="bg-stone-900 text-white p-8 lg:p-12 rounded-lg relative">
-              <button className="absolute top-4 right-4 w-10 h-10 bg-white text-stone-900 rounded-full flex items-center justify-center hover:bg-stone-100 transition-colors">
-                <FiX className="w-5 h-5" />
-              </button>
+             
               <h2 className="text-3xl font-bold uppercase mb-6">DESCRIPTION</h2>
               <p className="leading-relaxed text-stone-100 mb-8 max-w-4xl">
                 {product.description}
@@ -672,50 +743,126 @@ const ProductDetails = () => {
           </div>
 
           <div ref={specificationsRef} className="mb-16">
-            <div className="bg-stone-900 text-white p-8 lg:p-12 rounded-lg">
-              <h2 className="text-4xl font-bold text-center mb-12">
-                Product Highlights
+            <div className="bg-stone-900 text-white p-8 lg:p-16 rounded-lg overflow-hidden">
+              <h2 className="text-4xl font-bold text-center mb-16">
+                Product Specifications
               </h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div className="flex items-center gap-8">
-                  <div className="flex-shrink-0 w-40">
-                    <img
-                      src={allImages[1]?.url || allImages[0]?.url}
-                      alt="Soft Cotton Blend"
-                      className="w-full aspect-square object-cover rounded-lg"
-                    />
-                  </div>
-                  <div className="flex-1 border-l-4 border-green-500 pl-8">
-                    <h3 className="font-bold text-xl mb-2">
-                      Soft Cotton Blend
-                    </h3>
-                    <p className="text-stone-300">
-                      Premium quality {product.material || "fabric"} for all-day
-                      comfort
-                    </p>
-                  </div>
-                </div>
-
-                <div>
+              
+              <motion.div 
+                className="relative w-full max-w-6xl mx-auto min-h-[600px] flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6 }}
+              >
+                {/* Center Image */}
+                <div className="relative w-full aspect-[3/4] mx-auto max-w-md z-10">
                   <img
-                    src={allImages[2]?.url || allImages[0]?.url}
-                    alt="Product highlight"
-                    className="w-full aspect-[4/3] object-cover rounded-lg"
+                    src={allImages[1]?.url || allImages[0]?.url}
+                    alt="Product specifications"
+                    className="w-full h-full object-cover rounded-lg shadow-2xl"
                   />
+                  
+                  {/* Radiating Dots on Fabric - Only 2 Dots */}
+                  
+                  {/* Top Dot (radiates left) */}
+                  <motion.div
+                    className="absolute top-[35%] left-[20%] w-4 h-4 z-20"
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ delay: 0.3, duration: 0.4 }}
+                  >
+                    <div className="w-full h-full bg-white rounded-full shadow-lg animate-pulse" />
+                    <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-75" />
+                  </motion.div>
+
+                  {/* Bottom Dot (radiates right) */}
+                  <motion.div
+                    className="absolute top-[65%] right-[20%] w-4 h-4 z-20"
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true, amount: 0.3 }}
+                    transition={{ delay: 0.5, duration: 0.4 }}
+                  >
+                    <div className="w-full h-full bg-white rounded-full shadow-lg animate-pulse" />
+                    <div className="absolute inset-0 bg-white rounded-full animate-ping opacity-75" />
+                  </motion.div>
                 </div>
 
-                <div className="lg:col-span-2">
-                  <div className="border-l-4 border-green-500 pl-8">
-                    <h3 className="font-bold text-xl mb-2">
-                      Classic Crew Neck
-                    </h3>
-                    <p className="text-stone-300">
-                      Timeless neckline suitable for layering or standalone
-                      styling.
+                {/* Specification Cards with Straight Parallel Lines */}
+                
+                {/* Left Card - Connected to Top Dot */}
+                <motion.div
+                  className="absolute left-0 top-[35%] -translate-y-1/2"
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                >
+                  <div className="bg-white text-stone-900 p-6 rounded-lg shadow-xl max-w-xs relative">
+                    {/* Straight Horizontal Line radiating LEFT from dot */}
+                    <motion.div
+                      className="absolute left-full top-1/2 -translate-y-1/2 h-0.5 bg-white w-32 lg:w-48"
+                      style={{ 
+                        backgroundImage: 'repeating-linear-gradient(to right, white 0, white 8px, transparent 8px, transparent 16px)'
+                      }}
+                      initial={{ scaleX: 0, originX: 0 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={{ once: true, amount: 0.3 }}
+                      transition={{ delay: 0.7, duration: 0.8 }}
+                    />
+                    
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 bg-stone-900 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                        </svg>
+                      </div>
+                      <h3 className="font-bold text-lg">Premium {product.material || "Fabric"}</h3>
+                    </div>
+                    <p className="text-sm text-stone-600">
+                      High-quality {product.material || "fabric"} ensuring breathability and comfort throughout the day
                     </p>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+
+                {/* Right Card - Connected to Bottom Dot */}
+                <motion.div
+                  className="absolute right-0 top-[65%] -translate-y-1/2"
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ delay: 0.8, duration: 0.6 }}
+                >
+                  <div className="bg-white text-stone-900 p-6 rounded-lg shadow-xl max-w-xs relative">
+                    {/* Straight Horizontal Line radiating RIGHT from dot */}
+                    <motion.div
+                      className="absolute right-full top-1/2 -translate-y-1/2 h-0.5 bg-white w-32 lg:w-48"
+                      style={{ 
+                        backgroundImage: 'repeating-linear-gradient(to left, white 0, white 8px, transparent 8px, transparent 16px)'
+                      }}
+                      initial={{ scaleX: 0, originX: 1 }}
+                      whileInView={{ scaleX: 1 }}
+                      viewport={{ once: true, amount: 0.3 }}
+                      transition={{ delay: 0.9, duration: 0.8 }}
+                    />
+                    
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 bg-stone-900 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                      </div>
+                      <h3 className="font-bold text-lg">Handcrafted Details</h3>
+                    </div>
+                    <p className="text-sm text-stone-600">
+                      Artisanal embroidery and fine stitching showcase traditional craftsmanship
+                    </p>
+                  </div>
+                </motion.div>
+
+              </motion.div>
             </div>
           </div>
         </div>

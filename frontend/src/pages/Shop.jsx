@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiStar, FiPlus, FiMinus } from "react-icons/fi";
+import { FiX, FiStar, FiPlus, FiMinus, FiHeart } from "react-icons/fi";
 import productsJson from "../Data/products.json";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const API_URL = "https://kaash-clothing-q4td.onrender.com";
 
@@ -19,14 +21,15 @@ const buildUrl = (path) => {
 const categories = ["All", "Kurtis"];
 const priceRanges = [
   "All",
-  "Under ₹1000",
-  "₹1000 - ₹2000",
-  "₹2000 - ₹5000",
-  "Over ₹5000",
+  "Under 50 DHS",
+  "50 - 100 DHS",
+  "100 - 150 DHS",
+  "Over 150 DHS",
 ];
 
 const Shop = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { cartItems, addToCart, updateQuantity, removeFromCart, clearCart } =
     useCart();
   const [products, setProducts] = useState([]);
@@ -98,12 +101,12 @@ const Shop = () => {
     if (filters.price !== "All") {
       items = items.filter((p) => {
         const price = p.discountedPrice || p.price;
-        if (filters.price === "Under ₹1000") return price < 1000;
-        if (filters.price === "₹1000 - ₹2000")
-          return price >= 1000 && price <= 2000;
-        if (filters.price === "₹2000 - ₹5000")
-          return price >= 2000 && price <= 5000;
-        if (filters.price === "Over ₹5000") return price > 5000;
+        if (filters.price === "Under 50 DHS") return price < 50;
+        if (filters.price === "50 - 100 DHS")
+          return price >= 50 && price <= 100;
+        if (filters.price === "100 - 150 DHS")
+          return price >= 100 && price <= 150;
+        if (filters.price === "Over 150 DHS") return price > 150;
         return true;
       });
     }
@@ -136,7 +139,7 @@ const Shop = () => {
       <div className="p-8 space-y-10">
         <div className="flex justify-between items-center pb-6 border-b border-stone-100">
           <h2 className="text-2xl font-light tracking-wide text-stone-900">
-            Filters
+            {t("filters")}
           </h2>
           <button
             onClick={() => setIsFilterOpen(false)}
@@ -150,7 +153,7 @@ const Shop = () => {
           {/* Category Filter */}
           <div>
             <h3 className="text-sm font-medium text-stone-900 mb-4 tracking-wider uppercase">
-              Category
+              {t("category")}
             </h3>
             <div className="space-y-2">
               {categories.map((cat) => (
@@ -163,7 +166,7 @@ const Shop = () => {
                       : "bg-stone-50 text-stone-700 hover:bg-stone-100"
                   }`}
                 >
-                  {cat}
+                  {t(cat.toLowerCase())}
                 </button>
               ))}
             </div>
@@ -172,7 +175,7 @@ const Shop = () => {
           {/* Price Range Filter */}
           <div>
             <h3 className="text-sm font-medium text-stone-900 mb-4 tracking-wider uppercase">
-              Price Range
+              {t("priceRange")}
             </h3>
             <div className="space-y-2">
               {priceRanges.map((range) => (
@@ -194,16 +197,16 @@ const Shop = () => {
           {/* Sort By */}
           <div>
             <h3 className="text-sm font-medium text-stone-900 mb-4 tracking-wider uppercase">
-              Sort By
+              {t("sortBy")}
             </h3>
             <select
               value={filters.sortBy}
               onChange={(e) => handleFilterChange("sortBy", e.target.value)}
               className="w-full px-4 py-3 border border-stone-200 rounded-md bg-white text-sm focus:outline-none focus:ring-2 focus:ring-stone-900 transition"
             >
-              <option value="newest">Newest First</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
+              <option value="newest">{t("newestFirst")}</option>
+              <option value="price-asc">{t("priceLowToHigh")}</option>
+              <option value="price-desc">{t("priceHighToLow")}</option>
             </select>
           </div>
         </div>
@@ -212,6 +215,7 @@ const Shop = () => {
   );
 
   const ProductCard = ({ product, onQuickAdd }) => {
+    const { isInWishlist, toggleWishlist } = useWishlist();
     const hasDiscount =
       product.discountedPrice && product.discountedPrice < product.price;
     const [isHovered, setIsHovered] = useState(false);
@@ -220,6 +224,7 @@ const Shop = () => {
       product.sizes && product.sizes.length > 0 ? product.sizes[0] : null
     );
 
+    const inWishlist = isInWishlist(product._id);
     const firstAdditionalImage = product.additionalMedia?.find(
       (media) => media.type === "image"
     )?.url;
@@ -274,6 +279,28 @@ const Shop = () => {
               </span>
             </div>
           )}
+
+          {/* Wishlist Button */}
+          <motion.button
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleWishlist(product);
+            }}
+            className={`absolute ${hasDiscount ? 'top-14' : 'top-3'} right-3 w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors duration-200 ${
+              inWishlist
+                ? "bg-pink-500 text-white"
+                : "bg-white/95 text-stone-600 hover:text-pink-500"
+            }`}
+            aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <FiHeart
+              className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`}
+            />
+          </motion.button>
 
           {/* Quick View Tray at bottom */}
           <AnimatePresence>
@@ -362,15 +389,15 @@ const Shop = () => {
             {hasDiscount ? (
               <>
                 <span className="text-base font-medium text-stone-900">
-                  ₹{product.discountedPrice.toFixed(0)}
+                  {product.discountedPrice.toFixed(0)} DHS
                 </span>
                 <span className="text-sm text-stone-400 line-through font-light">
-                  ₹{product.price.toFixed(0)}
+                  {product.price.toFixed(0)} DHS
                 </span>
               </>
             ) : (
               <span className="text-base font-medium text-stone-900">
-                ₹{product.price.toFixed(0)}
+                {product.price.toFixed(0)} DHS
               </span>
             )}
           </div>
@@ -382,10 +409,10 @@ const Shop = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
-        <div className="text-center space-y-4">
+          <div className="text-center space-y-4">
           <div className="w-12 h-12 border-2 border-stone-200 border-t-stone-900 rounded-full animate-spin mx-auto" />
           <p className="text-sm text-stone-600 font-light">
-            Loading collection...
+            {t("loadingCollection")}
           </p>
         </div>
       </div>
@@ -440,7 +467,7 @@ const Shop = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="px-6 py-5 border-b border-stone-200 flex items-center justify-between">
-                <h2 className="text-lg font-medium text-stone-900">Your Bag</h2>
+                <h2 className="text-lg font-medium text-stone-900">{t("yourBag")}</h2>
                 <button
                   className="text-stone-500 hover:text-stone-900"
                   onClick={() => setIsCartOpen(false)}
@@ -452,7 +479,7 @@ const Shop = () => {
               <div className="flex-1 overflow-y-auto">
                 {cartItems.length === 0 ? (
                   <div className="p-8 text-stone-500 text-sm">
-                    Your cart is empty.
+                    {t("emptyCart")}
                   </div>
                 ) : (
                   <ul className="divide-y divide-stone-200">
@@ -468,10 +495,10 @@ const Shop = () => {
                             {item.name}
                           </p>
                           <p className="text-xs text-stone-500 mt-0.5">
-                            Size: {item.size}
+                            {t("size")}: {item.size}
                           </p>
                           <p className="text-sm text-stone-900 mt-1">
-                            ₹{item.price?.toFixed?.(0) ?? item.price}
+                            {item.price?.toFixed?.(0) ?? item.price} DHS
                           </p>
                           <div className="mt-2 flex items-center gap-2">
                             <button
@@ -511,36 +538,41 @@ const Shop = () => {
               </div>
               <div className="border-t border-stone-200 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-stone-600">Items</span>
+                  <span className="text-sm text-stone-600">{t("items")}</span>
                   <span className="text-sm text-stone-900 font-medium">
                     {cartItems.reduce((acc, i) => acc + i.quantity, 0)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-base text-stone-900 font-medium">
-                    Subtotal
+                    {t("subtotal")}
                   </span>
-                  <span className="text-base text-stone-900 font-medium">
-                    ₹
+                  <span className="text-xl text-stone-900 font-semibold">
                     {cartItems
                       .reduce((acc, i) => acc + (i.price || 0) * i.quantity, 0)
-                      .toFixed(0)}
+                      .toFixed(0)}{" "}
+                    DHS
                   </span>
                 </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setIsCartOpen(false)}
-                    className="flex-1 h-11 rounded-full border border-stone-300 text-stone-700 hover:bg-stone-50"
-                  >
-                    Continue shopping
-                  </button>
-                  <button
-                    onClick={() => navigate("/cart")}
-                    className="flex-1 h-11 rounded-full bg-stone-900 text-white hover:bg-stone-800"
-                  >
-                    Go to cart
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    navigate("/checkout");
+                  }}
+                  className="w-full h-12 rounded-full bg-stone-900 text-white hover:bg-stone-800 font-medium mb-3"
+                  disabled={cartItems.length === 0}
+                >
+                  Proceed to Checkout
+                </button>
+                <button
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    navigate("/cart");
+                  }}
+                  className="w-full h-11 rounded-full border border-stone-300 text-stone-700 hover:bg-stone-50"
+                >
+                  {t("goToCart")}
+                </button>
               </div>
             </motion.aside>
           </>
@@ -557,11 +589,10 @@ const Shop = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-7xl text-stone-900 font-light tracking-tight mb-4">
-              Our Collection
+              {t("ourCollection")}
             </h1>
             <p className="text-stone-600 max-w-2xl mx-auto text-base md:text-lg font-light leading-relaxed">
-              Timeless pieces crafted with love. Each kurti tells a story of
-              tradition, elegance, and modern grace.
+              {t("ourCollectionDesc")}
             </p>
           </motion.div>
         </header>
@@ -586,12 +617,12 @@ const Shop = () => {
                   d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                 />
               </svg>
-              <span>Filter & Sort</span>
+              <span>{t("filterAndSort")}</span>
             </button>
 
             <p className="text-sm text-stone-500 font-light">
-              {filteredAndSortedProducts.length} piece
-              {filteredAndSortedProducts.length !== 1 ? "s" : ""}
+              {filteredAndSortedProducts.length} {t("piece")}
+              {filteredAndSortedProducts.length !== 1 ? t("s") : ""}
             </p>
           </div>
 
@@ -618,7 +649,7 @@ const Shop = () => {
           {filteredAndSortedProducts.length === 0 && (
             <div className="text-center py-24">
               <p className="text-stone-500 text-lg font-light">
-                No products found. Try adjusting your filters.
+                {t("noProductsFound")}
               </p>
             </div>
           )}

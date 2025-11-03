@@ -2,10 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 
-// Import images from public folder - Vite will resolve these at build time
-const kaashkurti1 = "/maroon3.JPG";
-const kaashkurti2 = "/green4.JPG";
-
 // Metallic text helper class
 const metallicTextClass =
   "bg-gradient-to-br from-amber-200 via-amber-100 to-amber-300 text-transparent bg-clip-text drop-shadow-[0_6px_30px_rgba(0,0,0,0.25)]";
@@ -38,7 +34,7 @@ const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
 const ProductCard = ({ item, anchorPx, bounds, onClose }) => {
   const cardRef = useRef(null);
-  const [size, setSize] = useState({ w: 300, h: 360 });
+  const [size, setSize] = useState({ w: 320, h: 400 });
 
   // measure card size for accurate clamping
   useEffect(() => {
@@ -102,32 +98,71 @@ const ProductCard = ({ item, anchorPx, bounds, onClose }) => {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 6 }}
         transition={{ type: "spring", stiffness: 240, damping: 22 }}
-        className="absolute z-20 w-[300px] bg-white rounded-sm shadow-[0_25px_80px_rgba(0,0,0,0.35)] border border-white/90 backdrop-blur-[2px]"
+        className="absolute z-20 w-[320px] bg-white/95 backdrop-blur-xl rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] border border-stone-200/50 overflow-hidden"
         style={{ left, top }}
       >
-        {/* framed image */}
-        <div className="p-3">
-          <div className="bg-white border border-gray-200 rounded-sm p-2 shadow-sm">
-            <img
-              src={item.cardImage || item.image}
-              alt={item.title}
-              className="w-full h-56 object-cover rounded-sm"
-            />
-          </div>
+        {/* Product Image with overlay gradient */}
+        <div className="relative group overflow-hidden">
+          <img
+            src={item.cardImage || item.image}
+            alt={item.title}
+            className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         </div>
-        {/* content */}
-        <div className="px-4 pb-5">
-          <div className="text-[15px] text-gray-900 font-medium">
-            {item.title}
+
+        {/* Content Section */}
+        <div className="p-5 space-y-3">
+          {/* Title and Price */}
+          <div className="space-y-1.5">
+            <h3 className="text-base font-light text-stone-900 tracking-wide leading-snug">
+              {item.title}
+            </h3>
+            {item.price && (
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-xl font-light text-stone-900">
+                  {item.price.replace('₹', '')}
+                </span>
+                <span className="text-xs text-stone-500 font-light">DHS</span>
+              </div>
+            )}
           </div>
-          {item.price && (
-            <div className="mt-1 text-sm text-gray-600">{item.price}</div>
-          )}
+
+          {/* Divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-stone-300 to-transparent" />
+
+          {/* CTA Button */}
+          <Link
+            to={item.cta || "/shop"}
+            className="block w-full"
+            onClick={onClose}
+          >
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full h-10 bg-stone-900 text-white text-xs font-light tracking-[0.2em] uppercase rounded-full hover:bg-stone-800 transition-colors duration-300 flex items-center justify-center gap-2 group"
+            >
+              View Details
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </motion.button>
+          </Link>
         </div>
-        {/* close button */}
+
+        {/* Close button - Refined */}
         <button
           onClick={onClose}
-          className="absolute -top-3 -right-3 h-7 w-7 rounded-full bg-white text-gray-700 flex items-center justify-center shadow-md border border-gray-200"
+          className="absolute top-4 right-4 h-8 w-8 rounded-full bg-white/90 backdrop-blur-sm text-stone-700 flex items-center justify-center shadow-lg border border-stone-200/50 hover:bg-white hover:scale-110 transition-all duration-300 z-10"
           aria-label="Close"
         >
           <svg
@@ -136,11 +171,11 @@ const ProductCard = ({ item, anchorPx, bounds, onClose }) => {
             fill="none"
             stroke="currentColor"
             className="h-4 w-4"
+            strokeWidth="2"
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth="1.5"
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>
@@ -148,20 +183,18 @@ const ProductCard = ({ item, anchorPx, bounds, onClose }) => {
 
         {/* notch pointer toward hotspot */}
         <div
-          className="absolute w-3.5 h-3.5 bg-white border border-gray-200 rotate-45"
+          className="absolute w-3 h-3 bg-white/95 backdrop-blur-xl border-l border-t border-stone-200/50 rotate-45"
           style={{
-            [pointerSide]: -7,
+            [pointerSide]: -6,
             top: pointerTop,
-            marginTop: -7,
-            boxShadow: "0 10px 20px rgba(0,0,0,0.08)",
+            marginTop: -6,
+            boxShadow: "-4px -4px 8px rgba(0,0,0,0.05)",
           }}
         />
       </motion.div>
     </>
   );
 };
-
-
 
 const Panel = ({ item, index, isOpen, setOpen }) => {
   // hotspot position percentages relative to panel
@@ -247,31 +280,11 @@ const Panel = ({ item, index, isOpen, setOpen }) => {
         )}
       </AnimatePresence>
 
-      {/* Discover button - matching Hero explore button style */}
+      {/* Discover button */}
       <div className="absolute inset-x-0 bottom-6 flex items-center justify-center">
-        <Link
-          to={item.cta}
-          className="group/btn relative inline-flex items-center justify-center rounded-full px-10 py-3 h-14 text-base md:text-lg font-semibold text-white bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 ease-out hover:bg-white/20 hover:border-white/30 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white/40 overflow-hidden"
-        >
-          <span className="relative z-10 flex items-center gap-2">
-            DISCOVER
-            <svg
-              className="w-5 h-5 transition-transform group-hover/btn:translate-x-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </span>
-          {/* Shine effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-        </Link>
+        <button className="px-8 py-3 border border-white text-white text-sm tracking-[0.2em] hover:bg-white/50 hover:text-black transition-colors rounded-full">
+          discover
+        </button>
       </div>
     </div>
   );
@@ -283,8 +296,8 @@ const DualSpotlight = ({ items }) => {
     {
       title: "Dunes of Mauve",
       titleLines: ["Dunes of ", "Mauve"],
-      image: kaashkurti1,
-      cardImage: kaashkurti1,
+      image: "/kaashkurti1.JPG",
+      cardImage: "/kaashkurti1.JPG",
       price: "₹320.00",
       hotspot: { x: "56%", y: "64%", side: "left" },
       cta: "/shop",
@@ -292,8 +305,8 @@ const DualSpotlight = ({ items }) => {
     {
       title: "Al Khadra Grace",
       titleLines: ["Al Khadra ", "Grace"],
-      image: kaashkurti2,
-      cardImage: kaashkurti2,
+      image: "/kaashkurti2.JPG",
+      cardImage: "/kaashkurti2.JPG",
       price: "₹320.00",
       hotspot: { x: "47%", y: "66%", side: "right" },
       cta: "/shop",

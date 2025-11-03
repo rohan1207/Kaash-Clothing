@@ -8,9 +8,12 @@ import {
   FiPlus,
   FiMinus,
   FiX,
+  FiHeart,
 } from "react-icons/fi";
 import productsJson from "../Data/products.json";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import { useLanguage } from "../context/LanguageContext";
 
 const API_URL = "https://kaash-clothing-q4td.onrender.com";
 
@@ -29,11 +32,15 @@ const buildUrl = (path) => {
 
 const ProductCard = ({ product, index, onQuickAdd }) => {
   const navigate = useNavigate();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const [tabHovered, setTabHovered] = useState(false);
   const [selectedSize, setSelectedSize] = useState(
     product.sizes && product.sizes.length > 0 ? product.sizes[0] : null
   );
+
+  const inWishlist = isInWishlist(product._id);
 
   // Get the first additional image if available
   const firstAdditionalImage = product.additionalMedia?.find(
@@ -80,18 +87,16 @@ const ProductCard = ({ product, index, onQuickAdd }) => {
           loading="lazy"
         />
 
-        {/* Discount Badge */}
-        {hasDiscount && (
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-stone-900 text-xs px-3 py-1.5 rounded-full font-medium shadow-sm"
-          >
-            {discountPercentage}% OFF
-          </motion.div>
-        )}
-
-        {/* Rating Badge - top left */}
+          {/* Discount Badge */}
+          {hasDiscount && (
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-stone-900 text-xs px-3 py-1.5 rounded-full font-medium shadow-sm"
+            >
+              {discountPercentage}% {t("off")}
+            </motion.div>
+          )}        {/* Rating Badge - top left */}
         {product.ratings > 0 && (
           <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-full flex items-center gap-1 shadow-sm">
             <FiStar className="w-3 h-3 text-yellow-500 fill-current" />
@@ -100,6 +105,28 @@ const ProductCard = ({ product, index, onQuickAdd }) => {
             </span>
           </div>
         )}
+
+        {/* Wishlist Button - top right below discount badge */}
+        <motion.button
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleWishlist(product);
+          }}
+          className={`absolute ${hasDiscount ? 'top-14' : 'top-3'} right-3 w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors duration-200 ${
+            inWishlist
+              ? "bg-pink-500 text-white"
+              : "bg-white/95 text-stone-600 hover:text-pink-500"
+          }`}
+          aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <FiHeart
+            className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`}
+          />
+        </motion.button>
 
         {/* Quick View Tray at bottom */}
         <AnimatePresence>
@@ -120,8 +147,8 @@ const ProductCard = ({ product, index, onQuickAdd }) => {
                 className="w-full rounded-md bg-white/95 backdrop-blur-md border border-stone-200 shadow-lg px-4 flex flex-col justify-center"
               >
                 <div className="flex items-center justify-between h-12">
-                  <span className="text-xs tracking-wider text-stone-900 font-medium">
-                    QUICK VIEW
+                  <span className="text-xs tracking-wider text-stone-900 font-medium uppercase">
+                    {t("quickView")}
                   </span>
                   <button
                     aria-label="Add to cart"
@@ -188,15 +215,15 @@ const ProductCard = ({ product, index, onQuickAdd }) => {
           {hasDiscount ? (
             <>
               <span className="text-base font-medium text-stone-900">
-                ₹{product.discountedPrice.toFixed(0)}
+                {product.discountedPrice.toFixed(0)} DHS
               </span>
               <span className="text-sm text-stone-400 line-through font-light">
-                ₹{product.price.toFixed(0)}
+                {product.price.toFixed(0)} DHS
               </span>
             </>
           ) : (
             <span className="text-base font-medium text-stone-900">
-              ₹{product.price.toFixed(0)}
+              {product.price.toFixed(0)} DHS
             </span>
           )}
         </div>
@@ -224,6 +251,7 @@ const ValueProp = ({ icon, title, description, index }) => (
 const ProductShowcase = () => {
   const navigate = useNavigate();
   const { cartItems, addToCart, updateQuantity, removeFromCart } = useCart();
+  const { t } = useLanguage();
   const [products, setProducts] = useState([]);
   const [visibleProducts, setVisibleProducts] = useState(8); // Initially show 8 products
   const [loading, setLoading] = useState(true);
@@ -344,7 +372,7 @@ const ProductShowcase = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="px-6 py-5 border-b border-stone-200 flex items-center justify-between">
-                <h2 className="text-lg font-medium text-stone-900">Your Bag</h2>
+                <h2 className="text-lg font-medium text-stone-900">{t("yourBag")}</h2>
                 <button
                   className="text-stone-500 hover:text-stone-900"
                   onClick={() => setIsCartOpen(false)}
@@ -356,7 +384,7 @@ const ProductShowcase = () => {
               <div className="flex-1 overflow-y-auto">
                 {cartItems.length === 0 ? (
                   <div className="p-8 text-stone-500 text-sm">
-                    Your cart is empty.
+                    {t("emptyCart")}
                   </div>
                 ) : (
                   <ul className="divide-y divide-stone-200">
@@ -372,10 +400,10 @@ const ProductShowcase = () => {
                             {item.name}
                           </p>
                           <p className="text-xs text-stone-500 mt-0.5">
-                            Size: {item.size}
+                            {t("size")}: {item.size}
                           </p>
                           <p className="text-sm text-stone-900 mt-1">
-                            ₹{item.price?.toFixed?.(0) ?? item.price}
+                            {item.price?.toFixed?.(0) ?? item.price} DHS
                           </p>
                           <div className="mt-2 flex items-center gap-2">
                             <button
@@ -415,36 +443,41 @@ const ProductShowcase = () => {
               </div>
               <div className="border-t border-stone-200 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-stone-600">Items</span>
+                  <span className="text-sm text-stone-600">{t("items")}</span>
                   <span className="text-sm text-stone-900 font-medium">
                     {cartItems.reduce((acc, i) => acc + i.quantity, 0)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-base text-stone-900 font-medium">
-                    Subtotal
+                    {t("subtotal")}
                   </span>
-                  <span className="text-base text-stone-900 font-medium">
-                    ₹
+                  <span className="text-xl text-stone-900 font-semibold">
                     {cartItems
                       .reduce((acc, i) => acc + (i.price || 0) * i.quantity, 0)
-                      .toFixed(0)}
+                      .toFixed(0)}{" "}
+                    DHS
                   </span>
                 </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setIsCartOpen(false)}
-                    className="flex-1 h-11 rounded-full border border-stone-300 text-stone-700 hover:bg-stone-50"
-                  >
-                    Continue shopping
-                  </button>
-                  <button
-                    onClick={() => navigate("/cart")}
-                    className="flex-1 h-11 rounded-full bg-stone-900 text-white hover:bg-stone-800"
-                  >
-                    Go to cart
-                  </button>
-                </div>
+                <button
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    navigate("/checkout");
+                  }}
+                  className="w-full h-12 rounded-full bg-stone-900 text-white hover:bg-stone-800 font-medium mb-3"
+                  disabled={cartItems.length === 0}
+                >
+                  Proceed to Checkout
+                </button>
+                <button
+                  onClick={() => {
+                    setIsCartOpen(false);
+                    navigate("/cart");
+                  }}
+                  className="w-full h-11 rounded-full border border-stone-300 text-stone-700 hover:bg-stone-50"
+                >
+                  {t("goToCart")}
+                </button>
               </div>
             </motion.aside>
           </>
@@ -462,11 +495,10 @@ const ProductShowcase = () => {
             className="text-center mb-12 md:mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-thin tracking-tight text-stone-900">
-              Curated for You
+              {t("curatedForYou")}
             </h2>
             <p className="text-stone-600 mt-2 max-w-2xl mx-auto">
-              Discover our handpicked selection of signature pieces, where
-              timeless style meets modern elegance.
+              {t("discoverSelection")}
             </p>
           </motion.div>
           {renderProductGrid()}
@@ -475,7 +507,7 @@ const ProductShowcase = () => {
               onClick={() => navigate("/shop")}
               className="border border-stone-800 text-stone-800 font-medium tracking-widest text-sm uppercase px-10 py-3.5 rounded-full hover:bg-stone-800 hover:text-white transition-all duration-300 ease-out"
             >
-              View All
+              {t("viewAll")}
             </button>
           </div>
         </div>
@@ -502,8 +534,8 @@ const ProductShowcase = () => {
                 />
               </svg>
             }
-            title="Timeless Design"
-            description="Each piece is designed to transcend seasons, blending classic silhouettes with a modern sensibility."
+            title={t("timelessDesign")}
+            description={t("timelessDesignDesc")}
           />
           <ValueProp
             index={1}
@@ -523,8 +555,8 @@ const ProductShowcase = () => {
                 />
               </svg>
             }
-            title="Artisanal Quality"
-            description="We partner with skilled artisans who use traditional techniques to create garments of exceptional quality."
+            title={t("artisanalQuality")}
+            description={t("artisanalQualityDesc")}
           />
           <ValueProp
             index={2}
@@ -544,8 +576,8 @@ const ProductShowcase = () => {
                 />
               </svg>
             }
-            title="Sustainable Craft"
-            description="Committed to sustainability, we source eco-friendly materials and practice ethical production methods."
+            title={t("sustainableCraft")}
+            description={t("sustainableCraftDesc")}
           />
         </div>
       </section>

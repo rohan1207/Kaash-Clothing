@@ -6,6 +6,10 @@ import Shop from "./pages/Shop";
 import ContactUs from "./pages/ContactUs";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
+import Wishlist from "./pages/Wishlist";
+import Account from "./pages/Account";
+import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
@@ -38,6 +42,10 @@ const App = () => {
             <Route path="/kurti" element={<Kurti />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/product/:productId" element={<ProductDetails />} />
           </Routes>
         </main>

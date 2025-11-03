@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 
 const FooterLink = ({ to, children }) => (
   <Link
@@ -23,29 +24,30 @@ const SocialIcon = ({ href, children }) => (
 );
 
 const Footer = () => {
+  const { t } = useLanguage();
+  
   return (
     <footer className="bg-stone-900 text-stone-300 font-light">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Newsletter Section */}
         <div className="text-center mb-16 border-b border-stone-800 pb-12">
           <h2 className="text-2xl md:text-3xl font-serif text-white mb-4">
-            Stay in Touch
+            {t("stayInTouch")}
           </h2>
           <p className="text-stone-400 max-w-xl mx-auto mb-6">
-            Subscribe to our newsletter for exclusive updates, new collections,
-            and special offers.
+            {t("newsletterDesc")}
           </p>
           <form className="flex flex-col sm:flex-row justify-center max-w-lg mx-auto">
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder={t("enterEmail")}
               className="bg-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-md sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-sky w-full sm:w-auto flex-grow"
             />
             <button
               type="submit"
               className="bg-sky text-white font-semibold px-6 py-3 mt-2 sm:mt-0 rounded-md sm:rounded-l-none hover:bg-pink-700 transition-colors duration-300"
             >
-              Subscribe
+              {t("subscribe")}
             </button>
           </form>
         </div>
@@ -55,49 +57,52 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-1 mb-8 md:mb-0">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="text-xl md:text-2xl tracking-[0.3em] font-light cursor-pointer"
+              className="cursor-pointer"
             >
-              Kaash & Co.
+              <img 
+                src="/newlogo1.png" 
+                alt="Kaash & Co." 
+                className="h-8 md:h-36 w-auto mx-auto md:mx-0"
+              />
             </motion.div>
             <p className="text-sm text-stone-400 leading-relaxed mt-2">
-              Timeless elegance, modern design. Discover curated collections
-              that define luxury.
+              {t("footerBrandDesc")}
             </p>
           </div>
 
           {/* Shop Section - Half width on mobile */}
           <div className="col-span-1">
             <h3 className="font-semibold text-white tracking-wider uppercase mb-4">
-              Shop
+              {t("shop")}
             </h3>
             <div className="flex flex-col space-y-3">
-              <FooterLink to="/shop">All Products</FooterLink>
-              <FooterLink to="/new">New Arrivals</FooterLink>
-              <FooterLink to="/collections">Collections</FooterLink>
+              <FooterLink to="/shop">{t("allProducts")}</FooterLink>
+              <FooterLink to="/new">{t("newArrivals")}</FooterLink>
+              <FooterLink to="/collections">{t("collections")}</FooterLink>
             </div>
           </div>
 
           {/* About Section - Half width on mobile */}
           <div className="col-span-1">
             <h3 className="font-semibold text-white tracking-wider uppercase mb-4">
-              About
+              {t("about")}
             </h3>
             <div className="flex flex-col space-y-3">
-              <FooterLink to="/about">Our Story</FooterLink>
-              <FooterLink to="/sustainability">Sustainability</FooterLink>
-              <FooterLink to="/contact">Contact Us</FooterLink>
+              <FooterLink to="/about">{t("ourStory")}</FooterLink>
+              <FooterLink to="/sustainability">{t("sustainability")}</FooterLink>
+              <FooterLink to="/contact">{t("contact")}</FooterLink>
             </div>
           </div>
 
           {/* Support Section - Full width on mobile */}
           <div className="col-span-2 md:col-span-1 mt-8 md:mt-0">
             <h3 className="font-semibold text-white tracking-wider uppercase mb-4">
-              Support
+              {t("support")}
             </h3>
             <div className="flex flex-col space-y-3">
-              <FooterLink to="/faq">FAQ</FooterLink>
-              <FooterLink to="/shipping">Shipping & Returns</FooterLink>
-              <FooterLink to="/privacy">Privacy Policy</FooterLink>
+              <FooterLink to="/faq">{t("faq")}</FooterLink>
+              <FooterLink to="/shipping">{t("shippingAndReturns")}</FooterLink>
+              <FooterLink to="/privacy">{t("privacyPolicy")}</FooterLink>
             </div>
           </div>
         </div>
@@ -105,7 +110,10 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-stone-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs text-stone-500 tracking-wide mb-4 md:mb-0">
-            © {new Date().getFullYear()} Kaash Co.Clothing. All Rights Reserved.
+            © {new Date().getFullYear()} {t("allRightsReserved")}
+          </p>
+          <p className="text-xs text-stone-400 tracking-wide mb-4 md:mb-0">
+            {t("designedBy")} <span className="text-stone-300 font-medium">TheSocialKollab</span>
           </p>
           <div className="flex items-center space-x-6">
             <SocialIcon href="https://instagram.com">

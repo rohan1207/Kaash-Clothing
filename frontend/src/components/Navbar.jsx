@@ -2,12 +2,21 @@ import React, { useState, useEffect, useRef } from "react";
 // ...existing code...
 import { Link, NavLink } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
+import { useAuth } from "../context/AuthContext";
+import { useLanguage } from "../context/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
+import AuthModal from "./AuthModal";
+import LanguageSelector from "./LanguageSelector";
 
 const Navbar = () => {
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
+  const { user, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [searchPopupOpen, setSearchPopupOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [showResults, setShowResults] = useState(false);
@@ -229,7 +238,7 @@ const Navbar = () => {
                     : "text-white hover:text-pink-200"
                 }`}
               >
-                Menu
+                {t("menu")}
               </button>
 
               {/* Search hint (like the reference) */}
@@ -255,7 +264,7 @@ const Navbar = () => {
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
-                <span className="text-sm">Search our catalog</span>
+                <span className="text-sm">{t("search")}</span>
               </button>
             </div>
             {/* Elegant Search Popup (desktop) with premium animation and results view */}
@@ -553,45 +562,61 @@ const Navbar = () => {
               )}
             </AnimatePresence>
 
-            {/* Center Logo */}
+            {/* Line 556 omitted */}
             <div className="absolute left-1/2 transform -translate-x-1/2">
               <Link to="/">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="text-2xl lg:text-3xl font-light tracking-[0.3em] cursor-pointer"
+                  className="cursor-pointer"
                 >
-                  <span
-                    className={`transition-colors duration-300 ${
-                      isScrolled ? "text-gray-800" : "text-white"
-                    }`}
-                  >
-                    kaash & co.
-                  </span>
+                  <img 
+                    src="/newlogo.png" 
+                    alt="Kaash & Co." 
+                    className="h-12 lg:h-36 w-auto"
+                  />
                 </motion.div>
               </Link>
             </div>
 
             {/* Right: Text links like reference (Log in, Wishlist, Cart, En) */}
             <div className="hidden sm:flex items-center space-x-5 lg:space-x-8">
-              <Link
-                to="/account"
-                className={`text-sm transition-colors ${
-                  isScrolled
-                    ? "text-gray-800 hover:text-pink-600"
-                    : "text-white hover:text-pink-200"
-                }`}
-              >
-                Log in
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  to="/account"
+                  className={`text-sm transition-colors ${
+                    isScrolled
+                      ? "text-gray-800 hover:text-pink-600"
+                      : "text-white hover:text-pink-200"
+                  }`}
+                >
+                  {t("account")}
+                </Link>
+              ) : (
+                <button
+                  onClick={() => setAuthModalOpen(true)}
+                  className={`text-sm transition-colors ${
+                    isScrolled
+                      ? "text-gray-800 hover:text-pink-600"
+                      : "text-white hover:text-pink-200"
+                  }`}
+                >
+                  {t("login")}
+                </button>
+              )}
               <Link
                 to="/wishlist"
-                className={`text-sm transition-colors ${
+                className={`relative text-sm transition-colors ${
                   isScrolled
                     ? "text-gray-800 hover:text-pink-600"
                     : "text-white hover:text-pink-200"
                 }`}
               >
-                Wishlist
+                {t("wishlist")}
+                {wishlistCount > 0 && (
+                  <sup className="ml-0.5 text-[10px] align-super font-semibold">
+                    {wishlistCount > 9 ? "9+" : wishlistCount}
+                  </sup>
+                )}
               </Link>
               <Link
                 to="/cart"
@@ -601,34 +626,16 @@ const Navbar = () => {
                     : "text-white hover:text-pink-200"
                 }`}
               >
-                Cart
+                {t("cart")}
                 {cartCount > 0 && (
                   <sup className="ml-0.5 text-[10px] align-super font-semibold">
                     {cartCount > 9 ? "9+" : cartCount}
                   </sup>
                 )}
               </Link>
-              <button
-                className={`flex items-center gap-1 text-sm transition-colors ${
-                  isScrolled
-                    ? "text-gray-800 hover:text-pink-600"
-                    : "text-white hover:text-pink-200"
-                }`}
-              >
-                En
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-3.5 w-3.5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.27a.75.75 0 01-.02-1.06z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
+              
+              {/* Language Selector */}
+              <LanguageSelector isScrolled={isScrolled} />
             </div>
           </div>
         </nav>
@@ -656,14 +663,18 @@ const Navbar = () => {
               exit="exit"
               className="fixed top-0 left-0 h-full w-80 lg:w-96 bg-white z-50 shadow-2xl"
             >
-              {/* Header */}
+              {/* Line 659 omitted */}
               <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
                 <Link to="/" onClick={() => setIsOpen(false)}>
                   <motion.div
                     whileHover={{ scale: 1.02 }}
-                    className="text-xl lg:text-2xl font-light tracking-[0.3em] text-gray-800"
+                    className="cursor-pointer"
                   >
-                    kaash & co.
+                    <img 
+                      src="/newlogo.png" 
+                      alt="Kaash & Co." 
+                      className="h-10 lg:h-32 w-auto"
+                    />
                   </motion.div>
                 </Link>
                 <motion.button
@@ -722,11 +733,11 @@ const Navbar = () => {
               <div className="px-8 py-6 flex-1">
                 <div className="space-y-1">
                   {[
-                    { to: "/", label: "Home" },
-                    { to: "/shop", label: "Shop" },
-                    { to: "/new", label: "New Arrivals" },
-                    { to: "/about", label: "About" },
-                    { to: "/contact", label: "Contact" },
+                    { to: "/", label: t("home") },
+                    { to: "/shop", label: t("shop") },
+                    { to: "/new", label: t("newArrivals") },
+                    { to: "/about", label: t("about") },
+                    { to: "/contact", label: t("contact") },
                   ].map((link, i) => (
                     <motion.div
                       key={link.to}
@@ -816,6 +827,9 @@ const Navbar = () => {
           </>
         )}
       </AnimatePresence>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   );
 };

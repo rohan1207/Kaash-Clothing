@@ -6,6 +6,7 @@ import DualSpotlight from "../components/DualSpotlight";
 import Hero from "../components/Hero";
 import MordernVideoScroll from "../components/ModernVideoScroll";
 import ExpertiseCards from "../components/ExpertiseCards";
+import FAQ from "../components/FAQ";
 const HomePage = () => {
   return (
     <div>
@@ -21,6 +22,7 @@ const HomePage = () => {
       <ProductShowcase />
       <PremiumHero />
       <MordernVideoScroll />
+      <FAQ/>
     </div>
   );
 };
