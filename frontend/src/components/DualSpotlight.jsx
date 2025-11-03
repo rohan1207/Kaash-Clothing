@@ -296,7 +296,7 @@ const DualSpotlight = ({ items }) => {
     {
       title: "Dunes of Mauve",
       titleLines: ["Dunes of ", "Mauve"],
-      image: "/kaashkurti1.JPG",
+      image: "/maroon4.JPG",
       cardImage: "/kaashkurti1.JPG",
       price: "₹320.00",
       hotspot: { x: "56%", y: "64%", side: "left" },
@@ -305,7 +305,7 @@ const DualSpotlight = ({ items }) => {
     {
       title: "Al Khadra Grace",
       titleLines: ["Al Khadra ", "Grace"],
-      image: "/kaashkurti2.JPG",
+      image: "/green2.JPG",
       cardImage: "/kaashkurti2.JPG",
       price: "₹320.00",
       hotspot: { x: "47%", y: "66%", side: "right" },
