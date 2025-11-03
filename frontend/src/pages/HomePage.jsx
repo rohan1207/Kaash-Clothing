@@ -7,6 +7,7 @@ import Hero from "../components/Hero";
 import MordernVideoScroll from "../components/ModernVideoScroll";
 import ExpertiseCards from "../components/ExpertiseCards";
 import FAQ from "../components/FAQ";
+import Reviews from "../components/Reviews";
 const HomePage = () => {
   return (
     <div>
@@ -22,6 +23,7 @@ const HomePage = () => {
       <ProductShowcase />
       <PremiumHero />
       <MordernVideoScroll />
+      <Reviews />
       <FAQ/>
     </div>
   );

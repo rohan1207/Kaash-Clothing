@@ -1,5 +1,6 @@
 ﻿﻿import React, { useState, useEffect, useRef } from "react";
 import { useCart } from "../context/CartContext";
+import { useWishlist } from "../context/WishlistContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,6 +15,8 @@ import {
   FiSend,
   FiMail,
   FiX,
+  FiStar,
+  FiHeart,
 } from "react-icons/fi";
 import { FaWhatsapp, FaPinterest } from "react-icons/fa";
 import { FaPinterestP } from "react-icons/fa";
@@ -89,6 +92,7 @@ const ProductDetails = () => {
   const tabsRef = useRef(null);
 
   const [product, setProduct] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
@@ -150,6 +154,8 @@ const ProductDetails = () => {
         ratings: p.ratings ?? 0,
         reviews: p.reviews ?? 0,
       }));
+
+      setAllProducts(mapped);
 
       const found = mapped.find((m) => String(m._id) === String(productId));
       if (!found) {
@@ -866,8 +872,242 @@ const ProductDetails = () => {
             </div>
           </div>
         </div>
+
+        {/* More to Explore Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-12 text-center"
+          >
+            <h2 className="text-3xl md:text-4xl font-light text-stone-900 tracking-tight mb-3">
+              More to Explore
+            </h2>
+            <p className="text-sm text-stone-500 font-light tracking-wide">
+              Discover similar styles you'll love
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {allProducts
+              .filter((p) => p._id !== product._id && p.category === product.category)
+              .slice(0, 4)
+              .map((relatedProduct, index) => (
+                <ProductCard
+                  key={relatedProduct._id}
+                  product={relatedProduct}
+                  index={index}
+                />
+              ))}
+          </div>
+        </div>
       </div>
     </div>
+  );
+};
+
+// Product Card Component (consistent with Shop.jsx)
+const ProductCard = ({ product, index }) => {
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const [isHovered, setIsHovered] = useState(false);
+  const [tabHovered, setTabHovered] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(
+    product.sizes && product.sizes.length > 0 ? product.sizes[0] : null
+  );
+
+  const hasDiscount =
+    product.discountedPrice && product.discountedPrice < product.price;
+  const inWishlist = isInWishlist(product._id);
+  const firstAdditionalImage = product.additionalMedia?.find(
+    (media) => media.type === "image"
+  )?.url;
+
+  const buildUrl = (path) => {
+    if (!path) return "";
+    if (path.startsWith("http")) return path;
+    if (path.startsWith("/")) return path;
+    if (!path.includes("/")) return `/${path}`;
+    return path;
+  };
+
+  const currentImageUrl = buildUrl(
+    isHovered && firstAdditionalImage
+      ? firstAdditionalImage
+      : product.mainImage.url
+  );
+
+  const handleQuickAdd = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const sizeToUse = selectedSize || (product.sizes?.[0] ?? "Default");
+    addToCart(product, sizeToUse, 1);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.1 }}
+      className="group cursor-pointer"
+      onClick={() => navigate(`/product/${product._id}`)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="relative overflow-hidden aspect-[3/4] rounded-sm bg-stone-50 mb-4">
+        {/* Product Image */}
+        <motion.img
+          key={currentImageUrl}
+          src={currentImageUrl}
+          alt={product.name}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="w-full h-full object-cover"
+        />
+
+        {/* Discount Badge */}
+        {hasDiscount && (
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm text-stone-900 text-xs px-3 py-1.5 rounded-full font-medium shadow-sm"
+          >
+            {product.discountPercentage}% OFF
+          </motion.div>
+        )}
+
+        {/* Rating Badge - top left */}
+        {product.ratings > 0 && (
+          <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1.5 rounded-full flex items-center gap-1 shadow-sm">
+            <FiStar className="w-3 h-3 text-yellow-500 fill-current" />
+            <span className="text-xs font-medium text-stone-900">
+              {product.ratings.toFixed(1)}
+            </span>
+          </div>
+        )}
+
+        {/* Wishlist Button */}
+        <motion.button
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleWishlist(product);
+          }}
+          className={`absolute ${
+            hasDiscount ? "top-14" : "top-3"
+          } right-3 w-9 h-9 rounded-full backdrop-blur-sm flex items-center justify-center shadow-sm transition-colors duration-200 ${
+            inWishlist
+              ? "bg-pink-500 text-white"
+              : "bg-white/95 text-stone-600 hover:text-pink-500"
+          }`}
+          aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <FiHeart className={`w-4 h-4 ${inWishlist ? "fill-current" : ""}`} />
+        </motion.button>
+
+        {/* Quick View Tray at bottom */}
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              initial={{ y: 64, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 64, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="absolute left-0 right-0 bottom-3 px-3"
+            >
+              <motion.div
+                onClick={(e) => e.stopPropagation()}
+                onMouseEnter={() => setTabHovered(true)}
+                onMouseLeave={() => setTabHovered(false)}
+                animate={{ height: tabHovered ? 88 : 48 }}
+                transition={{ type: "spring", stiffness: 260, damping: 26 }}
+                className="w-full rounded-md bg-white/95 backdrop-blur-md border border-stone-200 shadow-lg px-4 flex flex-col justify-center"
+              >
+                <div className="flex items-center justify-between h-12">
+                  <span className="text-xs tracking-wider text-stone-900 font-medium">
+                    QUICK VIEW
+                  </span>
+                  <button
+                    aria-label="Add to cart"
+                    className="shrink-0 w-9 h-9 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-800 transition-colors"
+                    onClick={handleQuickAdd}
+                  >
+                    <FiPlus size={18} />
+                  </button>
+                </div>
+                {tabHovered && product.sizes && product.sizes.length > 0 && (
+                  <div className="pb-3">
+                    <div className="flex flex-wrap gap-2">
+                      {product.sizes.slice(0, 6).map((size) => (
+                        <button
+                          key={size}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setSelectedSize(size);
+                          }}
+                          className={`text-[10px] px-2.5 py-1 rounded-full border transition-colors ${
+                            selectedSize === size
+                              ? "bg-stone-900 text-white border-stone-900"
+                              : "bg-white text-stone-700 border-stone-300 hover:border-stone-500"
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                      {product.sizes.length > 6 && (
+                        <span className="text-[10px] text-stone-500">
+                          +{product.sizes.length - 6}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Product Info */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-light text-stone-900 line-clamp-2 tracking-wide group-hover:text-stone-600 transition-colors duration-200">
+          {product.name}
+        </h3>
+
+        {/* Material tag if available */}
+        {product.material && (
+          <p className="text-xs text-stone-500 font-light">
+            {product.material}
+          </p>
+        )}
+
+        <div className="flex items-center gap-3">
+          {hasDiscount ? (
+            <>
+              <span className="text-base font-medium text-stone-900">
+                {product.discountedPrice.toFixed(0)} DHS
+              </span>
+              <span className="text-sm text-stone-400 line-through font-light">
+                {product.price.toFixed(0)} DHS
+              </span>
+            </>
+          ) : (
+            <span className="text-base font-medium text-stone-900">
+              {product.price.toFixed(0)} DHS
+            </span>
+          )}
+        </div>
+      </div>
+    </motion.div>
   );
 };
 

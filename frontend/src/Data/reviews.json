@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Fatima Al Mansoori",
+    "location": "Dubai, UAE",
+    "avatar": "https://i.pravatar.cc/150?img=1",
+    "rating": 5,
+    "review": "Absolutely stunning collection! The fabric quality is exceptional and the embroidery work is exquisite. I ordered a kurti for a family gathering and received so many compliments. The delivery to Dubai was quick and the packaging was premium.",
+    "product": "Dunes of Mauve Kurti"
+  },
+  {
+    "id": 2,
+    "name": "Priya Sharma",
+    "location": "Mumbai, India",
+    "avatar": "https://i.pravatar.cc/150?img=5",
+    "rating": 5,
+    "review": "I've been shopping online for years, but this experience was unmatched. The sarees are breathtaking with intricate details that look even better in person. Fast shipping and excellent customer service. Highly recommend!",
+    "product": "Royal Emerald Saree"
+  },
+  {
+    "id": 3,
+    "name": "Sara Abdullah",
+    "location": "Abu Dhabi, UAE",
+    "avatar": "https://i.pravatar.cc/150?img=9",
+    "rating": 5,
+    "review": "As someone who values both tradition and modernity, I found the perfect balance in their collection. The Al Khadra Grace is my favorite - elegant, comfortable, and perfect for any occasion. Worth every dirham!",
+    "product": "Al Khadra Grace"
+  },
+  {
+    "id": 4,
+    "name": "Aisha Khan",
+    "location": "Delhi, India",
+    "avatar": "https://i.pravatar.cc/150?img=10",
+    "rating": 5,
+    "review": "The attention to detail is remarkable. From the website design to the actual products, everything screams premium quality. The western collection is chic and the fabric feels luxurious. My go-to store now!",
+    "product": "Midnight Elegance Top"
+  },
+  {
+    "id": 5,
+    "name": "Noura Hassan",
+    "location": "Sharjah, UAE",
+    "avatar": "https://i.pravatar.cc/150?img=16",
+    "rating": 5,
+    "review": "I was looking for authentic Indian ethnic wear in UAE and stumbled upon this gem. The collection is diverse, sizes are accurate, and the quality is top-notch. The checkout process was smooth and delivery was right on time.",
+    "product": "Golden Threads Kurti"
+  },
+  {
+    "id": 6,
+    "name": "Ananya Reddy",
+    "location": "Bangalore, India",
+    "avatar": "https://i.pravatar.cc/150?img=24",
+    "rating": 5,
+    "review": "Simply beautiful! I ordered three kurtis for Diwali and each one exceeded my expectations. The color accuracy is perfect, and the stitching is flawless. The website's zoom feature helped me see the fabric details clearly.",
+    "product": "Festive Dreams Collection"
+  },
+  {
+    "id": 7,
+    "name": "Mariam Al Zaabi",
+    "location": "Al Ain, UAE",
+    "avatar": "https://i.pravatar.cc/150?img=27",
+    "rating": 5,
+    "review": "Elegant, comfortable, and affordable luxury. The jeans collection is particularly impressive - perfect fit and premium denim. I also love how eco-conscious they are with their packaging. A brand that cares!",
+    "product": "Classic Blue Denim"
+  },
+  {
+    "id": 8,
+    "name": "Kavya Menon",
+    "location": "Kochi, India",
+    "avatar": "https://i.pravatar.cc/150?img=32",
+    "rating": 5,
+    "review": "The whole shopping experience was fantastic. The website is user-friendly, I found exactly what I was looking for without any hassle. My order arrived in perfect condition, and the clothing fits beautifully. Will definitely shop again!",
+    "product": "Monsoon Charm Kurti"
+  }
+]
